@@ -23,7 +23,8 @@ CHPL_HWLOC_CFG_OPTIONS += --enable-static \
                           --disable-nvml \
                           --disable-opencl \
                           --disable-gl \
-                          --disable-pci
+                          --disable-pci \
+                          --with-hwloc-symbol-prefix=$(CHPL_HWLOC_PREFIX_PREFIX)
 
 # Libnuma requires dynamic linking, so for the flat locale model where
 # we have no need for NUMA info, disable it so we can link statically.
