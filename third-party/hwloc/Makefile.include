@@ -6,3 +6,14 @@ HWLOC_INSTALL_SUBDIR=install/$(CHPL_MAKE_HWLOC_UNIQ_CFG_PATH)
 HWLOC_INSTALL_DIR=$(HWLOC_DIR)/$(HWLOC_INSTALL_SUBDIR)
 HWLOC_INCLUDE_DIR=$(HWLOC_INSTALL_DIR)/include
 HWLOC_LIB_DIR=$(HWLOC_INSTALL_DIR)/lib
+
+
+# For consistency with the rest of the runtime code base CHPL_HWLOC_PREFIX ends with "hwloc_".
+# The hwloc configure script says that the argument passed to --with-hwloc-symbol-prefix 
+# replaces the existing "hwloc_" prefix, but that isn't the case. It is simply added to the
+# existing symbol names. To avoid confusion CHPL_HWLOC_PREFIX should end with "hwloc_" while
+# CHPL_HWLOC_PREFIX_PREFIX is only used internally by hwloc and is CHPL_HWLOC_PREFIX
+# without the "hwloc_" at the end.
+
+CHPL_HWLOC_PREFIX_PREFIX=chpl_
+CHPL_HWLOC_PREFIX=$(CHPL_HWLOC_PREFIX_PREFIX)hwloc_
