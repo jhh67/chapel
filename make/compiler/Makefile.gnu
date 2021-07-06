@@ -23,8 +23,8 @@
 #
 # Tools
 #
-CXX = $(CHPL_MAKE_COMPILER_COMMAND_CXX) # normally g++
-CC = $(CHPL_MAKE_COMPILER_COMMAND_C)    # normally gcc
+CXX = $(CHPL_MAKE_CXX) # normally g++
+CC = $(CHPL_MAKE_CC)    # normally gcc
 
 RANLIB = ranlib
 
@@ -227,6 +227,11 @@ endif
 ifeq ($(shell test $(GNU_GPP_MAJOR_VERSION) -gt 7; echo "$$?"),0)
 WARN_CXXFLAGS += -Walloc-size-larger-than=18446744073709551615
 WARN_CXXFLAGS += -Wno-stringop-truncation
+endif
+
+ifeq ($(shell test $(GNU_GCC_MAJOR_VERSION) -gt 7; echo "$$?"),0)
+WARN_CFLAGS += -Walloc-size-larger-than=18446744073709551615
+WARN_CFLAGS += -Wno-stringop-truncation
 SQUASH_WARN_GEN_CFLAGS += -Walloc-size-larger-than=18446744073709551615 -Wno-restrict
 endif
 
@@ -237,6 +242,9 @@ endif
 #
 ifeq ($(shell test $(GNU_GPP_MAJOR_VERSION) -eq 8; echo "$$?"),0)
 WARN_CXXFLAGS += -Wno-class-memaccess
+endif
+
+ifeq ($(shell test $(GNU_GCC_MAJOR_VERSION) -eq 8; echo "$$?"),0)
 RUNTIME_CFLAGS += -Wno-stringop-overflow
 SQUASH_WARN_GEN_CFLAGS += -Wno-array-bounds
 endif
