@@ -2855,6 +2855,7 @@ void init_fixedHeap(void) {
 
     struct fi_info* info;
     for (info = infoList; info != NULL; info = info->next) {
+      break; // XXX delete this
       if (isGoodCoreProvider(info)
           && (!isInProvider("verbs", info)
               || !isInProvider("ofi_rxd", info))) {
@@ -2862,6 +2863,7 @@ void init_fixedHeap(void) {
       }
     }
 
+#ifdef NOTDEF
     chpl_bool useHeap;
     if (info == NULL) {
       DBG_PRINTF_NODE0(DBG_HEAP,
@@ -2884,16 +2886,32 @@ void init_fixedHeap(void) {
     if (!useHeap) {
       return;
     }
+#endif
   }
 
   //
-  // We'll use a fixed heap.  If its size is not specified, default
-  // to 85% of physical memory.
+  // If we get this far we'll use a fixed heap. Determine how much memory is
+  // available per locale.
+  // 
+  uint64_t total_memory = chpl_sys_physicalMemoryBytes();
+  DBG_PRINTF(DBG_HEAP, "total memory %llu (%#llx)", total_memory, total_memory);
+  int num_locales_on_node = chpl_comm_ofi_oob_locales_on_node();
+  uint64_t memory_per_locale = total_memory / num_locales_on_node;
+  DBG_PRINTF(DBG_HEAP, "memory per locale %llu (%#llx)", memory_per_locale, memory_per_locale);
+
+  //
+  // The maximum heap is 85% of a locale's physical memory.
+  //
+  size_t max_heap_per_locale = (size_t) (0.85 * memory_per_locale);
+
+  //
+  // If the maximum heap size is not specified or it's greater than the maximum heap size per
+  // locale, set it to the maximum heap size per locale.
   //
   ssize_t size = envMaxHeapSize;
   CHK_TRUE(size != 0);
-  if (size < 0) {
-    size = (size_t) (0.85 * chpl_sys_physicalMemoryBytes());
+  if ((size < 0) || (size > max_heap_per_locale)) {
+    size = max_heap_per_locale;
   }
 
   //
@@ -2916,6 +2934,7 @@ void init_fixedHeap(void) {
   //
   size = ALIGN_UP(size, page_size);
 
+#ifdef NOTDEF
   //
   // As a hedge against silliness, first reduce any request so that it's
   // no larger than the physical memory.  As a beneficial side effect
@@ -2927,14 +2946,20 @@ void init_fixedHeap(void) {
   if (size > size_phys)
     size = size_phys;
 
+#endif
+
   //
   // Work our way down from the starting size in (roughly) 5% steps
-  // until we can actually get that much from the system.
+  // until we can actually allocate a heap that size.
   //
   size_t decrement;
+  DBG_PRINTF(DBG_HEAP, "size %zd (%#zx)\n", size, size);
+  DBG_PRINTF(DBG_HEAP, "page_size %zd (%#zx)\n", page_size, page_size);
   if ((decrement = ALIGN_DN((size_t) (0.05 * size), page_size)) < page_size) {
+    DBG_PRINTF(DBG_HEAP, "decrement %zd (%#zx)\n", decrement, decrement);
     decrement = page_size;
   }
+  DBG_PRINTF(DBG_HEAP, "decrement is now %zd (%#zx)\n", decrement, decrement);
 
   void* start;
   size += decrement;
