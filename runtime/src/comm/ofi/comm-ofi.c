@@ -2855,7 +2855,6 @@ void init_fixedHeap(void) {
 
     struct fi_info* info;
     for (info = infoList; info != NULL; info = info->next) {
-      break; // XXX delete this
       if (isGoodCoreProvider(info)
           && (!isInProvider("verbs", info)
               || !isInProvider("ofi_rxd", info))) {
@@ -2863,7 +2862,6 @@ void init_fixedHeap(void) {
       }
     }
 
-#ifdef NOTDEF
     chpl_bool useHeap;
     if (info == NULL) {
       DBG_PRINTF_NODE0(DBG_HEAP,
@@ -2886,7 +2884,6 @@ void init_fixedHeap(void) {
     if (!useHeap) {
       return;
     }
-#endif
   }
 
   //
