@@ -2891,13 +2891,11 @@ void init_fixedHeap(void) {
   // available per locale.
   // 
   uint64_t total_memory = chpl_sys_physicalMemoryBytes();
-  DBG_PRINTF(DBG_HEAP, "total memory %llu (%#llx)", total_memory, total_memory);
   int num_locales_on_node = chpl_comm_ofi_oob_locales_on_node();
   uint64_t memory_per_locale = total_memory / num_locales_on_node;
-  DBG_PRINTF(DBG_HEAP, "memory per locale %llu (%#llx)", memory_per_locale, memory_per_locale);
 
   //
-  // The maximum heap is 85% of a locale's physical memory.
+  // A locale's maximum heap is 85% of its memory.
   //
   size_t max_heap_per_locale = (size_t) (0.85 * memory_per_locale);
 
@@ -2931,32 +2929,14 @@ void init_fixedHeap(void) {
   //
   size = ALIGN_UP(size, page_size);
 
-#ifdef NOTDEF
-  //
-  // As a hedge against silliness, first reduce any request so that it's
-  // no larger than the physical memory.  As a beneficial side effect
-  // when the user request is ridiculously large, this also causes the
-  // reduce-by-5% loop below to run faster and produce a final size
-  // closer to the maximum available.
-  //
-  const size_t size_phys = ALIGN_DN(chpl_sys_physicalMemoryBytes(), page_size);
-  if (size > size_phys)
-    size = size_phys;
-
-#endif
-
   //
   // Work our way down from the starting size in (roughly) 5% steps
   // until we can actually allocate a heap that size.
   //
   size_t decrement;
-  DBG_PRINTF(DBG_HEAP, "size %zd (%#zx)\n", size, size);
-  DBG_PRINTF(DBG_HEAP, "page_size %zd (%#zx)\n", page_size, page_size);
   if ((decrement = ALIGN_DN((size_t) (0.05 * size), page_size)) < page_size) {
-    DBG_PRINTF(DBG_HEAP, "decrement %zd (%#zx)\n", decrement, decrement);
     decrement = page_size;
   }
-  DBG_PRINTF(DBG_HEAP, "decrement is now %zd (%#zx)\n", decrement, decrement);
 
   void* start;
   size += decrement;
