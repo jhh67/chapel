@@ -116,6 +116,5 @@ int chpl_comm_ofi_oob_locales_on_node(void) {
   int nodeSize;
   MPI_CHK(MPI_Comm_size(nodeComm, &nodeSize));
   MPI_CHK(MPI_Comm_free(&nodeComm));
-  DBG_PRINTF(DBG_OOB, "OOB locales on node: %d", nodeSize);
   return nodeSize;
 }
