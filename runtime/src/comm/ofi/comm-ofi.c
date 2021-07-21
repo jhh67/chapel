@@ -2855,6 +2855,9 @@ void init_fixedHeap(void) {
 
     struct fi_info* info;
     for (info = infoList; info != NULL; info = info->next) {
+#ifdef CHPL_HEAP_LIMIT_DEBUG
+      break;
+#endif
       if (isGoodCoreProvider(info)
           && (!isInProvider("verbs", info)
               || !isInProvider("ofi_rxd", info))) {
@@ -2867,11 +2870,13 @@ void init_fixedHeap(void) {
       DBG_PRINTF_NODE0(DBG_HEAP,
                        "fixedHeap: no, no provider needs it");
       useHeap = false;
+#ifndef CHPL_HEAP_LIMIT_DEBUG
     } else if ((info->domain_attr->mr_mode & FI_MR_ALLOCATED) == 0) {
       DBG_PRINTF_NODE0(DBG_HEAP,
                        "fixedHeap: no, best provider '%s' doesn't need it",
                        info->fabric_attr->prov_name);
       useHeap = false;
+#endif
     } else {
       DBG_PRINTF_NODE0(DBG_HEAP,
                        "fixedHeap: yes, best provider '%s' needs it",
@@ -2890,6 +2895,9 @@ void init_fixedHeap(void) {
   // If we get this far we'll use a fixed heap.
   // 
   uint64_t total_memory = chpl_sys_physicalMemoryBytes();
+#ifdef CHPL_HEAP_LIMIT_DEBUG
+      total_memory /= 2;
+#endif
 
   //
   // Don't use more than 85% of the total memory for heaps.
@@ -2969,7 +2977,10 @@ void init_fixedHeap(void) {
                chpl_snprintf_KMG_z(buf, sizeof(buf), size), size);
   }
 #endif
-  assert(size 
+#ifdef CHPL_HEAP_LIMIT_DEBUG
+  size_t limit = (size_t) (1.05 * max_heap_memory);
+  assert(size * num_locales_on_node <= limit);
+#endif
   fixedHeapSize  = size;
   fixedHeapStart = start;
 }
