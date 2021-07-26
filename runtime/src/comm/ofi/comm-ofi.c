@@ -1845,7 +1845,14 @@ struct fi_info* getBaseProviderHints(chpl_bool* pTxAttrsForced) {
                                  | FI_MR_VIRT_ADDR
                                  | FI_MR_PROV_KEY // TODO: avoid pkey bcast?
                                  | FI_MR_ENDPOINT);
-  if (chpl_numNodes > 1 && envMaxHeapSize != 0 && !envOversubscribed) {
+  // 
+  // Consider ourselves oversubscribed if either the environment variable is set or
+  // there is more than one locale on the local node.
+  //
+  int num_locales_on_node = chpl_comm_ofi_oob_locales_on_node();
+  chpl_bool oversubscribed = envOversubscribed || (num_locales_on_node > 1);
+
+  if (chpl_numNodes > 1 && envMaxHeapSize != 0 && !oversubscribed) {
     hints->domain_attr->mr_mode |= FI_MR_ALLOCATED;
   }
 
