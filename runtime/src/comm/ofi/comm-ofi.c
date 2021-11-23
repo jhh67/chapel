@@ -2163,7 +2163,7 @@ void init_ofiEp(void) {
     txCQLen = cqAttr.size;
     cntrAttr = (struct fi_cntr_attr)
                { .events = FI_CNTR_EVENTS_COMP,
-                 .wait_obj = FI_WAIT_NONE, };
+                 .wait_obj = FI_WAIT_UNSPEC, };
     DBG_PRINTF(DBG_TCIPS, "creating tx endpoints/contexts");
     for (int i = 0; i < numWorkerTxCtxs; i++) {
       init_ofiEpTxCtx(i, false /*isAMHandler*/, &cqAttr, 
@@ -2187,7 +2187,7 @@ void init_ofiEp(void) {
              .wait_set = ofi_amhWaitSet, };
   cntrAttr = (struct fi_cntr_attr)
              { .events = FI_CNTR_EVENTS_COMP,
-               .wait_obj = waitObj,
+               .wait_obj = FI_WAIT_UNSPEC,
                .wait_set = ofi_amhWaitSet, };
   DBG_PRINTF(DBG_TCIPS, "creating AM handler tx endpoints/contexts");
   for (int i = numWorkerTxCtxs; i < tciTabLen; i++) {
@@ -2209,7 +2209,7 @@ void init_ofiEp(void) {
              .wait_set = ofi_amhWaitSet, };
   cntrAttr = (struct fi_cntr_attr)
              { .events = FI_CNTR_EVENTS_COMP,
-               .wait_obj = waitObj,
+               .wait_obj = FI_WAIT_UNSPEC,
                .wait_set = ofi_amhWaitSet, };
 
   OFI_CHK(fi_endpoint(ofi_domain, ofi_info, &ofi_rxEp, NULL));
@@ -6579,16 +6579,24 @@ void checkTxCmplsCntr(struct perTxCtxInfo_t* tcip) {
       INTERNAL_ERROR_V("fi_cq_read failed: %s", fi_strerror(rc));
     }
   }
-  uint64_t count = fi_cntr_read(tcip->txCntr);
-  if (count > tcip->numTxnsSent) {
-    INTERNAL_ERROR_V("fi_cntr_read() %" PRIu64 ", but numTxnsSent %" PRIu64,
-                     count, tcip->numTxnsSent);
-  }
-  tcip->numTxnsOut = tcip->numTxnsSent - count;
   if (tcip->numTxnsOut > 0) {
-    count = fi_cntr_readerr(tcip->txCntr);
-    if (count > 0) {
-      INTERNAL_ERROR_V("error count %" PRIu64, count);
+    int ret;
+    uint64_t count;
+    OFI_CHK_2(fi_cntr_wait(tcip->txCntr, tcip->numTxnsSent + tcip->numTxnsOut, 
+                           1), ret, -FI_ETIMEDOUT);
+    if (ret != -FI_ETIMEDOUT) {
+      count = fi_cntr_read(tcip->txCntr);
+      if (count > tcip->numTxnsSent) {
+        INTERNAL_ERROR_V("fi_cntr_read() %" PRIu64 ", but numTxnsSent %" PRIu64,
+                         count, tcip->numTxnsSent);
+      }
+      tcip->numTxnsOut = tcip->numTxnsSent - count;
+      if (tcip->numTxnsOut > 0) {
+        count = fi_cntr_readerr(tcip->txCntr);
+        if (count > 0) {
+          INTERNAL_ERROR_V("error count %" PRIu64, count);
+        }
+      }
     }
   }
 }
