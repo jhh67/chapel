@@ -4,16 +4,16 @@
 # that correspond to that path. 
 
 import os
-import utils
 import printchplenv
 import sys
 import stat
 from collections import OrderedDict
 import argparse
-from pprint import pprint
 import datetime
 from enum import Enum, unique
 from collections import defaultdict
+from unittest import TestCase
+
 
 # Parsing the build directory path is implemented as a state machine. Some
 # of the components start with a prefix, some do not. The state machine
@@ -35,10 +35,11 @@ class State(Enum):
     COMM_SUBSTRATE =    8
     GASNET_SEGMENT =    9
 
+
 # Maps component prefix to corresponding environment variable.
 
 prefixes = {
-    'arch':         'CHPL_TARGET_CPU', # obsolete
+    'arch':         'CHPL_TARGET_CPU',  # obsolete
     'cpu':          'CHPL_TARGET_CPU',
     'loc':          'CHPL_LOCALE_MODEL',
     'comm':         'CHPL_COMM',
@@ -51,7 +52,7 @@ prefixes = {
     'gmp':          'CHPL_GMP',
     'llvm':         'CHPL_LLVM',
     'fs':           'CHPL_AUX_FILESYS',
-    'sanitizers':   'CHPL_SANITIZE_EXE', # obsolete
+    'sanitizers':   'CHPL_SANITIZE_EXE',  # obsolete
     'san':          'CHPL_SANITIZE_EXE',
     'lib_pic':      'CHPL_LIB_PIC',
     'hwloc':        'CHPL_HWLOC',
@@ -87,12 +88,12 @@ nextStates = {
     State.GASNET_SEGMENT:   State.PREFIX
 }
 
+
 # Parse the given path and return a configuration based on the components of the path.
 # The configuration is a dictionary where the key is the environment variable name and the
 # value is its value. As a side effect the variables are added to the "used" set.
 
 def parse(path, used):
-
     state = State.TARGET_PLATFORM
 
     config = {}
@@ -139,6 +140,7 @@ def parse(path, used):
         i = j
     return config
 
+
 # Uses printchplenv to get the current configuration based on the environment variables.
 # If 'all' is True then returns all environment variables, otherwise omits variables not
 # relevant to the current configuration.
@@ -148,7 +150,7 @@ def getConfig(all=False):
     excludes = ['CHPL_HOME']
     filters = ['no-tidy'] if all else ['tidy']
     filters.append('only-path')
-    lines = printchplenv.printchplenv(['runtime'], print_filters=filters, 
+    lines = printchplenv.printchplenv(['runtime'], print_filters=filters,
                                       print_format='simple').split('\n')
     for line in lines:
         if len(line) == 0:
@@ -163,7 +165,8 @@ def getConfig(all=False):
             config['CHPL_COMM_DEBUG'] = value
     return config
 
-# Returns a list of variables that differ between two configurations 
+
+# Returns a list of variables that differ between two configurations
 
 def findDiffVars(usedvars, a, b):
     result = []
@@ -172,6 +175,7 @@ def findDiffVars(usedvars, a, b):
         if a.get(var, 'NA') != b.get(var, 'NA'):
             result.append(var)
     return result
+
 
 # print shell commands to change the environment variables from current to config
 
@@ -191,11 +195,12 @@ def printShellCommands(current, config, usedvars, shell="bash"):
                 if newValue == '+':
                     newValue = 1
                 if shell == "csh":
-                    print('setenv %s "%s";' %(var, newValue))
+                    print('setenv %s "%s";' % (var, newValue))
                 elif shell == "bash":
-                    print('export %s="%s";' %(var, newValue))
+                    print('export %s="%s";' % (var, newValue))
     if shell == "csh":
         print("unset noglob;")
+
 
 # Prints the configurations in columns. If a variable's value differs from the
 # current configuration it has a '*' suffix. "extras" are variables that shouldn't
@@ -214,6 +219,7 @@ def output(current, variables, extras, configs):
             output += " %-20s" % value
         print(output)
 
+
 # For argument parsing
 @unique
 class Sort(Enum):
@@ -222,10 +228,9 @@ class Sort(Enum):
     FEWEST =    3
     MOST =      4
 
-def printchplbuilds(order=Sort.NEWEST, showCurrent=True, summary=False, width=6, bash=None, 
+
+def printchplbuilds(order=Sort.NEWEST, showCurrent=True, summary=False, width=6, bash=None,
                     csh=None, path=None, check=False):
-
-
     # Note: "allvars" is a list of all possible variables in the order in
     # which they are displayed by printchplenv so we can print them in the
     # same order. "usedvars" is a list of the variables actually used in the
@@ -260,10 +265,10 @@ def printchplbuilds(order=Sort.NEWEST, showCurrent=True, summary=False, width=6,
                 targets.append(os.path.join(root, target))
 
         if order == Sort.OLDEST:
-            targets.sort(key= lambda x: os.stat(x)[stat.ST_MTIME])
+            targets.sort(key=lambda x: os.stat(x)[stat.ST_MTIME])
 
         if order == Sort.NEWEST:
-            targets.sort(key= lambda x: os.stat(x)[stat.ST_MTIME], reverse=True)
+            targets.sort(key=lambda x: os.stat(x)[stat.ST_MTIME], reverse=True)
 
         # Convert the targets into a list of paths in which each path is a list of
         # components, excluding the final "libchpl.a"
@@ -295,7 +300,7 @@ def printchplbuilds(order=Sort.NEWEST, showCurrent=True, summary=False, width=6,
 
         for var in usedvars:
             if var in diffvars:
-                 print("%25s: %-20s" % (var, list(values[var])))
+                print("%25s: %-20s" % (var, list(values[var])))
         sys.exit(0)
 
     if order == Sort.FEWEST or order == Sort.MOST or check:
@@ -303,17 +308,15 @@ def printchplbuilds(order=Sort.NEWEST, showCurrent=True, summary=False, width=6,
         for i in range(len(builds)):
             builds[i]['diffs'] = len(findDiffVars(usedvars, current, builds[i]))
         reverse = False if (order == Sort.FEWEST or check) else True
-        builds.sort(key= lambda x: x['diffs'], reverse=reverse)
+        builds.sort(key=lambda x: x['diffs'], reverse=reverse)
 
     if csh is not None:
-        if csh > len(builds):
-            parser.error("Invalid build %d" % csh)
+        assert csh < len(builds), "Invalid build %d" % csh
         printShellCommands(current, builds[csh], usedvars, shell="csh")
         sys.exit(0)
 
     if bash is not None:
-        if bash > len(builds):
-            parser.error("Invalid build %d" % bash)
+        assert bash < len(builds), "Invalid build %d" % bash
         printShellCommands(current, builds[bash], usedvars, shell="bash")
         sys.exit(0)
 
@@ -354,7 +357,7 @@ def printchplbuilds(order=Sort.NEWEST, showCurrent=True, summary=False, width=6,
         # print variable names and their values
         for var in usedvars + extras:
             output = "%25s:" % var
-            for config in configs[done:done+columns]:
+            for config in configs[done:done + columns]:
                 value = config.get(var, 'NA')
                 if var not in extras:
                     tag = "" if current.get(var, 'NA') == value else "*"
@@ -365,109 +368,104 @@ def printchplbuilds(order=Sort.NEWEST, showCurrent=True, summary=False, width=6,
             print(output)
         done += columns
 
+
 def addArgs(parser, version=False):
-
-
     if version:
         parser.add_argument("--version", action="version", version="%(prog)s 1.0",
-                        help="Print version information.")
+                            help="Print version information.")
     # Note: add_mutually_exclusive_group doesn't currently support a title which would make
     # the help output easier to read. Also help doesn't appear in the same order as below.
 
-
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument("--newest", "-n", action="store_const", dest="sort", const=Sort.NEWEST,
-                      help="Sort builds with newest first. [default]")
-    group.add_argument("--oldest", "-o", action="store_const", dest="sort", const=Sort.OLDEST,
-                      help="Sort builds with oldest first.")
-    group.add_argument("--fewest", "-f", action="store_const", dest="sort", const=Sort.FEWEST,
-                      help="Sort builds with fewest differences first.")
-    group.add_argument("--most", "-m", action="store_const", dest="sort", const=Sort.MOST,
-                      help="Sort builds with most differences first.")
-
     group = parser.add_argument_group("Display")
     group.add_argument("--no-current", "-C", action="store_false", dest="current", default=True,
-                      help="Do not display the current configuration.")
-    group.add_argument("--summary", "-s", action="store_true", dest="summary", default=False,
-                      help="Summarize the differences between the builds.")
-    group.add_argument("--width", "-w", action="store", type=int, dest="width", default=6,
-                      metavar="NUM",
-                      help="Number of columns in the output [default: %(default)s].")
+                       help="Do not display the current configuration.")
+    group.add_argument("--width", "-w", action="store", type=lambda x: valid_width(parser, x),
+                       dest="width", default=6, metavar="NUM",
+                       help="Number of columns in the output [default: %(default)s].")
 
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument("--bash", "-b", action="store", type=int, dest="bash", default=None,
-                      metavar="NUM",
-                      help="Output bash commands to match specified build.")
-    group.add_argument("--csh", "-c", action="store", type=int, dest="csh", default=None,
-                      metavar="NUM",
-                      help="Output csh commands to match specified build.")
+    group_hdr = parser.add_argument_group("Mutually Exclusive Options")
+    exclusive_group = group_hdr.add_mutually_exclusive_group()
+
+    exclusive_group.add_argument("--summary", "-s", action="store_true", dest="summary", default=False,
+                                 help="Summarize the differences between the builds.")
+    exclusive_group.add_argument("--check", "-k", action="store_true", dest="check", default=False,
+                                 help="Check that configuration matches a build.")
+    exclusive_group.add_argument("--sort", choices=["newest", "oldest", "fewest", "most"],
+                                 default="newest", dest="sort",
+                                 help="Sort the builds by a particular order")
+
+    exclusive_group.add_argument("--bash", "-b", action="store", type=int, dest="bash", default=None,
+                                 metavar="NUM",
+                                 help="Output bash commands to match specified build.")
+    exclusive_group.add_argument("--csh", "-c", action="store", type=int, dest="csh", default=None,
+                                 metavar="NUM",
+                                 help="Output csh commands to match specified build.")
 
     group = parser.add_argument_group("Misc.")
     group.add_argument("--path", "-p", action="store", dest="path", default=None,
-                      help="Parse the given runtime build path.")
-    group.add_argument("--check", "-k", action="store_true", dest="check", default=False,
-                      help="Check that configuration matches a build.")
+                       help="Parse the given runtime build path.")
 
-def validateArgs(parser, args):
-    if args.width < 1:
-        parser.error("Number of columns must be >= 1.")
 
-    if args.summary:
-        if args.sort != None:
-            parser.error("Sort option cannot be used with --summary.")
-        if args.csh:
-            parser.error("--summary cannot be used with --csh.")
-        if args.bash:
-            parser.error("--summary cannot be used with --bash.")
-        if args.check:
-            parser.error("--summary cannot be used with --check.")
+def valid_width(parser, arg):
+    ivalue = int(arg)
+    if ivalue < 1:
+        raise parser.ArgumentTypeError("%s is not a valid value for width" % arg)
+    else:
+        return ivalue
 
-    if args.check:
-        if args.sort != None:
-            parser.error("Sort option cannot be used with --check.")
-        if args.csh:
-            parser.error("--check cannot be used with --csh.")
-        if args.bash:
-            parser.error("--check cannot be used with --bash.")
-
-    if args.sort == None:
-        args.sort = Sort.NEWEST
-
-def help():
-    return """builds options:
-  [order]
-  --newest, -n  Sort builds with newest first. [default]
-  --oldest, -o  Sort builds with oldest first.
-  --fewest, -f  Sort builds with fewest differences first.
-  --most, -m    Sort builds with most differences first.  
-
-  [shell]
-  --bash NUM, -b NUM  Output bash commands to match specified build.
-  --csh NUM, -c NUM   Output csh commands to match specified build.  
-
-  [display]
-  --no-current, -C    Do not display the current configuration.
-  --summary, -s       Summarize the differences between the builds.
-  --width NUM, -w NUM Number of columns in the output [default: 6].  
-
-  [misc]
-  --path PATH, -p PATH  Parse the given runtime build path.
-  --check, -k           Check that there is a build of the current configuration.
-"""
 
 def main(argv):
-
     description = "Displays the available Chapel runtime builds. Values that differ from" \
-    " the current configuration have a '*' suffix. '+' denotes a variable that is set but" \
-    " whose value doesn't matter, '-' denotes a variable that is not set. 'NA' denotes a" \
-    " variable that is not applicable to the build." 
+                  " the current configuration have a '*' suffix. '+' denotes a variable that is set but" \
+                  " whose value doesn't matter, '-' denotes a variable that is not set. 'NA' denotes a" \
+                  " variable that is not applicable to the build."
 
     parser = argparse.ArgumentParser(description=description)
     addArgs(parser, version=True)
-    (args) = parser.parse_args(argv[1:])
-    validateArgs(parser, args);
-    printchplbuilds(args.sort, args.current, args.summary, args.width, args.bash, args.csh,
+    args = parser.parse_args(argv[1:])
+    printchplbuilds(Sort[args.sort.upper()], args.current, args.summary, args.width, args.bash, args.csh,
                     args.path, args.check)
+
 
 if __name__ == '__main__':
     main(sys.argv)
+
+
+# Incomplete test suite, just some examples that one could expand upon
+class PrintChplBuildsCLITests(TestCase):
+
+    def setUp(self) -> None:
+        self.check_summary = "--check --summary"
+        self.check_sort = "--check --sort newest"
+        self.check_shell = "--check --bash 1"
+
+    def test_parse_bad_summary_check(self):
+        with self.assertRaises(SystemExit):
+            parser = argparse.ArgumentParser()
+            addArgs(parser, version=True)
+            parser.parse_args(self.check_summary.split(" "))
+
+    def test_parse_bad_sort_check(self):
+        with self.assertRaises(SystemExit):
+            parser = argparse.ArgumentParser()
+            addArgs(parser, version=True)
+            parser.parse_args(self.check_sort.split(" "))
+
+    def test_parse_bad_shell_check(self):
+        with self.assertRaises(SystemExit):
+            parser = argparse.ArgumentParser()
+            addArgs(parser, version=True)
+            parser.parse_args(self.check_shell.split(" "))
+
+    def test_good_empty_args(self):
+        parser = argparse.ArgumentParser()
+        addArgs(parser, version=True)
+        args = parser.parse_args([])
+        self.assertEqual(Sort[args.sort.upper()], Sort.NEWEST)
+        self.assertTrue(args.current)
+        self.assertFalse(args.summary)
+        self.assertEqual(args.width, 6)
+        self.assertIsNone(args.bash)
+        self.assertIsNone(args.csh)
+        self.assertFalse(args.check)
+        self.assertIsNone(args.path)
