@@ -91,8 +91,7 @@ nextStates = {
 # The configuration is a dictionary where the key is the environment variable name and the
 # value is its value. As a side effect the variables are added to the "used" set.
 
-def Parse(path):
-    global used
+def parse(path, used):
 
     state = State.TARGET_PLATFORM
 
@@ -144,7 +143,7 @@ def Parse(path):
 # If 'all' is True then returns all environment variables, otherwise omits variables not
 # relevant to the current configuration.
 
-def GetConfig(all=False):
+def getConfig(all=False):
     config = OrderedDict()
     excludes = ['CHPL_HOME']
     filters = ['no-tidy'] if all else ['tidy']
@@ -166,7 +165,7 @@ def GetConfig(all=False):
 
 # Returns a list of variables that differ between two configurations 
 
-def FindDiffVars(usedvars, a, b):
+def findDiffVars(usedvars, a, b):
     result = []
     for var in usedvars:
         value = a.get(var, 'NA')
@@ -176,8 +175,7 @@ def FindDiffVars(usedvars, a, b):
 
 # print shell commands to change the environment variables from current to config
 
-def PrintShellCommands(current, config, shell="bash"):
-    global usedvars
+def printShellCommands(current, config, usedvars, shell="bash"):
     if shell == "csh":
         print("set noglob;")
     for var in usedvars:
@@ -203,7 +201,7 @@ def PrintShellCommands(current, config, shell="bash"):
 # current configuration it has a '*' suffix. "extras" are variables that shouldn't
 # get a prefix, e.g. MTIME.
 
-def Output(current, variables, extras, configs):
+def output(current, variables, extras, configs):
     for var in variables + extras:
         output = "%25s:" % var
         for config in configs:
@@ -224,21 +222,158 @@ class Sort(Enum):
     FEWEST =    3
     MOST =      4
 
-def main(argv):
-    global configs
-    global used
-    global usedvars
-    description = "Displays the available Chapel runtime builds. Values that differ from" \
-    " the current configuration have a '*' suffix. '+' denotes a variable that is set but" \
-    " whose value doesn't matter, '-' denotes a variable that is not set. 'NA' denotes a" \
-    " variable that is not applicable to the build." 
+def printchplbuilds(order=Sort.NEWEST, showCurrent=True, summary=False, width=6, bash=None, 
+                    csh=None, path=None, check=False):
 
+
+    # Note: "allvars" is a list of all possible variables in the order in
+    # which they are displayed by printchplenv so we can print them in the
+    # same order. "usedvars" is a list of the variables actually used in the
+    # configurations, in the same order. "used" is a set of used variables to
+    # make it easy to determine whether a variable has been used or
+    # not. "usedvars" is created from "allvars" and "used".
+
+    # get the names of all variables
+    printchplenv.compute_all_values()
+    allvars = getConfig(True).keys()
+    used = set()
+
+    # get the current configuration
+    current = getConfig()
+    for var in current:
+        used.add(var)
+
+    if path is not None:
+        builds = [parse(path.split(os.sep), used)]
+    else:
+        # gather the paths for all builds
+        home = os.getenv('CHPL_HOME')
+        if home is None:
+            print("Error: CHPL_HOME is not set", file=sys.stderr)
+            sys.exit(1)
+
+        base = os.path.join(home, "lib")
+        # "targets" is a list of all paths that contain a "libchpl.a" file
+        targets = []
+        for root, dirs, files in os.walk(base):
+            for target in filter(lambda x: x == "libchpl.a", files):
+                targets.append(os.path.join(root, target))
+
+        if order == Sort.OLDEST:
+            targets.sort(key= lambda x: os.stat(x)[stat.ST_MTIME])
+
+        if order == Sort.NEWEST:
+            targets.sort(key= lambda x: os.stat(x)[stat.ST_MTIME], reverse=True)
+
+        # Convert the targets into a list of paths in which each path is a list of
+        # components, excluding the final "libchpl.a"
+        paths = []
+        for target in targets:
+            relpath = os.path.relpath(target, base)
+            paths.append(relpath.split(os.sep)[:-1])
+
+        builds = []
+        for (target, path) in zip(targets, paths):
+            build = parse(path, used)
+            build['MTIME'] = os.stat(target)[stat.ST_MTIME]
+            builds.append(build)
+
+    # make a list of variables that were actually used by the configurations
+    usedvars = [x for x in allvars if x in used]
+
+    if summary:
+        # summarize which variables differ between the configs and their values
+        diffvars = set()
+        for i in range(len(builds)):
+            diffvars |= set(findDiffVars(usedvars, current, builds[i]))
+        values = defaultdict(set)
+        for config in [current] + builds:
+            for var in usedvars:
+                if var in diffvars:
+                    value = config.get(var, 'NA')
+                    values[var].add(value)
+
+        for var in usedvars:
+            if var in diffvars:
+                 print("%25s: %-20s" % (var, list(values[var])))
+        sys.exit(0)
+
+    if order == Sort.FEWEST or order == Sort.MOST or check:
+        # Sort based on # of differences from current config
+        for i in range(len(builds)):
+            builds[i]['diffs'] = len(findDiffVars(usedvars, current, builds[i]))
+        reverse = False if (order == Sort.FEWEST or check) else True
+        builds.sort(key= lambda x: x['diffs'], reverse=reverse)
+
+    if csh is not None:
+        if csh > len(builds):
+            parser.error("Invalid build %d" % csh)
+        printShellCommands(current, builds[csh], usedvars, shell="csh")
+        sys.exit(0)
+
+    if bash is not None:
+        if bash > len(builds):
+            parser.error("Invalid build %d" % bash)
+        printShellCommands(current, builds[bash], usedvars, shell="bash")
+        sys.exit(0)
+
+    if check:
+        if len(builds) > 0:
+            if builds[0]['diffs'] == 0:
+                print("There is a build for the current configuration.")
+                sys.exit(0)
+        print("No build for the current configuration.")
+        sys.exit(1)
+
+    if showCurrent:
+        # Print current configuration too
+        configs = [current] + builds
+    else:
+        configs = builds
+
+    extras = ['MTIME']
+    done = 0
+    headers = 0
+    offset = 0
+    # print the output args.width columns at a time
+    while done < len(configs):
+        columns = min(width, len(configs) - done)
+        # print column headers
+        output = "%26s " % ''
+        if showCurrent and done == 0:
+            output += "%-20s" % '<Current>'
+            headers = columns - 1
+        else:
+            headers = columns
+        for i in range(headers):
+            output += " %3d%17s" % (i + done - offset, '')
+        print(output)
+        if showCurrent and done == 0:
+            offset = 1
+
+        # print variable names and their values
+        for var in usedvars + extras:
+            output = "%25s:" % var
+            for config in configs[done:done+columns]:
+                value = config.get(var, 'NA')
+                if var not in extras:
+                    tag = "" if current.get(var, 'NA') == value else "*"
+                    value += tag
+                if var == 'MTIME' and value != 'NA':
+                    value = datetime.datetime.fromtimestamp(value).strftime("%b %d %H:%M")
+                output += " %-20s" % value
+            print(output)
+        done += columns
+
+def addArgs(parser, version=False):
+
+
+    if version:
+        parser.add_argument("--version", action="version", version="%(prog)s 1.0",
+                        help="Print version information.")
     # Note: add_mutually_exclusive_group doesn't currently support a title which would make
     # the help output easier to read. Also help doesn't appear in the same order as below.
 
-    parser = argparse.ArgumentParser(description=description)
-    parser.add_argument("--version", action="version", version="%(prog)s 1.0",
-                      help="Print version information.")
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--newest", "-n", action="store_const", dest="sort", const=Sort.NEWEST,
@@ -273,8 +408,7 @@ def main(argv):
     group.add_argument("--check", "-k", action="store_true", dest="check", default=False,
                       help="Check that configuration matches a build.")
 
-    (args) = parser.parse_args(argv[1:])
-
+def validateArgs(parser, args):
     if args.width < 1:
         parser.error("Number of columns must be >= 1.")
 
@@ -299,145 +433,41 @@ def main(argv):
     if args.sort == None:
         args.sort = Sort.NEWEST
 
-    # Note: "allvars" is a list of all possible variables in the order in
-    # which they are displayed by printchplenv so we can print them in the
-    # same order. "usedvars" is a list of the variables actually used in the
-    # configurations, in the same order. "used" is a set of used variables to
-    # make it easy to determine whether a variable has been used or
-    # not. "usedvars" is created from "allvars" and "used".
+def help():
+    return """builds options:
+  [order]
+  --newest, -n  Sort builds with newest first. [default]
+  --oldest, -o  Sort builds with oldest first.
+  --fewest, -f  Sort builds with fewest differences first.
+  --most, -m    Sort builds with most differences first.  
 
-    # get the names of all variables
-    printchplenv.compute_all_values()
-    allvars = GetConfig(True).keys()
-    used = set()
+  [shell]
+  --bash NUM, -b NUM  Output bash commands to match specified build.
+  --csh NUM, -c NUM   Output csh commands to match specified build.  
 
-    # get the current configuration
-    current = GetConfig()
-    for var in current:
-        used.add(var)
+  [display]
+  --no-current, -C    Do not display the current configuration.
+  --summary, -s       Summarize the differences between the builds.
+  --width NUM, -w NUM Number of columns in the output [default: 6].  
 
-    if args.path is not None:
-        builds = [Parse(args.path.split(os.sep))]
-    else:
-        # gather the paths for all builds
-        home = os.getenv('CHPL_HOME')
-        if home is None:
-            print("Error: CHPL_HOME is not set", file=sys.stderr)
-            sys.exit(1)
+  [misc]
+  --path PATH, -p PATH  Parse the given runtime build path.
+  --check, -k           Check that there is a build of the current configuration.
+"""
 
-        base = os.path.join(home, "lib")
-        # "targets" is a list of all paths that contain a "libchpl.a" file
-        targets = []
-        for root, dirs, files in os.walk(base):
-            for target in filter(lambda x: x == "libchpl.a", files):
-                targets.append(os.path.join(root, target))
+def main(argv):
 
-        if args.sort == Sort.OLDEST:
-            targets.sort(key= lambda x: os.stat(x)[stat.ST_MTIME])
+    description = "Displays the available Chapel runtime builds. Values that differ from" \
+    " the current configuration have a '*' suffix. '+' denotes a variable that is set but" \
+    " whose value doesn't matter, '-' denotes a variable that is not set. 'NA' denotes a" \
+    " variable that is not applicable to the build." 
 
-        if args.sort == Sort.NEWEST:
-            targets.sort(key= lambda x: os.stat(x)[stat.ST_MTIME], reverse=True)
-
-        # Convert the targets into a list of paths in which each path is a list of
-        # components, excluding the final "libchpl.a"
-        paths = []
-        for target in targets:
-            relpath = os.path.relpath(target, base)
-            paths.append(relpath.split(os.sep)[:-1])
-
-        builds = []
-        for (target, path) in zip(targets, paths):
-            build = Parse(path)
-            build['MTIME'] = os.stat(target)[stat.ST_MTIME]
-            builds.append(build)
-
-    # make a list of variables that were actually used by the configurations
-    usedvars = [x for x in allvars if x in used]
-
-    if args.summary:
-        # summarize which variables differ between the configs and their values
-        diffvars = set()
-        for i in range(len(builds)):
-            diffvars |= set(FindDiffVars(usedvars, current, builds[i]))
-        values = defaultdict(set)
-        for config in [current] + builds:
-            for var in usedvars:
-                if var in diffvars:
-                    value = config.get(var, 'NA')
-                    values[var].add(value)
-
-        for var in usedvars:
-            if var in diffvars:
-                 print("%25s: %-20s" % (var, list(values[var])))
-        sys.exit(0)
-
-    if args.sort == Sort.FEWEST or args.sort == Sort.MOST or args.check:
-        # Sort based on # of differences from current config
-        for i in range(len(builds)):
-            builds[i]['diffs'] = len(FindDiffVars(usedvars, current, builds[i]))
-        reverse = False if (args.sort == Sort.FEWEST or args.check) else True
-        builds.sort(key= lambda x: x['diffs'], reverse=reverse)
-
-    if args.csh is not None:
-        if args.csh > len(builds):
-            parser.error("Invalid build %d" % args.csh)
-        PrintShellCommands(current, builds[args.csh], shell="csh")
-        sys.exit(0)
-
-    if args.bash is not None:
-        if args.bash > len(builds):
-            parser.error("Invalid build %d" % args.bash)
-        PrintShellCommands(current, builds[args.bash],shell="bash")
-        sys.exit(0)
-
-    if args.check:
-        if len(builds) > 0:
-            if builds[0]['diffs'] == 0:
-                print("There is a build for the current configuration.")
-                sys.exit(0)
-        print("No build for the current configuration.")
-        sys.exit(1)
-
-    if args.current:
-        # Print current configuration too
-        configs = [current] + builds
-    else:
-        configs = builds
-
-    extras = ['MTIME']
-    done = 0
-    headers = 0
-    offset = 0
-    # print the output args.width columns at a time
-    while done < len(configs):
-        columns = min(args.width, len(configs) - done)
-        # print column headers
-        output = "%26s " % ''
-        if args.current and done == 0:
-            output += "%-20s" % '<Current>'
-            headers = columns - 1
-        else:
-            headers = columns
-        for i in range(headers):
-            output += " %3d%17s" % (i + done - offset, '')
-        print(output)
-        if args.current and done == 0:
-            offset = 1
-
-        # print variable names and their values
-        for var in usedvars + extras:
-            output = "%25s:" % var
-            for config in configs[done:done+columns]:
-                value = config.get(var, 'NA')
-                if var not in extras:
-                    tag = "" if current.get(var, 'NA') == value else "*"
-                    value += tag
-                if var == 'MTIME' and value != 'NA':
-                    value = datetime.datetime.fromtimestamp(value).strftime("%b %d %H:%M")
-                output += " %-20s" % value
-            print(output)
-        done += columns
-
+    parser = argparse.ArgumentParser(description=description)
+    addArgs(parser, version=True)
+    (args) = parser.parse_args(argv[1:])
+    validateArgs(parser, args);
+    printchplbuilds(args.sort, args.current, args.summary, args.width, args.bash, args.csh,
+                    args.path, args.check)
 
 if __name__ == '__main__':
     main(sys.argv)
