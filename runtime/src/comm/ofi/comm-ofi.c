@@ -3679,6 +3679,7 @@ typedef enum {
   am_opGet,                                // do an RMA GET
   am_opPut,                                // do an RMA PUT
   am_opAMO,                                // do an AMO
+  am_opAMODone,                            // set AMO done flag
   am_opFAMOResult,                         // return result of fetching AMO
   am_opFree,                               // free some memory
   am_opNop,                                // do nothing; for MCM & liveness
@@ -3784,6 +3785,7 @@ static void amRequestRmaPut(c_nodeid_t, void*, void*, size_t);
 static void amRequestRmaGet(c_nodeid_t, void*, void*, size_t);
 static void amRequestAMO(c_nodeid_t, void*, const void*, const void*, void*,
                          int, enum fi_datatype, size_t);
+static void amRequestAMODone(c_nodeid_t, amDone_t*);
 static void amRequestFAMOResult(c_nodeid_t, chpl_amo_datum_t*,
                                 enum fi_datatype, void*, size_t, amDone_t*);
 static void amRequestFree(c_nodeid_t, void*);
@@ -4049,6 +4051,32 @@ void amRequestAMO(c_nodeid_t node, void* object,
   //
   amRequestCommon(node, &req, sizeof(req.amo), blocking, tcip);
   mrUnLocalizeTarget(myResult, result, size);
+  tciFree(tcip);
+}
+
+/*
+amRequestAMODone
+
+This function is invoked by an AMO handler to set the "done" flag on the
+locale that initiated the AMO. The scenario is that locale A has sent
+an AMO to locale B via an AM. The AM handler on B invokes this function
+to send an AM back to A that sets *pAmDone.
+*/
+
+static inline
+void amRequestAMODone(c_nodeid_t node,
+                  amDone_t *pAmDone) // address of pAmDone on remote node
+{
+  DBG_PRINTF(DBG_AM | DBG_AM_SEND, "amRequestAMODone");
+  struct perTxCtxInfo_t* tcip;
+  CHK_TRUE((tcip = tciAlloc()) != NULL);
+
+  amRequest_t req = { .b = { .op = am_opAMODone,
+                             .node = chpl_nodeID,
+                             .pAmDone = pAmDone}};
+
+  amRequestCommon(node, &req, sizeof(req.b), false /* blocking */,
+                  tcip);
   tciFree(tcip);
 }
 
@@ -4512,6 +4540,7 @@ static void amWrapExecOnLrgBody(struct amRequest_execOnLrg_t*);
 static void amWrapGet(struct taskArg_RMA_t*);
 static void amWrapPut(struct taskArg_RMA_t*);
 static void amHandleAMO(struct amRequest_AMO_t*);
+static void amHandleAMODone(struct amRequest_base_t*);
 static void amHandleFAMOResult(struct amRequest_FAMO_result_t*);
 static void amPutDone(c_nodeid_t, amDone_t*);
 static void amCheckLiveness(void);
@@ -4668,6 +4697,11 @@ size_t handleAmReq(amRequest_t *req) {
     case am_opAMO:
       amHandleAMO(&req->amo);
       size = sizeof(req->amo);
+      break;
+
+    case am_opAMODone:
+      amHandleAMODone(&req->b);
+      size = sizeof(req->b);
       break;
 
     case am_opFAMOResult:
@@ -4960,16 +4994,12 @@ void amHandleAMO(struct amRequest_AMO_t* amo) {
            amo->ofiOp, amo->ofiType, amo->size);
 
   if (amo->result != NULL) {
-      // Use a non-blocking AMO to return the result and set pAmDone.
-      DBG_PRINTF(DBG_AM | DBG_AM_RECV, "sending FAMO result via AM");
-      amRequestFAMOResult(amo->b.node, &result, amo->ofiType, amo->result, resSize, amo->b.pAmDone);
-  }
-
-  // PUT the "done" flag if necessary
-  if ((amo->b.pAmDone != NULL) && (amo->result == NULL)) {
-      DBG_PRINTF(DBG_AM | DBG_AM_RECV,
-                 "writing FAMO done flag via non-blocking PUT");
-    amPutDone(amo->b.node, amo->b.pAmDone);
+    // Use a non-blocking AMO to return the result and set pAmDone.
+    DBG_PRINTF(DBG_AM | DBG_AM_RECV, "sending FAMO result via AM");
+    amRequestFAMOResult(amo->b.node, &result, amo->ofiType, amo->result, resSize, amo->b.pAmDone);
+  } else if (amo->b.pAmDone != NULL) {
+    DBG_PRINTF(DBG_AM | DBG_AM_RECV, "setting pAmDone via AM");
+    amRequestAMODone(amo->b.node, amo->b.pAmDone);
   }
   DBG_PRINTF(DBG_AM | DBG_AM_RECV, "%s", am_reqDoneStr((amRequest_t*) amo));
 }
@@ -5018,6 +5048,25 @@ void amPutDone(c_nodeid_t node, amDone_t* pAmDone) {
   if (amTcip == NULL) {
     tciFree(tcip);
   }
+}
+
+
+/*
+amHandleAMODone
+
+This function is invoked to set *pAmDone when an AM-implemented AMO has
+completed. The scenario is that locale A has sent an AMO to locale B
+via an AM. The AM handler on B sends back an AM to locale A that
+invokes this function to set *pAmDone.
+*/
+
+static
+void amHandleAMODone(struct amRequest_base_t* base) {
+  DBG_PRINTF(DBG_AM | DBG_AM_RECV, "AMO done");
+  assert(base->node != chpl_nodeID);    // should be handled on initiator
+
+  assert(base->pAmDone != NULL);
+  *(base->pAmDone) = 1;
 }
 
 
@@ -8114,6 +8163,7 @@ const char* am_opName(amOp_t op) {
   case am_opGet: return "opGet";
   case am_opPut: return "opPut";
   case am_opAMO: return "opAMO";
+  case am_opAMODone: return "opAMODone";
   case am_opFAMOResult: return "opFAMOResult";
   case am_opFree: return "opFree";
   case am_opNop: return "opNop";
