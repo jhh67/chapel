@@ -170,6 +170,7 @@ static fi_addr_t*       ofi_rxAddrs = NULL; // table of remote endpoint
 static chpl_bool envPreferScalableTxEp; // env: prefer scalable tx endpoint?
 static int envCommConcurrency;          // env: communication concurrency
 static ssize_t envMaxHeapSize;          // env: max heap size
+static ssize_t envHugepageHeapSize;     // env: hugepage heap size
 static chpl_bool envOversubscribed;     // env: over-subscribed?
 static chpl_bool envUseTxCntr;          // env: tasks use transmit counters
 static chpl_bool envUseAmTxCntr;        // env: AMH uses transmit counters
@@ -1019,6 +1020,24 @@ void chpl_comm_init(int *argc_p, char ***argv_p) {
   }
 
   envMaxHeapSize = chpl_comm_getenvMaxHeapSize();
+
+  //
+  // Get the hugepage heap size, if specified
+  ssize_t size = -1;
+  const char *ev = "HUGEPAGE_HEAP_SIZE";
+  int pct = chpl_env_rt_get_int_pct(ev, -1, false /*doWarn*/);
+  if (pct >= 0) {
+    const size_t sysMem = chpl_sys_physicalMemoryBytes();
+    size = (ssize_t) ((pct * sysMem + 50) / 100); // rounded percentage
+  } else {
+    const char *val = chpl_env_rt_get(ev, NULL);
+    if (val != NULL) {
+      size = chpl_env_str_to_size(ev, val, 0);
+    }
+  }
+  if (size > 0) {
+    envHugepageHeapSize = size;
+  }
 
   envOversubscribed = chpl_env_rt_get_bool("OVERSUBSCRIBED", false);
 
@@ -3458,72 +3477,91 @@ void init_fixedHeap(void) {
   size_t max_heap_per_locale = (size_t) (max_heap_memory / num_locales_on_node);
 
 
-  //
-  // If the maximum heap size is not specified or it's greater than the maximum heap per
-  // locale, set it to the maximum heap per locale.
-  //
-  ssize_t size = envMaxHeapSize;
-  CHK_TRUE(size != 0);
-  if ((size < 0) || (size > max_heap_per_locale)) {
-    size = max_heap_per_locale;
-  }
 
   //
   // Check for hugepages.  On certain systems you really ought to use
   // them.  But if you're on such a system and don't, we'll emit the
   // message later.
   //
-  size_t page_size;
-  chpl_bool have_hugepages;
+  size_t page_size = chpl_getSysPageSize();
+  size_t hugepage_size = get_hugepageSize();
 
-  if ((page_size = get_hugepageSize()) == 0) {
-    page_size = chpl_getSysPageSize();
-    have_hugepages = false;
-  } else {
+  chpl_bool have_hugepages = false;
+  ssize_t size = -1;
+  if (hugepage_size == 0) {
+    size = envMaxHeapSize;
+  } else if (envHugepageHeapSize > 0) {
+    size = envHugepageHeapSize;
+    DBG_PRINTF(DBG_HEAP, "envHugepageHeapSize %#zx", envHugepageHeapSize);
+    if (envMaxHeapSize > 0) {
+        chpl_warning("CHPL_RT_HUGEPAGE_HEAP_SIZE is set, ignoring CHPL_RT_MAX_HEAPSIZE", 0, 0);
+    }
     have_hugepages = true;
+  } else {
+    chpl_error("CHPL_RT_HUGEPAGE_HEAP_SIZE must be >= 0 to use hugepages.",
+               0, 0);
+  }
+  CHK_TRUE(size != 0);
+  if ((size < 0) || (size > max_heap_per_locale)) {
+    size = max_heap_per_locale;
   }
 
-  //
-  // We'll make a fixed heap, on whole (huge)pages.
-  //
-  size = ALIGN_UP(size, page_size);
+  void *start;
+  if (have_hugepages == false) {
+    //
+    // We'll make a fixed heap on whole pages.
+    //
+    size = ALIGN_UP(size, page_size);
 
-  //
-  // Work our way down from the starting size in (roughly) 5% steps
-  // until we can actually allocate a heap that size.
-  //
-  size_t decrement;
-  if ((decrement = ALIGN_DN((size_t) (0.05 * size), page_size)) < page_size) {
-    decrement = page_size;
-  }
+    //
+    // Work our way down from the starting size in (roughly) 5% steps
+    // until we can actually allocate a heap that size.
+    //
+    size_t decrement;
+    if ((decrement = ALIGN_DN((size_t) (0.05 * size), page_size)) < page_size) {
+      decrement = page_size;
+    }
 
-  void* start;
-  size += decrement;
-  do {
-    size -= decrement;
+    size += decrement;
+    do {
+      size -= decrement;
 #ifdef CHPL_COMM_DEBUG
-    if (DBG_TEST_MASK(DBG_HEAP)) {
-      char buf[10];
-      DBG_PRINTF(DBG_HEAP, "try allocating fixed heap, size %s (%#zx)",
-                 chpl_snprintf_KMG_z(buf, sizeof(buf), size), size);
-    }
+      if (DBG_TEST_MASK(DBG_HEAP)) {
+        char buf[10];
+        DBG_PRINTF(DBG_HEAP, "try allocating fixed heap, size %s (%#zx)",
+                   chpl_snprintf_KMG_z(buf, sizeof(buf), size), size);
+      }
 #endif
-    if (have_hugepages) {
-      start = chpl_comm_ofi_hp_get_huge_pages(size);
-    } else {
       CHK_SYS_MEMALIGN(start, page_size, size);
+    } while (start == NULL && size > decrement);
+
+
+    if (start == NULL) {
+      chpl_error("cannot create fixed heap: cannot get memory", 0, 0);
     }
-  } while (start == NULL && size > decrement);
-
-  if (start == NULL)
-    chpl_error("cannot create fixed heap: cannot get memory", 0, 0);
-
+  } else {
+    //
+    // We'll make a fixed heap on whole hugepages.
+    //
+    size = ALIGN_DN(size, hugepage_size);
+#ifdef CHPL_COMM_DEBUG
+      if (DBG_TEST_MASK(DBG_HEAP)) {
+        char buf[10];
+        DBG_PRINTF(DBG_HEAP, "try allocating fixed hugepage heap, size %s (%#zx)",
+                   chpl_snprintf_KMG_z(buf, sizeof(buf), size), size);
+      }
+#endif
+    start = chpl_comm_ofi_hp_get_huge_pages(size);
+    if (start == NULL) {
+      chpl_error("cannot create fixed heap: cannot get huge pages", 0, 0);
+    }
+  }
   chpl_comm_regMemHeapTouch(start, size);
 
 #ifdef CHPL_COMM_DEBUG
   if (DBG_TEST_MASK(DBG_HEAP)) {
     char buf[10];
-    DBG_PRINTF(DBG_HEAP, "fixed heap on %spages, start=%p size=%s (%#zx)\n",
+    DBG_PRINTF(DBG_HEAP, "fixed heap on %spages, start=%p size=%s (%#zx)",
                have_hugepages ? "huge" : "regular ", start,
                chpl_snprintf_KMG_z(buf, sizeof(buf), size), size);
   }
