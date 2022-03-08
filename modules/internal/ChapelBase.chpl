@@ -1341,6 +1341,8 @@ module ChapelBase {
     e.i.sub(1, memoryOrder.release);
   }
 
+  extern proc chpl_comm_wait_for_transmits_complete(): void;
+
   // This function is called once by the initiating task.  As above, no
   // on statement needed.
   // called for sync blocks (implicit or explicit), unbounded coforalls
@@ -1348,6 +1350,7 @@ module ChapelBase {
   pragma "task join impl fn"
   pragma "unchecked throws"
   proc _waitEndCount(e: _EndCount, param countRunningTasks=true) throws {
+    chpl_comm_wait_for_transmits_complete();
     // Remove the task that will just be waiting/yielding in the following
     // waitFor() from the running task count to let others do real work. It is
     // re-added after the waitFor().
@@ -1375,6 +1378,7 @@ module ChapelBase {
   pragma "task join impl fn"
   pragma "unchecked throws"
   proc _waitEndCount(e: _EndCount, param countRunningTasks=true, numTasks) throws {
+    chpl_comm_wait_for_transmits_complete();
     // Wait for all tasks to finish
     e.i.waitFor(0, memoryOrder.acquire);
 
