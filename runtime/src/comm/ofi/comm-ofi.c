@@ -184,6 +184,7 @@ static chpl_bool envNbamUseMalloc;      // env. use malloc/free for buffers
 static int numTxCtxs;
 static int numRxCtxs;
 
+// used to implement callbacks when tranmits complete
 typedef struct txnTrkCallback_t {
   void (*func)(struct txnTrkCallback_t *callback);
   struct perTxCtxInfo_t    *tcip;
