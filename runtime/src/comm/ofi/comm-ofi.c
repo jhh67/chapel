@@ -317,6 +317,8 @@ static chpl_bool tciAllocTabEntry(struct perTxCtxInfo_t*);
 static void tciFree(struct perTxCtxInfo_t*);
 static void waitForCQSpace(struct perTxCtxInfo_t*, size_t);
 static chpl_comm_nb_handle_t ofi_put(const void*, c_nodeid_t, void*, size_t);
+static chpl_comm_nb_handle_t ofi_put_mrkey(const void*, c_nodeid_t, void*,
+                                   size_t, uint64_t, uint64_t);
 static void ofi_put_lowLevel(const void*, void*, c_nodeid_t,
                              uint64_t, uint64_t, size_t, void*,
                              uint64_t, struct perTxCtxInfo_t*);
@@ -3525,16 +3527,14 @@ void mrUnLocalizeTarget(void* mrAddr, void* addr, size_t size) {
   }
 }
 
-void mrGetKeyExt(int *addr, uint64_t *key);
+void mrGetKeyExt(int *addr, uint64_t *key, uint64_t *offset);
 
 void
-mrGetKeyExt(int *addr, uint64_t *key) {
+mrGetKeyExt(int *addr, uint64_t *key, uint64_t *offset) {
   chpl_bool rv;
 
-  uint64_t offset;
-  rv = mrGetKey(key, &offset, chpl_nodeID, addr, sizeof(*addr));
+  rv = mrGetKey(key, offset, chpl_nodeID, addr, sizeof(*addr));
   assert(rv == true);
-  assert(offset == 0);
 }
 
 static inline
@@ -5221,6 +5221,44 @@ int chpl_comm_try_nb_some(chpl_comm_nb_handle_t* h, size_t nhandles) {
   return 0;
 }
 
+void chpl_comm_put_mrkey(void* addr, c_nodeid_t node, void* raddr,
+                   size_t size, int32_t commID, int ln, int32_t fn,
+                   uint64_t key, uint64_t offset) {
+  DBG_PRINTF(DBG_IFACE,
+             "%s(%p, %d, %p, %zd, %d)", __func__,
+             addr, (int) node, raddr, size, (int) commID);
+
+  retireDelayedAmDone(false /*taskIsEnding*/);
+
+  //
+  // Sanity checks, self-communication.
+  //
+  CHK_TRUE(addr != NULL);
+  CHK_TRUE(raddr != NULL);
+
+  if (size == 0) {
+    return;
+  }
+
+  if (node == chpl_nodeID) {
+    memmove(raddr, addr, size);
+    return;
+  }
+
+  // Communications callback support
+  if (chpl_comm_have_callbacks(chpl_comm_cb_event_kind_put)) {
+      chpl_comm_cb_info_t cb_data =
+        {chpl_comm_cb_event_kind_put, chpl_nodeID, node,
+         .iu.comm={addr, raddr, size, commID, ln, fn}};
+      chpl_comm_do_callbacks (&cb_data);
+  }
+
+  chpl_comm_diags_verbose_rdma("put", node, size, ln, fn, commID);
+  chpl_comm_diags_incr(put);
+
+  (void) ofi_put_mrkey(addr, node, raddr, size, key, offset);
+}
+
 
 void chpl_comm_put(void* addr, c_nodeid_t node, void* raddr,
                    size_t size, int32_t commID, int ln, int32_t fn) {
@@ -5619,6 +5657,58 @@ typedef chpl_comm_nb_handle_t (rmaPutFn_t)(void* myAddr, void* mrDesc,
                                            struct perTxCtxInfo_t* tcip);
 
 static rmaPutFn_t rmaPutFn_selector;
+
+static inline
+chpl_comm_nb_handle_t ofi_put_mrkey(const void* addr, c_nodeid_t node,
+                              void* raddr, size_t size, uint64_t key,
+                              uint64_t offset) {
+  //
+  // Don't ask the provider to transfer more than it wants to.
+  //
+  if (size > ofi_info->ep_attr->max_msg_size) {
+    DBG_PRINTF(DBG_RMA | DBG_RMA_WRITE,
+               "splitting large PUT %d:%p <= %p, size %zd",
+               (int) node, raddr, addr, size);
+
+    size_t chunkSize = ofi_info->ep_attr->max_msg_size;
+    for (size_t i = 0; i < size; i += chunkSize) {
+      if (chunkSize > size - i) {
+        chunkSize = size - i;
+      }
+      (void) ofi_put_mrkey(&((const char*) addr)[i], node, &((char*) raddr)[i],
+                     chunkSize, key, offset);
+    }
+
+    return NULL;
+  }
+
+  DBG_PRINTF(DBG_RMA | DBG_RMA_WRITE,
+             "PUT %d:%p <= %p, size %zd",
+             (int) node, raddr, addr, size);
+
+  //
+  // If the remote address is directly accessible do an RMA from this
+  // side; otherwise do the opposite RMA from the other side.
+  //
+  chpl_comm_nb_handle_t ret;
+  struct perTxCtxInfo_t* tcip;
+  CHK_TRUE((tcip = tciAlloc()) != NULL);
+  if (tcip->txCntr == NULL) {
+    waitForCQSpace(tcip, 1);
+  }
+
+  void* mrDesc;
+  void* myAddr = mrLocalizeSource(&mrDesc, addr, size, "PUT src");
+
+  ret = rmaPutFn_selector(myAddr, mrDesc, node, offset, key, size,
+                          tcip);
+
+  mrUnLocalizeSource(myAddr, addr);
+  tciFree(tcip);
+
+  return ret;
+}
+
 
 static inline
 chpl_comm_nb_handle_t ofi_put(const void* addr, c_nodeid_t node,

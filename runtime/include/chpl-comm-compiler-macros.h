@@ -88,6 +88,23 @@ void chpl_gen_comm_prefetch(c_nodeid_t node, void* raddr,
 }
 
 
+
+static inline
+void chpl_gen_comm_put_mrkey(void* addr, c_nodeid_t node, void* raddr,
+                       size_t size, int32_t commID, int ln, int32_t fn, uint64_t key,
+                       uint64_t offset)
+{
+  if (chpl_nodeID == node) {
+    chpl_memmove(raddr, addr, size);
+#ifdef HAS_CHPL_CACHE_FNS
+  } else if( chpl_cache_enabled() ) {
+    chpl_cache_comm_put(addr, node, raddr, size, commID, ln, fn);
+#endif
+  } else {
+    chpl_comm_put_mrkey(addr, node, raddr, size, commID, ln, fn, key, offset);
+  }
+}
+
 static inline
 void chpl_gen_comm_put(void* addr, c_nodeid_t node, void* raddr,
                        size_t size, int32_t commID, int ln, int32_t fn)
