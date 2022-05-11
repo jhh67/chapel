@@ -5683,8 +5683,8 @@ chpl_comm_nb_handle_t ofi_put_mrkey(const void* addr, c_nodeid_t node,
   }
 
   DBG_PRINTF(DBG_RMA | DBG_RMA_WRITE,
-             "PUT %d:%p <= %p, size %zd",
-             (int) node, raddr, addr, size);
+             "PUT %d:%p <= %p, size %zd key %#" PRIx64 " offset %#" PRIx64 "\n",
+             (int) node, raddr, addr, size, key, offset);
 
   //
   // If the remote address is directly accessible do an RMA from this
