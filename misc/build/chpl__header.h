@@ -1,0 +1,5820 @@
+#ifndef CHPL_GEN_HEADER_INCLUDE_GUARD
+#define CHPL_GEN_HEADER_INCLUDE_GUARD
+
+#define CHPL_GEN_CODE
+
+#include "sys_basic.h"
+#include "ctype.h"
+#include "wctype.h"
+#include "stdchpl.h"
+/*** Class Type Identification Numbers ***/
+
+extern const chpl__class_id chpl__cid_object_chpl;
+extern const chpl__class_id chpl__cid_chpl___EndCountBase;
+extern const chpl__class_id chpl__cid_chpl___EndCount_AtomicT_int64_t_int64_t;
+extern const chpl__class_id chpl__cid_chpl___EndCount_RAtomicT_int64_t_RAtomicT_int64_t;
+extern const chpl__class_id chpl__cid_chpl_ModuleDeinit;
+extern const chpl__class_id chpl__cid_BaseDist_chpl;
+extern const chpl__class_id chpl__cid_BaseDom_chpl;
+extern const chpl__class_id chpl__cid_BaseRectangularDom_1_int64_t_F_chpl;
+extern const chpl__class_id chpl__cid_BaseArr_chpl;
+extern const chpl__class_id chpl__cid_BaseArrOverRectangularDom_1_int64_t_F_chpl;
+extern const chpl__class_id chpl__cid_BaseRectangularArr_1_int64_t_F_int64_t_chpl;
+extern const chpl__class_id chpl__cid_BaseRectangularArr_1_int64_t_F_locale_chpl;
+extern const chpl__class_id chpl__cid_BaseRectangularArr_1_int64_t_F_uint64_t_chpl;
+extern const chpl__class_id chpl__cid_BaseLocale_chpl;
+extern const chpl__class_id chpl__cid_DummyLocale_chpl;
+extern const chpl__class_id chpl__cid_AbstractLocaleModel_chpl;
+extern const chpl__class_id chpl__cid_AbstractRootLocale_chpl;
+extern const chpl__class_id chpl__cid__ic_chpl_direct_counted_range_iter_chpl;
+extern const chpl__class_id chpl__cid__ic_chpl_direct_counted_range_iter_helper_chpl;
+extern const chpl__class_id chpl__cid__ic_chpl_direct_param_stride_range_iter_chpl;
+extern const chpl__class_id chpl__cid__ic_these_range_int64_t_bounded_F_chpl;
+extern const chpl__class_id chpl__cid_DefaultDist_chpl;
+extern const chpl__class_id chpl__cid_DefaultRectangularDom_1_int64_t_F_chpl;
+extern const chpl__class_id chpl__cid_DefaultRectangularArr_1_int64_t_F_int64_t_int64_t_chpl;
+extern const chpl__class_id chpl__cid_DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl;
+extern const chpl__class_id chpl__cid_DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t_chpl;
+extern const chpl__class_id chpl__cid_LocaleModel_chpl;
+extern const chpl__class_id chpl__cid_RootLocale_chpl;
+extern const chpl__class_id chpl__cid__ic_chpl_bytes__ref_string_chpl;
+extern const chpl__class_id chpl__cid_Error_chpl;
+extern const chpl__class_id chpl__cid_NilThrownError_chpl;
+extern const chpl__class_id chpl__cid_DecodeError_chpl;
+extern const chpl__class_id chpl__cid_IllegalArgumentError_chpl;
+extern const chpl__class_id chpl__cid_CodepointSplittingError_chpl;
+extern const chpl__class_id chpl__cid_TaskErrors_chpl;
+extern const chpl__class_id chpl__cid_QioPluginFile_chpl;
+extern const chpl__class_id chpl__cid_QioPluginChannel_chpl;
+extern const chpl__class_id chpl__cid_BadRegexError_chpl;
+extern const chpl__class_id chpl__cid_SystemError_chpl;
+extern const chpl__class_id chpl__cid_BlockingIOError_chpl;
+extern const chpl__class_id chpl__cid_ChildProcessError_chpl;
+extern const chpl__class_id chpl__cid_ConnectionError_chpl;
+extern const chpl__class_id chpl__cid_BrokenPipeError_chpl;
+extern const chpl__class_id chpl__cid_ConnectionAbortedError_chpl;
+extern const chpl__class_id chpl__cid_ConnectionRefusedError_chpl;
+extern const chpl__class_id chpl__cid_ConnectionResetError_chpl;
+extern const chpl__class_id chpl__cid_FileExistsError_chpl;
+extern const chpl__class_id chpl__cid_FileNotFoundError_chpl;
+extern const chpl__class_id chpl__cid_InterruptedError_chpl;
+extern const chpl__class_id chpl__cid_IsADirectoryError_chpl;
+extern const chpl__class_id chpl__cid_NotADirectoryError_chpl;
+extern const chpl__class_id chpl__cid_PermissionError_chpl;
+extern const chpl__class_id chpl__cid_ProcessLookupError_chpl;
+extern const chpl__class_id chpl__cid_TimeoutError_chpl;
+extern const chpl__class_id chpl__cid_IOError_chpl;
+extern const chpl__class_id chpl__cid_EOFError_chpl;
+extern const chpl__class_id chpl__cid_UnexpectedEOFError_chpl;
+extern const chpl__class_id chpl__cid_BadFormatError_chpl;
+extern const chpl__class_id chpl_subclass_max_id[];
+extern const c_string chpl_classNames[];
+/*** Class Prototypes ***/
+
+typedef struct chpl__class_localson_fn_chpl_s* _class_localson_fn_chpl;
+typedef struct chpl__class_localson_fn_chpl2_s* _class_localson_fn_chpl2;
+typedef struct chpl__class_localson_fn_chpl3_s* _class_localson_fn_chpl3;
+typedef struct chpl__class_localson_fn_chpl4_s* _class_localson_fn_chpl4;
+typedef struct chpl__class_localson_fn_chpl5_s* _class_localson_fn_chpl5;
+typedef struct chpl__class_localson_fn_chpl6_s* _class_localson_fn_chpl6;
+typedef struct chpl__class_localson_fn_chpl7_s* _class_localson_fn_chpl7;
+typedef struct chpl__class_localson_fn_chpl8_s* _class_localson_fn_chpl8;
+typedef struct chpl__class_localson_fn_chpl9_s* _class_localson_fn_chpl9;
+typedef struct chpl__class_localson_fn_chpl10_s* _class_localson_fn_chpl10;
+typedef struct chpl__class_localson_fn_chpl11_s* _class_localson_fn_chpl11;
+typedef struct chpl__class_localson_fn_chpl12_s* _class_localson_fn_chpl12;
+typedef struct chpl__class_localson_fn_chpl13_s* _class_localson_fn_chpl13;
+typedef struct chpl__class_localson_fn_chpl14_s* _class_localson_fn_chpl14;
+typedef struct chpl__class_localson_fn_chpl15_s* _class_localson_fn_chpl15;
+typedef struct chpl__class_localson_fn_chpl16_s* _class_localson_fn_chpl16;
+typedef struct chpl__class_localscobegin_fn_chpl_s* _class_localscobegin_fn_chpl;
+typedef struct chpl__class_localson_fn_chpl17_s* _class_localson_fn_chpl17;
+typedef struct chpl__class_localscobegin_fn_chpl2_s* _class_localscobegin_fn_chpl2;
+typedef struct chpl__class_localson_fn_chpl18_s* _class_localson_fn_chpl18;
+typedef struct chpl__class_localson_fn_chpl19_s* _class_localson_fn_chpl19;
+typedef struct chpl__class_localson_fn_chpl20_s* _class_localson_fn_chpl20;
+typedef struct chpl__class_localson_fn_chpl21_s* _class_localson_fn_chpl21;
+typedef struct chpl_object_chpl_s* object_chpl;
+typedef struct chpl__class_localscoforall_fn_chpl_s* _class_localscoforall_fn_chpl;
+typedef struct chpl__class_localscoforall_fn_chpl2_s* _class_localscoforall_fn_chpl2;
+typedef struct chpl__class_localscoforall_fn_chpl3_s* _class_localscoforall_fn_chpl3;
+typedef struct chpl_chpl___EndCountBase_s* chpl___EndCountBase;
+typedef struct chpl_chpl___EndCount_AtomicT_int64_t_int64_t_s* chpl___EndCount_AtomicT_int64_t_int64_t;
+typedef struct chpl_chpl___EndCount_RAtomicT_int64_t_RAtomicT_int64_t_s* chpl___EndCount_RAtomicT_int64_t_RAtomicT_int64_t;
+typedef struct chpl__class_localson_fn_chpl22_s* _class_localson_fn_chpl22;
+typedef struct chpl__class_localson_fn_chpl23_s* _class_localson_fn_chpl23;
+typedef struct chpl__class_localson_fn_chpl24_s* _class_localson_fn_chpl24;
+typedef struct chpl__class_localson_fn_chpl25_s* _class_localson_fn_chpl25;
+typedef struct chpl__class_localson_fn_chpl26_s* _class_localson_fn_chpl26;
+typedef struct chpl__class_localson_fn_chpl27_s* _class_localson_fn_chpl27;
+typedef struct chpl__class_localson_fn_chpl28_s* _class_localson_fn_chpl28;
+typedef struct chpl__class_localson_fn_chpl29_s* _class_localson_fn_chpl29;
+typedef struct chpl__class_localson_fn_chpl30_s* _class_localson_fn_chpl30;
+typedef struct chpl__class_localson_fn_chpl31_s* _class_localson_fn_chpl31;
+typedef struct chpl__class_localson_fn_chpl32_s* _class_localson_fn_chpl32;
+typedef struct chpl__class_localson_fn_chpl33_s* _class_localson_fn_chpl33;
+typedef struct chpl__class_localson_fn_chpl34_s* _class_localson_fn_chpl34;
+typedef struct chpl__class_localson_fn_chpl35_s* _class_localson_fn_chpl35;
+typedef struct chpl__class_localson_fn_chpl36_s* _class_localson_fn_chpl36;
+typedef struct chpl__class_localson_fn_chpl37_s* _class_localson_fn_chpl37;
+typedef struct chpl__class_localson_fn_chpl38_s* _class_localson_fn_chpl38;
+typedef struct chpl__class_localson_fn_chpl39_s* _class_localson_fn_chpl39;
+typedef struct chpl__class_localson_fn_chpl40_s* _class_localson_fn_chpl40;
+typedef struct chpl__class_localson_fn_chpl41_s* _class_localson_fn_chpl41;
+typedef struct chpl__class_localson_fn_chpl42_s* _class_localson_fn_chpl42;
+typedef struct chpl__class_localson_fn_chpl43_s* _class_localson_fn_chpl43;
+typedef struct chpl__class_localson_fn_chpl44_s* _class_localson_fn_chpl44;
+typedef struct chpl__class_localson_fn_chpl45_s* _class_localson_fn_chpl45;
+typedef struct chpl__class_localson_fn_chpl46_s* _class_localson_fn_chpl46;
+typedef struct chpl__class_localson_fn_chpl47_s* _class_localson_fn_chpl47;
+typedef struct chpl__class_localson_fn_chpl48_s* _class_localson_fn_chpl48;
+typedef struct chpl__class_localson_fn_chpl49_s* _class_localson_fn_chpl49;
+typedef struct chpl__class_localson_fn_chpl50_s* _class_localson_fn_chpl50;
+typedef struct chpl__class_localson_fn_chpl51_s* _class_localson_fn_chpl51;
+typedef struct chpl__class_localson_fn_chpl52_s* _class_localson_fn_chpl52;
+typedef struct chpl__class_localson_fn_chpl53_s* _class_localson_fn_chpl53;
+typedef struct chpl__class_localson_fn_chpl54_s* _class_localson_fn_chpl54;
+typedef struct chpl__class_localson_fn_chpl55_s* _class_localson_fn_chpl55;
+typedef struct chpl__class_localson_fn_chpl56_s* _class_localson_fn_chpl56;
+typedef struct chpl__class_localson_fn_chpl57_s* _class_localson_fn_chpl57;
+typedef struct chpl__class_localson_fn_chpl58_s* _class_localson_fn_chpl58;
+typedef struct chpl__class_localson_fn_chpl59_s* _class_localson_fn_chpl59;
+typedef struct chpl_chpl_ModuleDeinit_s* chpl_ModuleDeinit;
+typedef struct chpl_BaseDist_chpl_s* BaseDist_chpl;
+typedef struct chpl__class_localson_fn_chpl60_s* _class_localson_fn_chpl60;
+typedef struct chpl__class_localson_fn_chpl61_s* _class_localson_fn_chpl61;
+typedef struct chpl_BaseDom_chpl_s* BaseDom_chpl;
+typedef struct chpl__class_localson_fn_chpl62_s* _class_localson_fn_chpl62;
+typedef struct chpl__class_localson_fn_chpl63_s* _class_localson_fn_chpl63;
+typedef struct chpl__class_localson_fn_chpl64_s* _class_localson_fn_chpl64;
+typedef struct chpl_BaseRectangularDom_1_int64_t_F_chpl_s* BaseRectangularDom_1_int64_t_F_chpl;
+typedef struct chpl_BaseArr_chpl_s* BaseArr_chpl;
+typedef struct chpl_BaseArrOverRectangularDom_1_int64_t_F_chpl_s* BaseArrOverRectangularDom_1_int64_t_F_chpl;
+typedef struct chpl_BaseRectangularArr_1_int64_t_F_int64_t_chpl_s* BaseRectangularArr_1_int64_t_F_int64_t_chpl;
+typedef struct chpl_BaseRectangularArr_1_int64_t_F_locale_chpl_s* BaseRectangularArr_1_int64_t_F_locale_chpl;
+typedef struct chpl_BaseRectangularArr_1_int64_t_F_uint64_t_chpl_s* BaseRectangularArr_1_int64_t_F_uint64_t_chpl;
+typedef struct chpl__class_localson_fn_chpl65_s* _class_localson_fn_chpl65;
+typedef struct chpl__class_localson_fn_chpl66_s* _class_localson_fn_chpl66;
+typedef struct chpl__class_localson_fn_chpl67_s* _class_localson_fn_chpl67;
+typedef struct chpl_BaseLocale_chpl_s* BaseLocale_chpl;
+typedef struct chpl_DummyLocale_chpl_s* DummyLocale_chpl;
+typedef struct chpl_AbstractLocaleModel_chpl_s* AbstractLocaleModel_chpl;
+typedef struct chpl_AbstractRootLocale_chpl_s* AbstractRootLocale_chpl;
+typedef struct chpl__class_localscoforall_fn_chpl4_s* _class_localscoforall_fn_chpl4;
+typedef struct chpl__class_localson_fn_chpl68_s* _class_localson_fn_chpl68;
+typedef struct chpl__ic_chpl_direct_counted_range_iter_chpl_s* _ic_chpl_direct_counted_range_iter_chpl;
+typedef struct chpl__ic_chpl_direct_counted_range_iter_helper_chpl_s* _ic_chpl_direct_counted_range_iter_helper_chpl;
+typedef struct chpl__ic_chpl_direct_param_stride_range_iter_chpl_s* _ic_chpl_direct_param_stride_range_iter_chpl;
+typedef struct chpl__ic_these_range_int64_t_bounded_F_chpl_s* _ic_these_range_int64_t_bounded_F_chpl;
+typedef struct chpl_DefaultDist_chpl_s* DefaultDist_chpl;
+typedef struct chpl_DefaultRectangularDom_1_int64_t_F_chpl_s* DefaultRectangularDom_1_int64_t_F_chpl;
+typedef struct chpl_DefaultRectangularArr_1_int64_t_F_int64_t_int64_t_chpl_s* DefaultRectangularArr_1_int64_t_F_int64_t_int64_t_chpl;
+typedef struct chpl_DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl_s* DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl;
+typedef struct chpl_DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t_chpl_s* DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t_chpl;
+typedef struct chpl__class_localscoforall_fn_chpl5_s* _class_localscoforall_fn_chpl5;
+typedef struct chpl__class_localscoforall_fn_chpl6_s* _class_localscoforall_fn_chpl6;
+typedef struct chpl__class_localscoforall_fn_chpl7_s* _class_localscoforall_fn_chpl7;
+typedef struct chpl__class_localson_fn_chpl70_s* _class_localson_fn_chpl70;
+typedef struct chpl__class_localson_fn_chpl71_s* _class_localson_fn_chpl71;
+typedef struct chpl_LocaleModel_chpl_s* LocaleModel_chpl;
+typedef struct chpl_RootLocale_chpl_s* RootLocale_chpl;
+typedef struct chpl__class_localson_fn_chpl69_s* _class_localson_fn_chpl69;
+typedef struct chpl__class_localson_fn_chpl72_s* _class_localson_fn_chpl72;
+typedef struct chpl__class_localson_fn_chpl73_s* _class_localson_fn_chpl73;
+typedef struct chpl__class_localson_fn_chpl74_s* _class_localson_fn_chpl74;
+typedef struct chpl__class_localson_fn_chpl75_s* _class_localson_fn_chpl75;
+typedef struct chpl__ic_chpl_bytes__ref_string_chpl_s* _ic_chpl_bytes__ref_string_chpl;
+typedef struct chpl_heap_chpl_bool_chpl_s* heap_chpl_bool_chpl;
+typedef struct chpl_heap_int64_t_chpl_s* heap_int64_t_chpl;
+typedef struct chpl_heap_locale_chpl_s* heap_locale_chpl;
+typedef struct chpl_heap__tuple_6_star_string_chpl_s* heap__tuple_6_star_string_chpl;
+typedef struct chpl_heap_AtomicT_int64_t_chpl_s* heap_AtomicT_int64_t_chpl;
+typedef struct chpl_heap_ArrayInit_chpl_s* heap_ArrayInit_chpl;
+typedef struct chpl_heap_chpl_ModuleDeinit_chpl_s* heap_chpl_ModuleDeinit_chpl;
+typedef struct chpl_Error_chpl_s* Error_chpl;
+typedef struct chpl_NilThrownError_chpl_s* NilThrownError_chpl;
+typedef struct chpl_DecodeError_chpl_s* DecodeError_chpl;
+typedef struct chpl_IllegalArgumentError_chpl_s* IllegalArgumentError_chpl;
+typedef struct chpl_CodepointSplittingError_chpl_s* CodepointSplittingError_chpl;
+typedef struct chpl__class_localson_fn_chpl76_s* _class_localson_fn_chpl76;
+typedef struct chpl_TaskErrors_chpl_s* TaskErrors_chpl;
+typedef struct chpl_QioPluginFile_chpl_s* QioPluginFile_chpl;
+typedef struct chpl_QioPluginChannel_chpl_s* QioPluginChannel_chpl;
+typedef struct chpl__class_localson_fn_chpl77_s* _class_localson_fn_chpl77;
+typedef struct chpl__class_localson_fn_chpl78_s* _class_localson_fn_chpl78;
+typedef struct chpl__class_localson_fn_chpl79_s* _class_localson_fn_chpl79;
+typedef struct chpl__class_localson_fn_chpl80_s* _class_localson_fn_chpl80;
+typedef struct chpl__class_localson_fn_chpl81_s* _class_localson_fn_chpl81;
+typedef struct chpl__class_localson_fn_chpl82_s* _class_localson_fn_chpl82;
+typedef struct chpl__class_localson_fn_chpl83_s* _class_localson_fn_chpl83;
+typedef struct chpl__class_localson_fn_chpl84_s* _class_localson_fn_chpl84;
+typedef struct chpl__class_localson_fn_chpl85_s* _class_localson_fn_chpl85;
+typedef struct chpl__class_localson_fn_chpl86_s* _class_localson_fn_chpl86;
+typedef struct chpl__class_localson_fn_chpl87_s* _class_localson_fn_chpl87;
+typedef struct chpl__class_localson_fn_chpl88_s* _class_localson_fn_chpl88;
+typedef struct chpl__class_localson_fn_chpl89_s* _class_localson_fn_chpl89;
+typedef struct chpl__class_localson_fn_chpl90_s* _class_localson_fn_chpl90;
+typedef struct chpl__class_localson_fn_chpl91_s* _class_localson_fn_chpl91;
+typedef struct chpl__class_localson_fn_chpl92_s* _class_localson_fn_chpl92;
+typedef struct chpl__class_localson_fn_chpl93_s* _class_localson_fn_chpl93;
+typedef struct chpl_BadRegexError_chpl_s* BadRegexError_chpl;
+typedef struct chpl_SystemError_chpl_s* SystemError_chpl;
+typedef struct chpl_BlockingIOError_chpl_s* BlockingIOError_chpl;
+typedef struct chpl_ChildProcessError_chpl_s* ChildProcessError_chpl;
+typedef struct chpl_ConnectionError_chpl_s* ConnectionError_chpl;
+typedef struct chpl_BrokenPipeError_chpl_s* BrokenPipeError_chpl;
+typedef struct chpl_ConnectionAbortedError_chpl_s* ConnectionAbortedError_chpl;
+typedef struct chpl_ConnectionRefusedError_chpl_s* ConnectionRefusedError_chpl;
+typedef struct chpl_ConnectionResetError_chpl_s* ConnectionResetError_chpl;
+typedef struct chpl_FileExistsError_chpl_s* FileExistsError_chpl;
+typedef struct chpl_FileNotFoundError_chpl_s* FileNotFoundError_chpl;
+typedef struct chpl_InterruptedError_chpl_s* InterruptedError_chpl;
+typedef struct chpl_IsADirectoryError_chpl_s* IsADirectoryError_chpl;
+typedef struct chpl_NotADirectoryError_chpl_s* NotADirectoryError_chpl;
+typedef struct chpl_PermissionError_chpl_s* PermissionError_chpl;
+typedef struct chpl_ProcessLookupError_chpl_s* ProcessLookupError_chpl;
+typedef struct chpl_TimeoutError_chpl_s* TimeoutError_chpl;
+typedef struct chpl_IOError_chpl_s* IOError_chpl;
+typedef struct chpl_EOFError_chpl_s* EOFError_chpl;
+typedef struct chpl_UnexpectedEOFError_chpl_s* UnexpectedEOFError_chpl;
+typedef struct chpl_BadFormatError_chpl_s* BadFormatError_chpl;
+typedef struct chpl__class_localson_fn_chpl94_s* _class_localson_fn_chpl94;
+/*** Enumerated Types ***/
+
+typedef enum {decodePolicy_chpl_strict_chpl, decodePolicy_chpl_replace_chpl, decodePolicy_chpl_drop_chpl, decodePolicy_chpl_escape_chpl} decodePolicy_chpl;
+typedef enum {encodePolicy_chpl_unescape_chpl, encodePolicy_chpl_pass_chpl} encodePolicy_chpl;
+typedef enum {_tElt_chpl_move_chpl, _tElt_chpl_initCopy_chpl, _tElt_chpl_assign_chpl} _tElt_chpl;
+typedef enum {iterKind_chpl_leader_chpl, iterKind_chpl_follower_chpl, iterKind_chpl_standalone_chpl} iterKind_chpl;
+typedef enum {ArrayInit_chpl_heuristicInit_chpl, ArrayInit_chpl_noInit_chpl, ArrayInit_chpl_serialInit_chpl, ArrayInit_chpl_parallelInit_chpl} ArrayInit_chpl;
+typedef enum {chpl_ddataResizePolicy_normalInit_chpl, chpl_ddataResizePolicy_skipInit_chpl, chpl_ddataResizePolicy_skipInitButClearMem_chpl} chpl_ddataResizePolicy;
+typedef enum {chpl__hash_status_empty_chpl = INT64(0), chpl__hash_status_full_chpl = INT32(1), chpl__hash_status_deleted_chpl = INT32(2)} chpl__hash_status;
+typedef enum {localeKind_chpl_regular_chpl, localeKind_chpl_any_chpl, localeKind_chpl_nilLocale_chpl, localeKind_chpl_dummy_chpl, localeKind_chpl_default_chpl} localeKind_chpl;
+typedef enum {BoundedRangeType_chpl_bounded_chpl, BoundedRangeType_chpl_boundedLow_chpl, BoundedRangeType_chpl_boundedHigh_chpl, BoundedRangeType_chpl_boundedNone_chpl} BoundedRangeType_chpl;
+typedef enum {ArrayStorageOrder_chpl_RMO_chpl, ArrayStorageOrder_chpl_CMO_chpl} ArrayStorageOrder_chpl;
+typedef enum {memoryOrder_chpl_seqCst_chpl, memoryOrder_chpl_acqRel_chpl, memoryOrder_chpl_release_chpl, memoryOrder_chpl_acquire_chpl, memoryOrder_chpl_relaxed_chpl} memoryOrder_chpl;
+typedef enum {iomode_chpl_r_chpl = INT64(1), iomode_chpl_cw_chpl = INT64(2), iomode_chpl_rw_chpl = INT64(3), iomode_chpl_cwr_chpl = INT64(4)} iomode_chpl;
+typedef enum {iokind_chpl_dynamic_chpl = INT64(0), iokind_chpl_native_chpl = INT64(1), iokind_chpl_big_chpl = INT64(2), iokind_chpl_little_chpl = INT64(3)} iokind_chpl;
+typedef enum {ioendian_chpl_native_chpl = INT64(0), ioendian_chpl_big_chpl = INT64(1), ioendian_chpl_little_chpl = INT64(2)} ioendian_chpl;
+typedef enum {iostringstyle_chpl_len1b_data_chpl = INT64(-1), iostringstyle_chpl_len2b_data_chpl = INT64(-2), iostringstyle_chpl_len4b_data_chpl = INT64(-4), iostringstyle_chpl_len8b_data_chpl = INT64(-8), iostringstyle_chpl_lenVb_data_chpl = INT64(-10), iostringstyle_chpl_data_toeof_chpl = INT64(-65280), iostringstyle_chpl_data_null_chpl = INT64(-256)} iostringstyle_chpl;
+typedef enum {iostringformat_chpl_word_chpl = INT64(0), iostringformat_chpl_basic_chpl = INT64(1), iostringformat_chpl_chpl_chpl = INT64(2), iostringformat_chpl_json_chpl = INT64(3), iostringformat_chpl_toend_chpl = INT64(4), iostringformat_chpl_toeof_chpl = INT64(5)} iostringformat_chpl;
+typedef enum {RemElems_chpl_Thru_chpl, RemElems_chpl_Pack_chpl, RemElems_chpl_Mod_chpl} RemElems_chpl;
+/*** Records, Unions, Data Class, References (Hierarchically) ***/
+
+typedef struct chpl_AtomicBool_chpl_s {
+  atomic_bool _v;
+} AtomicBool_chpl;
+
+typedef struct chpl_AtomicT_int64_t_chpl_s {
+  atomic_int_least64_t _v;
+} AtomicT_int64_t_chpl;
+
+typedef uint8_t *c_ptr_uint8_t_chpl;
+typedef struct chpl_chpl____serializeHelper_s {
+  int64_t buffLen;
+  c_ptr_uint8_t_chpl buff;
+  int64_t size;
+  int32_t locale_id;
+  chpl__inPlaceBuffer shortData;
+  int64_t cachedNumCodepoints;
+} chpl____serializeHelper;
+
+typedef struct chpl_bytes_chpl_s {
+  int64_t buffLen;
+  int64_t buffSize;
+  c_ptr_uint8_t_chpl buff;
+  chpl_bool isOwned;
+  int32_t locale_id;
+} bytes_chpl;
+
+typedef struct chpl_chpl____wide_DefaultDist_s {
+  chpl_localeID_t locale;
+  DefaultDist_chpl addr;
+} chpl____wide_DefaultDist;
+
+typedef struct chpl__distribution_DefaultDist_chpl_s {
+  int64_t _pid;
+  chpl____wide_DefaultDist _instance;
+  chpl_bool _unowned;
+} _distribution_DefaultDist_chpl;
+
+typedef struct chpl_chpl____wide_DefaultRectangularArr_1_int64_t_F_locale_int64_t_s {
+  chpl_localeID_t locale;
+  DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl addr;
+} chpl____wide_DefaultRectangularArr_1_int64_t_F_locale_int64_t;
+
+typedef struct chpl__array_DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl_s {
+  int64_t _pid;
+  chpl____wide_DefaultRectangularArr_1_int64_t_F_locale_int64_t _instance;
+  chpl_bool _unowned;
+} _array_DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl;
+
+typedef int64_t *_ddata_int64_t_chpl;
+typedef struct chpl_chpl____wide_BaseLocale_s {
+  chpl_localeID_t locale;
+  BaseLocale_chpl addr;
+} chpl____wide_BaseLocale;
+
+typedef struct chpl_locale_chpl_s {
+  chpl____wide_BaseLocale _instance;
+} locale_chpl;
+
+typedef locale_chpl *_ddata_locale_chpl;
+typedef uint64_t *_ddata_uint64_t_chpl;
+typedef AbstractLocaleModel_chpl *_ref_AbstractLocaleModel_chpl;
+typedef AbstractRootLocale_chpl *_ref_AbstractRootLocale_chpl;
+typedef AtomicBool_chpl *_ref_AtomicBool_chpl;
+typedef AtomicT_int64_t_chpl *_ref_AtomicT_int64_t_chpl;
+typedef BadFormatError_chpl *_ref_BadFormatError_chpl;
+typedef BadRegexError_chpl *_ref_BadRegexError_chpl;
+typedef BaseArrOverRectangularDom_1_int64_t_F_chpl *_ref_BaseArrOverRectangularDom_1_int64_t_F_chpl;
+typedef BaseArr_chpl *_ref_BaseArr_chpl;
+typedef BaseDist_chpl *_ref_BaseDist_chpl;
+typedef BaseDom_chpl *_ref_BaseDom_chpl;
+typedef BaseLocale_chpl *_ref_BaseLocale_chpl;
+typedef BaseRectangularArr_1_int64_t_F_int64_t_chpl *_ref_BaseRectangularArr_1_int64_t_F_int64_t_chpl;
+typedef BaseRectangularArr_1_int64_t_F_locale_chpl *_ref_BaseRectangularArr_1_int64_t_F_locale_chpl;
+typedef BaseRectangularArr_1_int64_t_F_uint64_t_chpl *_ref_BaseRectangularArr_1_int64_t_F_uint64_t_chpl;
+typedef BaseRectangularDom_1_int64_t_F_chpl *_ref_BaseRectangularDom_1_int64_t_F_chpl;
+typedef BlockingIOError_chpl *_ref_BlockingIOError_chpl;
+typedef BrokenPipeError_chpl *_ref_BrokenPipeError_chpl;
+typedef ChildProcessError_chpl *_ref_ChildProcessError_chpl;
+typedef CodepointSplittingError_chpl *_ref_CodepointSplittingError_chpl;
+typedef ConnectionAbortedError_chpl *_ref_ConnectionAbortedError_chpl;
+typedef ConnectionError_chpl *_ref_ConnectionError_chpl;
+typedef ConnectionRefusedError_chpl *_ref_ConnectionRefusedError_chpl;
+typedef ConnectionResetError_chpl *_ref_ConnectionResetError_chpl;
+typedef DecodeError_chpl *_ref_DecodeError_chpl;
+typedef struct chpl_DefaultComparator_chpl_s {
+  uint8_t dummyFieldToAvoidWarning;
+} DefaultComparator_chpl;
+
+typedef DefaultComparator_chpl *_ref_DefaultComparator_chpl;
+typedef DefaultDist_chpl *_ref_DefaultDist_chpl;
+typedef DefaultRectangularArr_1_int64_t_F_int64_t_int64_t_chpl *_ref_DefaultRectangularArr_1_int64_t_F_int64_t_int64_t_chpl;
+typedef DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl *_ref_DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl;
+typedef DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t_chpl *_ref_DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t_chpl;
+typedef DefaultRectangularDom_1_int64_t_F_chpl *_ref_DefaultRectangularDom_1_int64_t_F_chpl;
+typedef DummyLocale_chpl *_ref_DummyLocale_chpl;
+typedef EOFError_chpl *_ref_EOFError_chpl;
+typedef Error_chpl *_ref_Error_chpl;
+typedef FileExistsError_chpl *_ref_FileExistsError_chpl;
+typedef FileNotFoundError_chpl *_ref_FileNotFoundError_chpl;
+typedef IOError_chpl *_ref_IOError_chpl;
+typedef IllegalArgumentError_chpl *_ref_IllegalArgumentError_chpl;
+typedef InterruptedError_chpl *_ref_InterruptedError_chpl;
+typedef IsADirectoryError_chpl *_ref_IsADirectoryError_chpl;
+typedef LocaleModel_chpl *_ref_LocaleModel_chpl;
+typedef NilThrownError_chpl *_ref_NilThrownError_chpl;
+typedef NotADirectoryError_chpl *_ref_NotADirectoryError_chpl;
+typedef PermissionError_chpl *_ref_PermissionError_chpl;
+typedef ProcessLookupError_chpl *_ref_ProcessLookupError_chpl;
+typedef QioPluginChannel_chpl *_ref_QioPluginChannel_chpl;
+typedef QioPluginFile_chpl *_ref_QioPluginFile_chpl;
+typedef struct chpl_RAtomicT_int64_t_chpl_s {
+  int64_t _v;
+} RAtomicT_int64_t_chpl;
+
+typedef RAtomicT_int64_t_chpl *_ref_RAtomicT_int64_t_chpl;
+typedef struct chpl_ReverseComparator_DefaultComparator_chpl_s {
+  DefaultComparator_chpl comparator;
+} ReverseComparator_DefaultComparator_chpl;
+
+typedef ReverseComparator_DefaultComparator_chpl *_ref_ReverseComparator_DefaultComparator_chpl;
+typedef RootLocale_chpl *_ref_RootLocale_chpl;
+typedef SystemError_chpl *_ref_SystemError_chpl;
+typedef TaskErrors_chpl *_ref_TaskErrors_chpl;
+typedef TimeoutError_chpl *_ref_TimeoutError_chpl;
+typedef UnexpectedEOFError_chpl *_ref_UnexpectedEOFError_chpl;
+typedef chpl___EndCountBase *_ref__EndCountBase_chpl;
+typedef chpl___EndCount_AtomicT_int64_t_int64_t *_ref__EndCount_AtomicT_int64_t_int64_t_chpl;
+typedef chpl___EndCount_RAtomicT_int64_t_RAtomicT_int64_t *_ref__EndCount_RAtomicT_int64_t_RAtomicT_int64_t_chpl;
+typedef struct chpl_chpl____wide_DefaultRectangularDom_1_int64_t_F_s {
+  chpl_localeID_t locale;
+  DefaultRectangularDom_1_int64_t_F_chpl addr;
+} chpl____wide_DefaultRectangularDom_1_int64_t_F;
+
+typedef struct chpl__domain_DefaultRectangularDom_1_int64_t_F_chpl_s {
+  int64_t _pid;
+  chpl____wide_DefaultRectangularDom_1_int64_t_F _instance;
+  chpl_bool _unowned;
+} _domain_DefaultRectangularDom_1_int64_t_F_chpl;
+
+typedef struct chpl_chpl___RuntimeTypeInfo2_s {
+  _domain_DefaultRectangularDom_1_int64_t_F_chpl dom;
+} chpl___RuntimeTypeInfo2;
+
+typedef chpl___RuntimeTypeInfo2 *_ref__RuntimeTypeInfo_chpl;
+typedef struct chpl_chpl___RuntimeTypeInfo_s {
+  _distribution_DefaultDist_chpl dist;
+} chpl___RuntimeTypeInfo;
+
+typedef chpl___RuntimeTypeInfo *_ref__RuntimeTypeInfo_chpl2;
+typedef chpl____serializeHelper *_ref___serializeHelper_chpl;
+typedef _array_DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl *_ref__array_DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl;
+typedef _ddata_int64_t_chpl *_ref__ddata_int64_t_chpl;
+typedef _ddata_locale_chpl *_ref__ddata_locale_chpl;
+typedef _ddata_uint64_t_chpl *_ref__ddata_uint64_t_chpl;
+typedef _distribution_DefaultDist_chpl *_ref__distribution_DefaultDist_chpl;
+typedef _domain_DefaultRectangularDom_1_int64_t_F_chpl *_ref__domain_DefaultRectangularDom_1_int64_t_F_chpl;
+typedef _ic_chpl_bytes__ref_string_chpl *_ref__ic_chpl_bytes__ref_string_chpl;
+typedef _ic_chpl_direct_counted_range_iter_chpl *_ref__ic_chpl_direct_counted_range_iter_chpl;
+typedef _ic_chpl_direct_counted_range_iter_helper_chpl *_ref__ic_chpl_direct_counted_range_iter_helper_chpl;
+typedef _ic_chpl_direct_param_stride_range_iter_chpl *_ref__ic_chpl_direct_param_stride_range_iter_chpl;
+typedef _ic_these_range_int64_t_bounded_F_chpl *_ref__ic_these_range_int64_t_bounded_F_chpl;
+typedef _nilType *_ref__nilType_chpl;
+typedef struct chpl__owned_BadFormatError_chpl_s {
+  BadFormatError_chpl chpl_p;
+} _owned_BadFormatError_chpl;
+
+typedef _owned_BadFormatError_chpl *_ref__owned_BadFormatError_chpl;
+typedef struct chpl__owned_BlockingIOError_chpl_s {
+  BlockingIOError_chpl chpl_p;
+} _owned_BlockingIOError_chpl;
+
+typedef _owned_BlockingIOError_chpl *_ref__owned_BlockingIOError_chpl;
+typedef struct chpl__owned_BrokenPipeError_chpl_s {
+  BrokenPipeError_chpl chpl_p;
+} _owned_BrokenPipeError_chpl;
+
+typedef _owned_BrokenPipeError_chpl *_ref__owned_BrokenPipeError_chpl;
+typedef struct chpl__owned_ChildProcessError_chpl_s {
+  ChildProcessError_chpl chpl_p;
+} _owned_ChildProcessError_chpl;
+
+typedef _owned_ChildProcessError_chpl *_ref__owned_ChildProcessError_chpl;
+typedef struct chpl__owned_CodepointSplittingError_chpl_s {
+  CodepointSplittingError_chpl chpl_p;
+} _owned_CodepointSplittingError_chpl;
+
+typedef _owned_CodepointSplittingError_chpl *_ref__owned_CodepointSplittingError_chpl;
+typedef struct chpl__owned_ConnectionAbortedError_chpl_s {
+  ConnectionAbortedError_chpl chpl_p;
+} _owned_ConnectionAbortedError_chpl;
+
+typedef _owned_ConnectionAbortedError_chpl *_ref__owned_ConnectionAbortedError_chpl;
+typedef struct chpl__owned_ConnectionRefusedError_chpl_s {
+  ConnectionRefusedError_chpl chpl_p;
+} _owned_ConnectionRefusedError_chpl;
+
+typedef _owned_ConnectionRefusedError_chpl *_ref__owned_ConnectionRefusedError_chpl;
+typedef struct chpl__owned_ConnectionResetError_chpl_s {
+  ConnectionResetError_chpl chpl_p;
+} _owned_ConnectionResetError_chpl;
+
+typedef _owned_ConnectionResetError_chpl *_ref__owned_ConnectionResetError_chpl;
+typedef struct chpl__owned_DecodeError_chpl_s {
+  DecodeError_chpl chpl_p;
+} _owned_DecodeError_chpl;
+
+typedef _owned_DecodeError_chpl *_ref__owned_DecodeError_chpl;
+typedef struct chpl__owned_EOFError_chpl_s {
+  EOFError_chpl chpl_p;
+} _owned_EOFError_chpl;
+
+typedef _owned_EOFError_chpl *_ref__owned_EOFError_chpl;
+typedef struct chpl_chpl____wide_Error_s {
+  chpl_localeID_t locale;
+  Error_chpl addr;
+} chpl____wide_Error;
+
+typedef struct chpl__owned_Error_chpl_s {
+  chpl____wide_Error chpl_p;
+} _owned_Error_chpl;
+
+typedef _owned_Error_chpl *_ref__owned_Error_chpl;
+typedef struct chpl__owned_Error_chpl2_s {
+  chpl____wide_Error chpl_p;
+} _owned_Error_chpl2;
+
+typedef _owned_Error_chpl2 *_ref__owned_Error_chpl2;
+typedef struct chpl__owned_FileExistsError_chpl_s {
+  FileExistsError_chpl chpl_p;
+} _owned_FileExistsError_chpl;
+
+typedef _owned_FileExistsError_chpl *_ref__owned_FileExistsError_chpl;
+typedef struct chpl__owned_FileNotFoundError_chpl_s {
+  FileNotFoundError_chpl chpl_p;
+} _owned_FileNotFoundError_chpl;
+
+typedef _owned_FileNotFoundError_chpl *_ref__owned_FileNotFoundError_chpl;
+typedef struct chpl__owned_IOError_chpl_s {
+  IOError_chpl chpl_p;
+} _owned_IOError_chpl;
+
+typedef _owned_IOError_chpl *_ref__owned_IOError_chpl;
+typedef struct chpl__owned_IllegalArgumentError_chpl_s {
+  IllegalArgumentError_chpl chpl_p;
+} _owned_IllegalArgumentError_chpl;
+
+typedef _owned_IllegalArgumentError_chpl *_ref__owned_IllegalArgumentError_chpl;
+typedef struct chpl__owned_InterruptedError_chpl_s {
+  InterruptedError_chpl chpl_p;
+} _owned_InterruptedError_chpl;
+
+typedef _owned_InterruptedError_chpl *_ref__owned_InterruptedError_chpl;
+typedef struct chpl__owned_IsADirectoryError_chpl_s {
+  IsADirectoryError_chpl chpl_p;
+} _owned_IsADirectoryError_chpl;
+
+typedef _owned_IsADirectoryError_chpl *_ref__owned_IsADirectoryError_chpl;
+typedef struct chpl__owned_NotADirectoryError_chpl_s {
+  NotADirectoryError_chpl chpl_p;
+} _owned_NotADirectoryError_chpl;
+
+typedef _owned_NotADirectoryError_chpl *_ref__owned_NotADirectoryError_chpl;
+typedef struct chpl__owned_PermissionError_chpl_s {
+  PermissionError_chpl chpl_p;
+} _owned_PermissionError_chpl;
+
+typedef _owned_PermissionError_chpl *_ref__owned_PermissionError_chpl;
+typedef struct chpl__owned_ProcessLookupError_chpl_s {
+  ProcessLookupError_chpl chpl_p;
+} _owned_ProcessLookupError_chpl;
+
+typedef _owned_ProcessLookupError_chpl *_ref__owned_ProcessLookupError_chpl;
+typedef struct chpl__owned_SystemError_chpl_s {
+  SystemError_chpl chpl_p;
+} _owned_SystemError_chpl;
+
+typedef _owned_SystemError_chpl *_ref__owned_SystemError_chpl;
+typedef struct chpl__owned_TaskErrors_chpl_s {
+  TaskErrors_chpl chpl_p;
+} _owned_TaskErrors_chpl;
+
+typedef _owned_TaskErrors_chpl *_ref__owned_TaskErrors_chpl;
+typedef struct chpl__owned_TimeoutError_chpl_s {
+  TimeoutError_chpl chpl_p;
+} _owned_TimeoutError_chpl;
+
+typedef _owned_TimeoutError_chpl *_ref__owned_TimeoutError_chpl;
+typedef struct chpl__owned_UnexpectedEOFError_chpl_s {
+  UnexpectedEOFError_chpl chpl_p;
+} _owned_UnexpectedEOFError_chpl;
+
+typedef _owned_UnexpectedEOFError_chpl *_ref__owned_UnexpectedEOFError_chpl;
+typedef struct chpl_range_int64_t_bounded_F_chpl_s {
+  int64_t _low;
+  int64_t _high;
+} range_int64_t_bounded_F_chpl;
+
+typedef range_int64_t_bounded_F_chpl _tuple_1_star_range_int64_t_bounded_F_chpl[1];
+
+typedef struct chpl__serialized_domain_1_int64_t_F__tuple_1_star_range_int64_t_bounded_F_T_chpl_s {
+  _tuple_1_star_range_int64_t_bounded_F_chpl dims;
+} _serialized_domain_1_int64_t_F__tuple_1_star_range_int64_t_bounded_F_T_chpl;
+
+typedef _serialized_domain_1_int64_t_F__tuple_1_star_range_int64_t_bounded_F_T_chpl *_ref__serialized_domain_1_int64_t_F__tuple_1_star_range_int64_t_bounded_F_T_chpl;
+typedef int64_t _tuple_1_star_int64_t_chpl[1];
+
+typedef _tuple_1_star_int64_t_chpl *_ref__tuple_1_star_int64_t_chpl;
+typedef _tuple_1_star_range_int64_t_bounded_F_chpl *_ref__tuple_1_star_range_int64_t_bounded_F_chpl;
+typedef struct chpl_chpl____wide_BaseArr_s {
+  chpl_localeID_t locale;
+  BaseArr_chpl addr;
+} chpl____wide_BaseArr;
+
+typedef struct chpl_chpl____wide_BaseDom_s {
+  chpl_localeID_t locale;
+  BaseDom_chpl addr;
+} chpl____wide_BaseDom;
+
+typedef struct chpl__tuple_2_BaseArr_BaseDom_chpl_s {
+  chpl____wide_BaseArr x0;
+  chpl____wide_BaseDom x1;
+} _tuple_2_BaseArr_BaseDom_chpl;
+
+typedef _tuple_2_BaseArr_BaseDom_chpl *_ref__tuple_2_BaseArr_BaseDom_chpl;
+typedef struct chpl_chpl____wide_BaseDist_s {
+  chpl_localeID_t locale;
+  BaseDist_chpl addr;
+} chpl____wide_BaseDist;
+
+typedef struct chpl__tuple_2_BaseDom_BaseDist_chpl_s {
+  chpl____wide_BaseDom x0;
+  chpl____wide_BaseDist x1;
+} _tuple_2_BaseDom_BaseDist_chpl;
+
+typedef _tuple_2_BaseDom_BaseDist_chpl *_ref__tuple_2_BaseDom_BaseDist_chpl;
+typedef struct chpl_byteIndex_chpl_s {
+  int64_t _bindex;
+} byteIndex_chpl;
+
+typedef byteIndex_chpl *_ref_byteIndex_chpl;
+typedef struct chpl__tuple_2__ref_byteIndex_int64_t_chpl_s {
+  _ref_byteIndex_chpl x0;
+  int64_t x1;
+} _tuple_2__ref_byteIndex_int64_t_chpl;
+
+typedef _tuple_2__ref_byteIndex_int64_t_chpl *_ref__tuple_2__ref_byteIndex_int64_t_chpl;
+typedef struct chpl__tuple_2_c_ptr_uint8_t_int64_t_chpl_s {
+  c_ptr_uint8_t_chpl x0;
+  int64_t x1;
+} _tuple_2_c_ptr_uint8_t_int64_t_chpl;
+
+typedef _tuple_2_c_ptr_uint8_t_int64_t_chpl *_ref__tuple_2_c_ptr_uint8_t_int64_t_chpl;
+typedef struct chpl__tuple_2_range_int64_t_bounded_F_int64_t_chpl_s {
+  range_int64_t_bounded_F_chpl x0;
+  int64_t x1;
+} _tuple_2_range_int64_t_bounded_F_int64_t_chpl;
+
+typedef _tuple_2_range_int64_t_bounded_F_int64_t_chpl *_ref__tuple_2_range_int64_t_bounded_F_int64_t_chpl;
+typedef int64_t _tuple_2_star_int64_t_chpl[2];
+
+typedef _tuple_2_star_int64_t_chpl *_ref__tuple_2_star_int64_t_chpl;
+typedef struct chpl_string_chpl_s {
+  int64_t buffLen;
+  int64_t buffSize;
+  int64_t cachedNumCodepoints;
+  c_ptr_uint8_t_chpl buff;
+  chpl_bool isOwned;
+  chpl_bool hasEscapes;
+  int32_t locale_id;
+} string_chpl;
+
+typedef string_chpl *_ref_string_chpl;
+typedef struct chpl_chpl____wide__ref_string_s {
+  chpl_localeID_t locale;
+  _ref_string_chpl addr;
+} chpl____wide__ref_string;
+
+typedef struct chpl_ioNewline_chpl_s {
+  chpl_bool skipWhitespaceOnly;
+} ioNewline_chpl;
+
+typedef ioNewline_chpl *_ref_ioNewline_chpl;
+typedef struct chpl_chpl____wide__ref_ioNewline_s {
+  chpl_localeID_t locale;
+  _ref_ioNewline_chpl addr;
+} chpl____wide__ref_ioNewline;
+
+typedef struct chpl__tuple_3__ref_string_int64_t__ref_ioNewline_chpl_s {
+  chpl____wide__ref_string x0;
+  int64_t x1;
+  chpl____wide__ref_ioNewline x2;
+} _tuple_3__ref_string_int64_t__ref_ioNewline_chpl;
+
+typedef _tuple_3__ref_string_int64_t__ref_ioNewline_chpl *_ref__tuple_3__ref_string_int64_t__ref_ioNewline_chpl;
+typedef struct chpl__tuple_3_int32_t__ref_byteIndex_int64_t_chpl_s {
+  int32_t x0;
+  _ref_byteIndex_chpl x1;
+  int64_t x2;
+} _tuple_3_int32_t__ref_byteIndex_int64_t_chpl;
+
+typedef _tuple_3_int32_t__ref_byteIndex_int64_t_chpl *_ref__tuple_3_int32_t__ref_byteIndex_int64_t_chpl;
+typedef struct chpl__tuple_3_int32_t_byteIndex_int64_t_chpl_s {
+  int32_t x0;
+  byteIndex_chpl x1;
+  int64_t x2;
+} _tuple_3_int32_t_byteIndex_int64_t_chpl;
+
+typedef _tuple_3_int32_t_byteIndex_int64_t_chpl *_ref__tuple_3_int32_t_byteIndex_int64_t_chpl;
+typedef struct chpl__tuple_3_syserr_int32_t_int32_t_chpl_s {
+  syserr x0;
+  int32_t x1;
+  int32_t x2;
+} _tuple_3_syserr_int32_t_int32_t_chpl;
+
+typedef _tuple_3_syserr_int32_t_int32_t_chpl *_ref__tuple_3_syserr_int32_t_int32_t_chpl;
+typedef _ref_string_chpl _tuple_6_star__ref_string_chpl[6];
+
+typedef _tuple_6_star__ref_string_chpl *_ref__tuple_6_star__ref_string_chpl;
+typedef string_chpl _tuple_6_star_string_chpl[6];
+
+typedef _tuple_6_star_string_chpl *_ref__tuple_6_star_string_chpl;
+typedef atomic_bool *_ref_atomic_bool_chpl;
+typedef atomic_int_least64_t *_ref_atomic_int_least64_t_chpl;
+typedef bytes_chpl *_ref_bytes_chpl;
+typedef struct chpl_chpl____wide__ddata_int64_t_s {
+  chpl_localeID_t locale;
+  _ddata_int64_t_chpl addr;
+} chpl____wide__ddata_int64_t;
+
+typedef chpl____wide__ddata_int64_t *c_ptr__ddata_int64_t_chpl;
+typedef c_ptr__ddata_int64_t_chpl *_ref_c_ptr__ddata_int64_t_chpl;
+typedef struct chpl_chpl____wide__ddata_locale_s {
+  chpl_localeID_t locale;
+  _ddata_locale_chpl addr;
+} chpl____wide__ddata_locale;
+
+typedef chpl____wide__ddata_locale *c_ptr__ddata_locale_chpl;
+typedef c_ptr__ddata_locale_chpl *_ref_c_ptr__ddata_locale_chpl;
+typedef struct chpl_chpl____wide__ddata_uint64_t_s {
+  chpl_localeID_t locale;
+  _ddata_uint64_t_chpl addr;
+} chpl____wide__ddata_uint64_t;
+
+typedef chpl____wide__ddata_uint64_t *c_ptr__ddata_uint64_t_chpl;
+typedef c_ptr__ddata_uint64_t_chpl *_ref_c_ptr__ddata_uint64_t_chpl;
+typedef _owned_Error_chpl *c_ptr__owned_Error_chpl;
+typedef c_ptr__owned_Error_chpl *_ref_c_ptr__owned_Error_chpl;
+typedef c_string *c_ptr_c_string_chpl;
+typedef c_ptr_c_string_chpl *_ref_c_ptr_c_string_chpl;
+typedef c_void_ptr *c_ptr_c_void_ptr_chpl;
+typedef c_ptr_c_void_ptr_chpl *_ref_c_ptr_c_void_ptr_chpl;
+typedef chpl_localeID_t *c_ptr_chpl_localeID_t_chpl;
+typedef c_ptr_chpl_localeID_t_chpl *_ref_c_ptr_chpl_localeID_t_chpl;
+typedef chpl_privateObject_t *c_ptr_chpl_privateObject_t_chpl;
+typedef c_ptr_chpl_privateObject_t_chpl *_ref_c_ptr_chpl_privateObject_t_chpl;
+typedef chpl_task_infoChapel_t *c_ptr_chpl_task_infoChapel_t_chpl;
+typedef c_ptr_chpl_task_infoChapel_t_chpl *_ref_c_ptr_chpl_task_infoChapel_t_chpl;
+typedef int64_t *c_ptr_int64_t_chpl;
+typedef c_ptr_int64_t_chpl *_ref_c_ptr_int64_t_chpl;
+typedef c_ptr_uint8_t_chpl *_ref_c_ptr_uint8_t_chpl;
+typedef c_string *_ref_c_string_chpl;
+typedef c_void_ptr *_ref_c_void_ptr_chpl;
+typedef struct chpl_channel_F_dynamic_T_chpl_s {
+  locale_chpl home;
+  qio_channel_ptr_t _channel_internal;
+  locale_chpl _readWriteThisFromLocale;
+} channel_F_dynamic_T_chpl;
+
+typedef channel_F_dynamic_T_chpl *_ref_channel_F_dynamic_T_chpl;
+typedef struct chpl_channel_T_dynamic_T_chpl_s {
+  locale_chpl home;
+  qio_channel_ptr_t _channel_internal;
+  locale_chpl _readWriteThisFromLocale;
+} channel_T_dynamic_T_chpl;
+
+typedef channel_T_dynamic_T_chpl *_ref_channel_T_dynamic_T_chpl;
+typedef struct chpl_chpl_LocalSpinlock_s {
+  AtomicBool_chpl l;
+} chpl_LocalSpinlock;
+
+typedef chpl_LocalSpinlock *_ref_chpl_LocalSpinlock_chpl;
+typedef chpl_ModuleDeinit *_ref_chpl_ModuleDeinit_chpl;
+typedef struct chpl_chpl_TaskErrors_s {
+  chpl____wide_Error _head;
+  chpl_LocalSpinlock _errorsLock;
+} chpl_TaskErrors;
+
+typedef chpl_TaskErrors *_ref_chpl_TaskErrors_chpl;
+typedef chpl__inPlaceBuffer *_ref_chpl__inPlaceBuffer_chpl;
+typedef chpl_bool *_ref_chpl_bool_chpl;
+typedef chpl_comm_on_bundle_t *_ref_chpl_comm_on_bundle_t_chpl;
+typedef chpl_localeID_t *_ref_chpl_localeID_t_chpl;
+typedef struct chpl_chpl_localeTreeRecord_s {
+  locale_chpl left;
+  locale_chpl right;
+} chpl_localeTreeRecord;
+
+typedef chpl_localeTreeRecord *_ref_chpl_localeTreeRecord_chpl;
+typedef chpl_main_argument *_ref_chpl_main_argument_chpl;
+typedef chpl_opaque_array *_ref_chpl_opaque_array_chpl;
+typedef chpl_privateObject_t *_ref_chpl_privateObject_t_chpl;
+typedef struct chpl_chpl_root_locale_accum_s {
+  RAtomicT_int64_t_chpl nPUsPhysAcc;
+  RAtomicT_int64_t_chpl nPUsPhysAll;
+  RAtomicT_int64_t_chpl nPUsLogAcc;
+  RAtomicT_int64_t_chpl nPUsLogAll;
+  RAtomicT_int64_t_chpl maxTaskPar;
+} chpl_root_locale_accum;
+
+typedef chpl_root_locale_accum *_ref_chpl_root_locale_accum_chpl;
+typedef chpl_task_bundle_t *_ref_chpl_task_bundle_t_chpl;
+typedef struct chpl_codepointIndex_chpl_s {
+  int64_t _cpindex;
+} codepointIndex_chpl;
+
+typedef codepointIndex_chpl *_ref_codepointIndex_chpl;
+typedef struct chpl_file_chpl_s {
+  locale_chpl home;
+  qio_file_ptr_t _file_internal;
+} file_chpl;
+
+typedef file_chpl *_ref_file_chpl;
+typedef int32_t *_ref_int32_t_chpl;
+typedef int64_t *_ref_int64_t_chpl;
+typedef iostyleInternal *_ref_iostyleInternal_chpl;
+typedef locale_chpl *_ref_locale_chpl;
+typedef object_chpl *_ref_object_chpl;
+typedef qio_channel_ptr_t *_ref_qio_channel_ptr_t_chpl;
+typedef qio_file_ptr_t *_ref_qio_file_ptr_t_chpl;
+typedef struct chpl_range_byteIndex_boundedHigh_F_chpl_s {
+  int64_t _low;
+  int64_t _high;
+} range_byteIndex_boundedHigh_F_chpl;
+
+typedef range_byteIndex_boundedHigh_F_chpl *_ref_range_byteIndex_boundedHigh_F_chpl;
+typedef struct chpl_range_byteIndex_boundedLow_F_chpl_s {
+  int64_t _low;
+  int64_t _high;
+} range_byteIndex_boundedLow_F_chpl;
+
+typedef range_byteIndex_boundedLow_F_chpl *_ref_range_byteIndex_boundedLow_F_chpl;
+typedef struct chpl_range_byteIndex_bounded_F_chpl_s {
+  int64_t _low;
+  int64_t _high;
+} range_byteIndex_bounded_F_chpl;
+
+typedef range_byteIndex_bounded_F_chpl *_ref_range_byteIndex_bounded_F_chpl;
+typedef struct chpl_range_int64_t_boundedHigh_F_chpl_s {
+  int64_t _low;
+  int64_t _high;
+} range_int64_t_boundedHigh_F_chpl;
+
+typedef range_int64_t_boundedHigh_F_chpl *_ref_range_int64_t_boundedHigh_F_chpl;
+typedef struct chpl_range_int64_t_boundedLow_F_chpl_s {
+  int64_t _low;
+  int64_t _high;
+} range_int64_t_boundedLow_F_chpl;
+
+typedef range_int64_t_boundedLow_F_chpl *_ref_range_int64_t_boundedLow_F_chpl;
+typedef range_int64_t_bounded_F_chpl *_ref_range_int64_t_bounded_F_chpl;
+typedef syserr *_ref_syserr_chpl;
+typedef uint64_t *_ref_uint64_t_chpl;
+typedef uint8_t *_ref_uint8_t_chpl;
+typedef struct chpl_chpl____wide_heap_chpl_bool_s {
+  chpl_localeID_t locale;
+  heap_chpl_bool_chpl addr;
+} chpl____wide_heap_chpl_bool;
+
+typedef struct chpl_chpl____wide_heap_int64_t_s {
+  chpl_localeID_t locale;
+  heap_int64_t_chpl addr;
+} chpl____wide_heap_int64_t;
+
+typedef struct chpl_chpl____wide_heap_locale_s {
+  chpl_localeID_t locale;
+  heap_locale_chpl addr;
+} chpl____wide_heap_locale;
+
+typedef struct chpl_chpl____wide_object_s {
+  chpl_localeID_t locale;
+  object_chpl addr;
+} chpl____wide_object;
+
+typedef struct chpl_chpl____wide_SystemError_s {
+  chpl_localeID_t locale;
+  SystemError_chpl addr;
+} chpl____wide_SystemError;
+
+typedef struct chpl_chpl____wide_heap__tuple_6_star_string_s {
+  chpl_localeID_t locale;
+  heap__tuple_6_star_string_chpl addr;
+} chpl____wide_heap__tuple_6_star_string;
+
+typedef struct chpl_chpl____wide_LocaleModel_s {
+  chpl_localeID_t locale;
+  LocaleModel_chpl addr;
+} chpl____wide_LocaleModel;
+
+typedef struct chpl_chpl____wide_NilThrownError_s {
+  chpl_localeID_t locale;
+  NilThrownError_chpl addr;
+} chpl____wide_NilThrownError;
+
+typedef struct chpl_chpl____wide_DecodeError_s {
+  chpl_localeID_t locale;
+  DecodeError_chpl addr;
+} chpl____wide_DecodeError;
+
+typedef struct chpl_chpl____wide_IllegalArgumentError_s {
+  chpl_localeID_t locale;
+  IllegalArgumentError_chpl addr;
+} chpl____wide_IllegalArgumentError;
+
+typedef struct chpl_chpl____wide_CodepointSplittingError_s {
+  chpl_localeID_t locale;
+  CodepointSplittingError_chpl addr;
+} chpl____wide_CodepointSplittingError;
+
+typedef struct chpl_chpl____wide_BlockingIOError_s {
+  chpl_localeID_t locale;
+  BlockingIOError_chpl addr;
+} chpl____wide_BlockingIOError;
+
+typedef struct chpl_chpl____wide_ChildProcessError_s {
+  chpl_localeID_t locale;
+  ChildProcessError_chpl addr;
+} chpl____wide_ChildProcessError;
+
+typedef struct chpl_chpl____wide_RootLocale_s {
+  chpl_localeID_t locale;
+  RootLocale_chpl addr;
+} chpl____wide_RootLocale;
+
+typedef struct chpl_chpl____wide_ConnectionError_s {
+  chpl_localeID_t locale;
+  ConnectionError_chpl addr;
+} chpl____wide_ConnectionError;
+
+typedef struct chpl_chpl____wide_BrokenPipeError_s {
+  chpl_localeID_t locale;
+  BrokenPipeError_chpl addr;
+} chpl____wide_BrokenPipeError;
+
+typedef struct chpl_chpl____wide_TaskErrors_s {
+  chpl_localeID_t locale;
+  TaskErrors_chpl addr;
+} chpl____wide_TaskErrors;
+
+typedef struct chpl_chpl____wide_ConnectionAbortedError_s {
+  chpl_localeID_t locale;
+  ConnectionAbortedError_chpl addr;
+} chpl____wide_ConnectionAbortedError;
+
+typedef struct chpl_chpl____wide_ConnectionRefusedError_s {
+  chpl_localeID_t locale;
+  ConnectionRefusedError_chpl addr;
+} chpl____wide_ConnectionRefusedError;
+
+typedef struct chpl_chpl____wide_ConnectionResetError_s {
+  chpl_localeID_t locale;
+  ConnectionResetError_chpl addr;
+} chpl____wide_ConnectionResetError;
+
+typedef struct chpl_chpl____wide_FileExistsError_s {
+  chpl_localeID_t locale;
+  FileExistsError_chpl addr;
+} chpl____wide_FileExistsError;
+
+typedef struct chpl_chpl____wide_FileNotFoundError_s {
+  chpl_localeID_t locale;
+  FileNotFoundError_chpl addr;
+} chpl____wide_FileNotFoundError;
+
+typedef struct chpl_chpl____wide_InterruptedError_s {
+  chpl_localeID_t locale;
+  InterruptedError_chpl addr;
+} chpl____wide_InterruptedError;
+
+typedef struct chpl_chpl____wide_IsADirectoryError_s {
+  chpl_localeID_t locale;
+  IsADirectoryError_chpl addr;
+} chpl____wide_IsADirectoryError;
+
+typedef struct chpl_chpl____wide_NotADirectoryError_s {
+  chpl_localeID_t locale;
+  NotADirectoryError_chpl addr;
+} chpl____wide_NotADirectoryError;
+
+typedef struct chpl_chpl____wide_PermissionError_s {
+  chpl_localeID_t locale;
+  PermissionError_chpl addr;
+} chpl____wide_PermissionError;
+
+typedef struct chpl_chpl____wide_ProcessLookupError_s {
+  chpl_localeID_t locale;
+  ProcessLookupError_chpl addr;
+} chpl____wide_ProcessLookupError;
+
+typedef struct chpl_chpl____wide_TimeoutError_s {
+  chpl_localeID_t locale;
+  TimeoutError_chpl addr;
+} chpl____wide_TimeoutError;
+
+typedef struct chpl_chpl____wide_IOError_s {
+  chpl_localeID_t locale;
+  IOError_chpl addr;
+} chpl____wide_IOError;
+
+typedef struct chpl_chpl____wide_EOFError_s {
+  chpl_localeID_t locale;
+  EOFError_chpl addr;
+} chpl____wide_EOFError;
+
+typedef struct chpl_chpl____wide_UnexpectedEOFError_s {
+  chpl_localeID_t locale;
+  UnexpectedEOFError_chpl addr;
+} chpl____wide_UnexpectedEOFError;
+
+typedef struct chpl_chpl____wide_BadFormatError_s {
+  chpl_localeID_t locale;
+  BadFormatError_chpl addr;
+} chpl____wide_BadFormatError;
+
+typedef struct chpl_chpl____wide_BadRegexError_s {
+  chpl_localeID_t locale;
+  BadRegexError_chpl addr;
+} chpl____wide_BadRegexError;
+
+typedef struct chpl_chpl____wide_heap_AtomicT_int64_t_s {
+  chpl_localeID_t locale;
+  heap_AtomicT_int64_t_chpl addr;
+} chpl____wide_heap_AtomicT_int64_t;
+
+typedef struct chpl_chpl____wide_BaseRectangularDom_1_int64_t_F_s {
+  chpl_localeID_t locale;
+  BaseRectangularDom_1_int64_t_F_chpl addr;
+} chpl____wide_BaseRectangularDom_1_int64_t_F;
+
+typedef struct chpl_chpl____wide_DummyLocale_s {
+  chpl_localeID_t locale;
+  DummyLocale_chpl addr;
+} chpl____wide_DummyLocale;
+
+typedef struct chpl_chpl____wide_AbstractLocaleModel_s {
+  chpl_localeID_t locale;
+  AbstractLocaleModel_chpl addr;
+} chpl____wide_AbstractLocaleModel;
+
+typedef struct chpl_chpl____wide_AbstractRootLocale_s {
+  chpl_localeID_t locale;
+  AbstractRootLocale_chpl addr;
+} chpl____wide_AbstractRootLocale;
+
+typedef struct chpl_chpl____wide__distribution_DefaultDist_s {
+  chpl_localeID_t locale;
+  _distribution_DefaultDist_chpl addr;
+} chpl____wide__distribution_DefaultDist;
+
+typedef struct chpl_chpl____wide_heap_ArrayInit_s {
+  chpl_localeID_t locale;
+  heap_ArrayInit_chpl addr;
+} chpl____wide_heap_ArrayInit;
+
+typedef struct chpl_chpl____wide__array_DefaultRectangularArr_1_int64_t_F_locale_int64_t_s {
+  chpl_localeID_t locale;
+  _array_DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl addr;
+} chpl____wide__array_DefaultRectangularArr_1_int64_t_F_locale_int64_t;
+
+typedef struct chpl_chpl____wide__domain_DefaultRectangularDom_1_int64_t_F_s {
+  chpl_localeID_t locale;
+  _domain_DefaultRectangularDom_1_int64_t_F_chpl addr;
+} chpl____wide__domain_DefaultRectangularDom_1_int64_t_F;
+
+typedef struct chpl_chpl____wide_QioPluginFile_s {
+  chpl_localeID_t locale;
+  QioPluginFile_chpl addr;
+} chpl____wide_QioPluginFile;
+
+typedef struct chpl_chpl____wide_BaseArrOverRectangularDom_1_int64_t_F_s {
+  chpl_localeID_t locale;
+  BaseArrOverRectangularDom_1_int64_t_F_chpl addr;
+} chpl____wide_BaseArrOverRectangularDom_1_int64_t_F;
+
+typedef struct chpl_chpl____wide_BaseRectangularArr_1_int64_t_F_int64_t_s {
+  chpl_localeID_t locale;
+  BaseRectangularArr_1_int64_t_F_int64_t_chpl addr;
+} chpl____wide_BaseRectangularArr_1_int64_t_F_int64_t;
+
+typedef struct chpl_chpl____wide_BaseRectangularArr_1_int64_t_F_locale_s {
+  chpl_localeID_t locale;
+  BaseRectangularArr_1_int64_t_F_locale_chpl addr;
+} chpl____wide_BaseRectangularArr_1_int64_t_F_locale;
+
+typedef struct chpl_chpl____wide_BaseRectangularArr_1_int64_t_F_uint64_t_s {
+  chpl_localeID_t locale;
+  BaseRectangularArr_1_int64_t_F_uint64_t_chpl addr;
+} chpl____wide_BaseRectangularArr_1_int64_t_F_uint64_t;
+
+typedef struct chpl_chpl____wide_DefaultRectangularArr_1_int64_t_F_int64_t_int64_t_s {
+  chpl_localeID_t locale;
+  DefaultRectangularArr_1_int64_t_F_int64_t_int64_t_chpl addr;
+} chpl____wide_DefaultRectangularArr_1_int64_t_F_int64_t_int64_t;
+
+typedef struct chpl_chpl____wide_DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t_s {
+  chpl_localeID_t locale;
+  DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t_chpl addr;
+} chpl____wide_DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t;
+
+typedef struct chpl_chpl____wide_QioPluginChannel_s {
+  chpl_localeID_t locale;
+  QioPluginChannel_chpl addr;
+} chpl____wide_QioPluginChannel;
+
+typedef chpl____wide_AbstractLocaleModel *_ref__wide_AbstractLocaleModel_chpl;
+typedef chpl____wide_AbstractRootLocale *_ref__wide_AbstractRootLocale_chpl;
+typedef chpl____wide_BadFormatError *_ref__wide_BadFormatError_chpl;
+typedef chpl____wide_BadRegexError *_ref__wide_BadRegexError_chpl;
+typedef chpl____wide_BaseArrOverRectangularDom_1_int64_t_F *_ref__wide_BaseArrOverRectangularDom_1_int64_t_F_chpl;
+typedef chpl____wide_BaseArr *_ref__wide_BaseArr_chpl;
+typedef chpl____wide_BaseDist *_ref__wide_BaseDist_chpl;
+typedef chpl____wide_BaseDom *_ref__wide_BaseDom_chpl;
+typedef chpl____wide_BaseLocale *_ref__wide_BaseLocale_chpl;
+typedef chpl____wide_BaseRectangularArr_1_int64_t_F_int64_t *_ref__wide_BaseRectangularArr_1_int64_t_F_int64_t_chpl;
+typedef chpl____wide_BaseRectangularArr_1_int64_t_F_locale *_ref__wide_BaseRectangularArr_1_int64_t_F_locale_chpl;
+typedef chpl____wide_BaseRectangularArr_1_int64_t_F_uint64_t *_ref__wide_BaseRectangularArr_1_int64_t_F_uint64_t_chpl;
+typedef chpl____wide_BaseRectangularDom_1_int64_t_F *_ref__wide_BaseRectangularDom_1_int64_t_F_chpl;
+typedef chpl____wide_BlockingIOError *_ref__wide_BlockingIOError_chpl;
+typedef chpl____wide_BrokenPipeError *_ref__wide_BrokenPipeError_chpl;
+typedef chpl____wide_ChildProcessError *_ref__wide_ChildProcessError_chpl;
+typedef chpl____wide_CodepointSplittingError *_ref__wide_CodepointSplittingError_chpl;
+typedef chpl____wide_ConnectionAbortedError *_ref__wide_ConnectionAbortedError_chpl;
+typedef chpl____wide_ConnectionError *_ref__wide_ConnectionError_chpl;
+typedef chpl____wide_ConnectionRefusedError *_ref__wide_ConnectionRefusedError_chpl;
+typedef chpl____wide_ConnectionResetError *_ref__wide_ConnectionResetError_chpl;
+typedef chpl____wide_DecodeError *_ref__wide_DecodeError_chpl;
+typedef chpl____wide_DefaultDist *_ref__wide_DefaultDist_chpl;
+typedef chpl____wide_DefaultRectangularArr_1_int64_t_F_int64_t_int64_t *_ref__wide_DefaultRectangularArr_1_int64_t_F_int64_t_int64_t_chpl;
+typedef chpl____wide_DefaultRectangularArr_1_int64_t_F_locale_int64_t *_ref__wide_DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl;
+typedef chpl____wide_DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t *_ref__wide_DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t_chpl;
+typedef chpl____wide_DefaultRectangularDom_1_int64_t_F *_ref__wide_DefaultRectangularDom_1_int64_t_F_chpl;
+typedef chpl____wide_DummyLocale *_ref__wide_DummyLocale_chpl;
+typedef chpl____wide_EOFError *_ref__wide_EOFError_chpl;
+typedef chpl____wide_Error *_ref__wide_Error_chpl;
+typedef chpl____wide_FileExistsError *_ref__wide_FileExistsError_chpl;
+typedef chpl____wide_FileNotFoundError *_ref__wide_FileNotFoundError_chpl;
+typedef chpl____wide_IOError *_ref__wide_IOError_chpl;
+typedef chpl____wide_IllegalArgumentError *_ref__wide_IllegalArgumentError_chpl;
+typedef chpl____wide_InterruptedError *_ref__wide_InterruptedError_chpl;
+typedef chpl____wide_IsADirectoryError *_ref__wide_IsADirectoryError_chpl;
+typedef chpl____wide_LocaleModel *_ref__wide_LocaleModel_chpl;
+typedef chpl____wide_NilThrownError *_ref__wide_NilThrownError_chpl;
+typedef chpl____wide_NotADirectoryError *_ref__wide_NotADirectoryError_chpl;
+typedef chpl____wide_PermissionError *_ref__wide_PermissionError_chpl;
+typedef chpl____wide_ProcessLookupError *_ref__wide_ProcessLookupError_chpl;
+typedef chpl____wide_QioPluginChannel *_ref__wide_QioPluginChannel_chpl;
+typedef chpl____wide_QioPluginFile *_ref__wide_QioPluginFile_chpl;
+typedef chpl____wide_RootLocale *_ref__wide_RootLocale_chpl;
+typedef chpl____wide_SystemError *_ref__wide_SystemError_chpl;
+typedef chpl____wide_TaskErrors *_ref__wide_TaskErrors_chpl;
+typedef chpl____wide_TimeoutError *_ref__wide_TimeoutError_chpl;
+typedef chpl____wide_UnexpectedEOFError *_ref__wide_UnexpectedEOFError_chpl;
+typedef struct chpl_chpl____wide__EndCountBase_s {
+  chpl_localeID_t locale;
+  chpl___EndCountBase addr;
+} chpl____wide__EndCountBase;
+
+typedef chpl____wide__EndCountBase *_ref__wide__EndCountBase_chpl;
+typedef struct chpl_chpl____wide__EndCount_AtomicT_int64_t_int64_t_s {
+  chpl_localeID_t locale;
+  chpl___EndCount_AtomicT_int64_t_int64_t addr;
+} chpl____wide__EndCount_AtomicT_int64_t_int64_t;
+
+typedef chpl____wide__EndCount_AtomicT_int64_t_int64_t *_ref__wide__EndCount_AtomicT_int64_t_int64_t_chpl;
+typedef struct chpl_chpl____wide__EndCount_RAtomicT_int64_t_RAtomicT_int64_t_s {
+  chpl_localeID_t locale;
+  chpl___EndCount_RAtomicT_int64_t_RAtomicT_int64_t addr;
+} chpl____wide__EndCount_RAtomicT_int64_t_RAtomicT_int64_t;
+
+typedef chpl____wide__EndCount_RAtomicT_int64_t_RAtomicT_int64_t *_ref__wide__EndCount_RAtomicT_int64_t_RAtomicT_int64_t_chpl;
+typedef _array_DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl *_ref__wide__array_DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl;
+typedef chpl____wide__ddata_int64_t *_ref__wide__ddata_int64_t_chpl;
+typedef chpl____wide__ddata_locale *_ref__wide__ddata_locale_chpl;
+typedef chpl____wide__ddata_uint64_t *_ref__wide__ddata_uint64_t_chpl;
+typedef _distribution_DefaultDist_chpl *_ref__wide__distribution_DefaultDist_chpl;
+typedef _domain_DefaultRectangularDom_1_int64_t_F_chpl *_ref__wide__domain_DefaultRectangularDom_1_int64_t_F_chpl;
+typedef struct chpl_chpl____wide__ic_chpl_bytes__ref_string_s {
+  chpl_localeID_t locale;
+  _ic_chpl_bytes__ref_string_chpl addr;
+} chpl____wide__ic_chpl_bytes__ref_string;
+
+typedef chpl____wide__ic_chpl_bytes__ref_string *_ref__wide__ic_chpl_bytes__ref_string_chpl;
+typedef struct chpl_chpl____wide__ic_chpl_direct_counted_range_iter_s {
+  chpl_localeID_t locale;
+  _ic_chpl_direct_counted_range_iter_chpl addr;
+} chpl____wide__ic_chpl_direct_counted_range_iter;
+
+typedef chpl____wide__ic_chpl_direct_counted_range_iter *_ref__wide__ic_chpl_direct_counted_range_iter_chpl;
+typedef struct chpl_chpl____wide__ic_chpl_direct_counted_range_iter_helper_s {
+  chpl_localeID_t locale;
+  _ic_chpl_direct_counted_range_iter_helper_chpl addr;
+} chpl____wide__ic_chpl_direct_counted_range_iter_helper;
+
+typedef chpl____wide__ic_chpl_direct_counted_range_iter_helper *_ref__wide__ic_chpl_direct_counted_range_iter_helper_chpl;
+typedef struct chpl_chpl____wide__ic_chpl_direct_param_stride_range_iter_s {
+  chpl_localeID_t locale;
+  _ic_chpl_direct_param_stride_range_iter_chpl addr;
+} chpl____wide__ic_chpl_direct_param_stride_range_iter;
+
+typedef chpl____wide__ic_chpl_direct_param_stride_range_iter *_ref__wide__ic_chpl_direct_param_stride_range_iter_chpl;
+typedef struct chpl_chpl____wide__ic_these_range_int64_t_bounded_F_s {
+  chpl_localeID_t locale;
+  _ic_these_range_int64_t_bounded_F_chpl addr;
+} chpl____wide__ic_these_range_int64_t_bounded_F;
+
+typedef chpl____wide__ic_these_range_int64_t_bounded_F *_ref__wide__ic_these_range_int64_t_bounded_F_chpl;
+typedef struct chpl_chpl____wide_chpl_ModuleDeinit_s {
+  chpl_localeID_t locale;
+  chpl_ModuleDeinit addr;
+} chpl____wide_chpl_ModuleDeinit;
+
+typedef chpl____wide_chpl_ModuleDeinit *_ref__wide_chpl_ModuleDeinit_chpl;
+typedef chpl____wide_object *_ref__wide_object_chpl;
+typedef struct chpl_chpl____wide__ref_AtomicBool_s {
+  chpl_localeID_t locale;
+  _ref_AtomicBool_chpl addr;
+} chpl____wide__ref_AtomicBool;
+
+typedef struct chpl_chpl____wide__ref_AtomicT_int64_t_s {
+  chpl_localeID_t locale;
+  _ref_AtomicT_int64_t_chpl addr;
+} chpl____wide__ref_AtomicT_int64_t;
+
+typedef struct chpl_chpl____wide__ref_DefaultComparator_s {
+  chpl_localeID_t locale;
+  _ref_DefaultComparator_chpl addr;
+} chpl____wide__ref_DefaultComparator;
+
+typedef struct chpl_chpl____wide__ref_RAtomicT_int64_t_s {
+  chpl_localeID_t locale;
+  _ref_RAtomicT_int64_t_chpl addr;
+} chpl____wide__ref_RAtomicT_int64_t;
+
+typedef struct chpl_chpl____wide__ref_ReverseComparator_DefaultComparator_s {
+  chpl_localeID_t locale;
+  _ref_ReverseComparator_DefaultComparator_chpl addr;
+} chpl____wide__ref_ReverseComparator_DefaultComparator;
+
+typedef struct chpl_chpl____wide__ref__RuntimeTypeInfo_s {
+  chpl_localeID_t locale;
+  _ref__RuntimeTypeInfo_chpl addr;
+} chpl____wide__ref__RuntimeTypeInfo;
+
+typedef struct chpl_chpl____wide__ref__RuntimeTypeInfo2_s {
+  chpl_localeID_t locale;
+  _ref__RuntimeTypeInfo_chpl2 addr;
+} chpl____wide__ref__RuntimeTypeInfo2;
+
+typedef struct chpl_chpl____wide__ref___serializeHelper_s {
+  chpl_localeID_t locale;
+  _ref___serializeHelper_chpl addr;
+} chpl____wide__ref___serializeHelper;
+
+typedef struct chpl_chpl____wide__ref__nilType_s {
+  chpl_localeID_t locale;
+  _ref__nilType_chpl addr;
+} chpl____wide__ref__nilType;
+
+typedef struct chpl_chpl____wide__ref__owned_BadFormatError_s {
+  chpl_localeID_t locale;
+  _ref__owned_BadFormatError_chpl addr;
+} chpl____wide__ref__owned_BadFormatError;
+
+typedef struct chpl_chpl____wide__ref__owned_BlockingIOError_s {
+  chpl_localeID_t locale;
+  _ref__owned_BlockingIOError_chpl addr;
+} chpl____wide__ref__owned_BlockingIOError;
+
+typedef struct chpl_chpl____wide__ref__owned_BrokenPipeError_s {
+  chpl_localeID_t locale;
+  _ref__owned_BrokenPipeError_chpl addr;
+} chpl____wide__ref__owned_BrokenPipeError;
+
+typedef struct chpl_chpl____wide__ref__owned_ChildProcessError_s {
+  chpl_localeID_t locale;
+  _ref__owned_ChildProcessError_chpl addr;
+} chpl____wide__ref__owned_ChildProcessError;
+
+typedef struct chpl_chpl____wide__ref__owned_CodepointSplittingError_s {
+  chpl_localeID_t locale;
+  _ref__owned_CodepointSplittingError_chpl addr;
+} chpl____wide__ref__owned_CodepointSplittingError;
+
+typedef struct chpl_chpl____wide__ref__owned_ConnectionAbortedError_s {
+  chpl_localeID_t locale;
+  _ref__owned_ConnectionAbortedError_chpl addr;
+} chpl____wide__ref__owned_ConnectionAbortedError;
+
+typedef struct chpl_chpl____wide__ref__owned_ConnectionRefusedError_s {
+  chpl_localeID_t locale;
+  _ref__owned_ConnectionRefusedError_chpl addr;
+} chpl____wide__ref__owned_ConnectionRefusedError;
+
+typedef struct chpl_chpl____wide__ref__owned_ConnectionResetError_s {
+  chpl_localeID_t locale;
+  _ref__owned_ConnectionResetError_chpl addr;
+} chpl____wide__ref__owned_ConnectionResetError;
+
+typedef struct chpl_chpl____wide__ref__owned_DecodeError_s {
+  chpl_localeID_t locale;
+  _ref__owned_DecodeError_chpl addr;
+} chpl____wide__ref__owned_DecodeError;
+
+typedef struct chpl_chpl____wide__ref__owned_EOFError_s {
+  chpl_localeID_t locale;
+  _ref__owned_EOFError_chpl addr;
+} chpl____wide__ref__owned_EOFError;
+
+typedef struct chpl_chpl____wide__ref__owned_Error_s {
+  chpl_localeID_t locale;
+  _ref__owned_Error_chpl addr;
+} chpl____wide__ref__owned_Error;
+
+typedef struct chpl_chpl____wide__ref__owned_Error2_s {
+  chpl_localeID_t locale;
+  _ref__owned_Error_chpl2 addr;
+} chpl____wide__ref__owned_Error2;
+
+typedef struct chpl_chpl____wide__ref__owned_FileExistsError_s {
+  chpl_localeID_t locale;
+  _ref__owned_FileExistsError_chpl addr;
+} chpl____wide__ref__owned_FileExistsError;
+
+typedef struct chpl_chpl____wide__ref__owned_FileNotFoundError_s {
+  chpl_localeID_t locale;
+  _ref__owned_FileNotFoundError_chpl addr;
+} chpl____wide__ref__owned_FileNotFoundError;
+
+typedef struct chpl_chpl____wide__ref__owned_IOError_s {
+  chpl_localeID_t locale;
+  _ref__owned_IOError_chpl addr;
+} chpl____wide__ref__owned_IOError;
+
+typedef struct chpl_chpl____wide__ref__owned_IllegalArgumentError_s {
+  chpl_localeID_t locale;
+  _ref__owned_IllegalArgumentError_chpl addr;
+} chpl____wide__ref__owned_IllegalArgumentError;
+
+typedef struct chpl_chpl____wide__ref__owned_InterruptedError_s {
+  chpl_localeID_t locale;
+  _ref__owned_InterruptedError_chpl addr;
+} chpl____wide__ref__owned_InterruptedError;
+
+typedef struct chpl_chpl____wide__ref__owned_IsADirectoryError_s {
+  chpl_localeID_t locale;
+  _ref__owned_IsADirectoryError_chpl addr;
+} chpl____wide__ref__owned_IsADirectoryError;
+
+typedef struct chpl_chpl____wide__ref__owned_NotADirectoryError_s {
+  chpl_localeID_t locale;
+  _ref__owned_NotADirectoryError_chpl addr;
+} chpl____wide__ref__owned_NotADirectoryError;
+
+typedef struct chpl_chpl____wide__ref__owned_PermissionError_s {
+  chpl_localeID_t locale;
+  _ref__owned_PermissionError_chpl addr;
+} chpl____wide__ref__owned_PermissionError;
+
+typedef struct chpl_chpl____wide__ref__owned_ProcessLookupError_s {
+  chpl_localeID_t locale;
+  _ref__owned_ProcessLookupError_chpl addr;
+} chpl____wide__ref__owned_ProcessLookupError;
+
+typedef struct chpl_chpl____wide__ref__owned_SystemError_s {
+  chpl_localeID_t locale;
+  _ref__owned_SystemError_chpl addr;
+} chpl____wide__ref__owned_SystemError;
+
+typedef struct chpl_chpl____wide__ref__owned_TaskErrors_s {
+  chpl_localeID_t locale;
+  _ref__owned_TaskErrors_chpl addr;
+} chpl____wide__ref__owned_TaskErrors;
+
+typedef struct chpl_chpl____wide__ref__owned_TimeoutError_s {
+  chpl_localeID_t locale;
+  _ref__owned_TimeoutError_chpl addr;
+} chpl____wide__ref__owned_TimeoutError;
+
+typedef struct chpl_chpl____wide__ref__owned_UnexpectedEOFError_s {
+  chpl_localeID_t locale;
+  _ref__owned_UnexpectedEOFError_chpl addr;
+} chpl____wide__ref__owned_UnexpectedEOFError;
+
+typedef struct chpl_chpl____wide__ref__serialized_domain_1_int64_t_F__tuple_1_star_range_int64_t_bounded_F_T_s {
+  chpl_localeID_t locale;
+  _ref__serialized_domain_1_int64_t_F__tuple_1_star_range_int64_t_bounded_F_T_chpl addr;
+} chpl____wide__ref__serialized_domain_1_int64_t_F__tuple_1_star_range_int64_t_bounded_F_T;
+
+typedef struct chpl_chpl____wide__ref__tuple_1_star_int64_t_s {
+  chpl_localeID_t locale;
+  _ref__tuple_1_star_int64_t_chpl addr;
+} chpl____wide__ref__tuple_1_star_int64_t;
+
+typedef struct chpl_chpl____wide__ref__tuple_1_star_range_int64_t_bounded_F_s {
+  chpl_localeID_t locale;
+  _ref__tuple_1_star_range_int64_t_bounded_F_chpl addr;
+} chpl____wide__ref__tuple_1_star_range_int64_t_bounded_F;
+
+typedef struct chpl_chpl____wide__ref__tuple_2_BaseArr_BaseDom_s {
+  chpl_localeID_t locale;
+  _ref__tuple_2_BaseArr_BaseDom_chpl addr;
+} chpl____wide__ref__tuple_2_BaseArr_BaseDom;
+
+typedef struct chpl_chpl____wide__ref__tuple_2_BaseDom_BaseDist_s {
+  chpl_localeID_t locale;
+  _ref__tuple_2_BaseDom_BaseDist_chpl addr;
+} chpl____wide__ref__tuple_2_BaseDom_BaseDist;
+
+typedef struct chpl_chpl____wide__ref__tuple_2__ref_byteIndex_int64_t_s {
+  chpl_localeID_t locale;
+  _ref__tuple_2__ref_byteIndex_int64_t_chpl addr;
+} chpl____wide__ref__tuple_2__ref_byteIndex_int64_t;
+
+typedef struct chpl_chpl____wide__ref__tuple_2_c_ptr_uint8_t_int64_t_s {
+  chpl_localeID_t locale;
+  _ref__tuple_2_c_ptr_uint8_t_int64_t_chpl addr;
+} chpl____wide__ref__tuple_2_c_ptr_uint8_t_int64_t;
+
+typedef struct chpl_chpl____wide__ref__tuple_2_range_int64_t_bounded_F_int64_t_s {
+  chpl_localeID_t locale;
+  _ref__tuple_2_range_int64_t_bounded_F_int64_t_chpl addr;
+} chpl____wide__ref__tuple_2_range_int64_t_bounded_F_int64_t;
+
+typedef struct chpl_chpl____wide__ref__tuple_2_star_int64_t_s {
+  chpl_localeID_t locale;
+  _ref__tuple_2_star_int64_t_chpl addr;
+} chpl____wide__ref__tuple_2_star_int64_t;
+
+typedef struct chpl_chpl____wide__ref__tuple_3__ref_string_int64_t__ref_ioNewline_s {
+  chpl_localeID_t locale;
+  _ref__tuple_3__ref_string_int64_t__ref_ioNewline_chpl addr;
+} chpl____wide__ref__tuple_3__ref_string_int64_t__ref_ioNewline;
+
+typedef struct chpl_chpl____wide__ref__tuple_3_int32_t__ref_byteIndex_int64_t_s {
+  chpl_localeID_t locale;
+  _ref__tuple_3_int32_t__ref_byteIndex_int64_t_chpl addr;
+} chpl____wide__ref__tuple_3_int32_t__ref_byteIndex_int64_t;
+
+typedef struct chpl_chpl____wide__ref__tuple_3_int32_t_byteIndex_int64_t_s {
+  chpl_localeID_t locale;
+  _ref__tuple_3_int32_t_byteIndex_int64_t_chpl addr;
+} chpl____wide__ref__tuple_3_int32_t_byteIndex_int64_t;
+
+typedef struct chpl_chpl____wide__ref__tuple_3_syserr_int32_t_int32_t_s {
+  chpl_localeID_t locale;
+  _ref__tuple_3_syserr_int32_t_int32_t_chpl addr;
+} chpl____wide__ref__tuple_3_syserr_int32_t_int32_t;
+
+typedef struct chpl_chpl____wide__ref__tuple_6_star__ref_string_s {
+  chpl_localeID_t locale;
+  _ref__tuple_6_star__ref_string_chpl addr;
+} chpl____wide__ref__tuple_6_star__ref_string;
+
+typedef struct chpl_chpl____wide__ref__tuple_6_star_string_s {
+  chpl_localeID_t locale;
+  _ref__tuple_6_star_string_chpl addr;
+} chpl____wide__ref__tuple_6_star_string;
+
+typedef struct chpl_chpl____wide__ref__wide_AbstractLocaleModel_s {
+  chpl_localeID_t locale;
+  _ref__wide_AbstractLocaleModel_chpl addr;
+} chpl____wide__ref__wide_AbstractLocaleModel;
+
+typedef struct chpl_chpl____wide__ref__wide_AbstractRootLocale_s {
+  chpl_localeID_t locale;
+  _ref__wide_AbstractRootLocale_chpl addr;
+} chpl____wide__ref__wide_AbstractRootLocale;
+
+typedef struct chpl_chpl____wide__ref__wide_BadFormatError_s {
+  chpl_localeID_t locale;
+  _ref__wide_BadFormatError_chpl addr;
+} chpl____wide__ref__wide_BadFormatError;
+
+typedef struct chpl_chpl____wide__ref__wide_BadRegexError_s {
+  chpl_localeID_t locale;
+  _ref__wide_BadRegexError_chpl addr;
+} chpl____wide__ref__wide_BadRegexError;
+
+typedef struct chpl_chpl____wide__ref__wide_BaseArr_s {
+  chpl_localeID_t locale;
+  _ref__wide_BaseArr_chpl addr;
+} chpl____wide__ref__wide_BaseArr;
+
+typedef struct chpl_chpl____wide__ref__wide_BaseArrOverRectangularDom_1_int64_t_F_s {
+  chpl_localeID_t locale;
+  _ref__wide_BaseArrOverRectangularDom_1_int64_t_F_chpl addr;
+} chpl____wide__ref__wide_BaseArrOverRectangularDom_1_int64_t_F;
+
+typedef struct chpl_chpl____wide__ref__wide_BaseDist_s {
+  chpl_localeID_t locale;
+  _ref__wide_BaseDist_chpl addr;
+} chpl____wide__ref__wide_BaseDist;
+
+typedef struct chpl_chpl____wide__ref__wide_BaseDom_s {
+  chpl_localeID_t locale;
+  _ref__wide_BaseDom_chpl addr;
+} chpl____wide__ref__wide_BaseDom;
+
+typedef struct chpl_chpl____wide__ref__wide_BaseLocale_s {
+  chpl_localeID_t locale;
+  _ref__wide_BaseLocale_chpl addr;
+} chpl____wide__ref__wide_BaseLocale;
+
+typedef struct chpl_chpl____wide__ref__wide_BaseRectangularArr_1_int64_t_F_int64_t_s {
+  chpl_localeID_t locale;
+  _ref__wide_BaseRectangularArr_1_int64_t_F_int64_t_chpl addr;
+} chpl____wide__ref__wide_BaseRectangularArr_1_int64_t_F_int64_t;
+
+typedef struct chpl_chpl____wide__ref__wide_BaseRectangularArr_1_int64_t_F_locale_s {
+  chpl_localeID_t locale;
+  _ref__wide_BaseRectangularArr_1_int64_t_F_locale_chpl addr;
+} chpl____wide__ref__wide_BaseRectangularArr_1_int64_t_F_locale;
+
+typedef struct chpl_chpl____wide__ref__wide_BaseRectangularArr_1_int64_t_F_uint64_t_s {
+  chpl_localeID_t locale;
+  _ref__wide_BaseRectangularArr_1_int64_t_F_uint64_t_chpl addr;
+} chpl____wide__ref__wide_BaseRectangularArr_1_int64_t_F_uint64_t;
+
+typedef struct chpl_chpl____wide__ref__wide_BaseRectangularDom_1_int64_t_F_s {
+  chpl_localeID_t locale;
+  _ref__wide_BaseRectangularDom_1_int64_t_F_chpl addr;
+} chpl____wide__ref__wide_BaseRectangularDom_1_int64_t_F;
+
+typedef struct chpl_chpl____wide__ref__wide_BlockingIOError_s {
+  chpl_localeID_t locale;
+  _ref__wide_BlockingIOError_chpl addr;
+} chpl____wide__ref__wide_BlockingIOError;
+
+typedef struct chpl_chpl____wide__ref__wide_BrokenPipeError_s {
+  chpl_localeID_t locale;
+  _ref__wide_BrokenPipeError_chpl addr;
+} chpl____wide__ref__wide_BrokenPipeError;
+
+typedef struct chpl_chpl____wide__ref__wide_ChildProcessError_s {
+  chpl_localeID_t locale;
+  _ref__wide_ChildProcessError_chpl addr;
+} chpl____wide__ref__wide_ChildProcessError;
+
+typedef struct chpl_chpl____wide__ref__wide_CodepointSplittingError_s {
+  chpl_localeID_t locale;
+  _ref__wide_CodepointSplittingError_chpl addr;
+} chpl____wide__ref__wide_CodepointSplittingError;
+
+typedef struct chpl_chpl____wide__ref__wide_ConnectionAbortedError_s {
+  chpl_localeID_t locale;
+  _ref__wide_ConnectionAbortedError_chpl addr;
+} chpl____wide__ref__wide_ConnectionAbortedError;
+
+typedef struct chpl_chpl____wide__ref__wide_ConnectionError_s {
+  chpl_localeID_t locale;
+  _ref__wide_ConnectionError_chpl addr;
+} chpl____wide__ref__wide_ConnectionError;
+
+typedef struct chpl_chpl____wide__ref__wide_ConnectionRefusedError_s {
+  chpl_localeID_t locale;
+  _ref__wide_ConnectionRefusedError_chpl addr;
+} chpl____wide__ref__wide_ConnectionRefusedError;
+
+typedef struct chpl_chpl____wide__ref__wide_ConnectionResetError_s {
+  chpl_localeID_t locale;
+  _ref__wide_ConnectionResetError_chpl addr;
+} chpl____wide__ref__wide_ConnectionResetError;
+
+typedef struct chpl_chpl____wide__ref__wide_DecodeError_s {
+  chpl_localeID_t locale;
+  _ref__wide_DecodeError_chpl addr;
+} chpl____wide__ref__wide_DecodeError;
+
+typedef struct chpl_chpl____wide__ref__wide_DefaultDist_s {
+  chpl_localeID_t locale;
+  _ref__wide_DefaultDist_chpl addr;
+} chpl____wide__ref__wide_DefaultDist;
+
+typedef struct chpl_chpl____wide__ref__wide_DefaultRectangularArr_1_int64_t_F_int64_t_int64_t_s {
+  chpl_localeID_t locale;
+  _ref__wide_DefaultRectangularArr_1_int64_t_F_int64_t_int64_t_chpl addr;
+} chpl____wide__ref__wide_DefaultRectangularArr_1_int64_t_F_int64_t_int64_t;
+
+typedef struct chpl_chpl____wide__ref__wide_DefaultRectangularArr_1_int64_t_F_locale_int64_t_s {
+  chpl_localeID_t locale;
+  _ref__wide_DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl addr;
+} chpl____wide__ref__wide_DefaultRectangularArr_1_int64_t_F_locale_int64_t;
+
+typedef struct chpl_chpl____wide__ref__wide_DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t_s {
+  chpl_localeID_t locale;
+  _ref__wide_DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t_chpl addr;
+} chpl____wide__ref__wide_DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t;
+
+typedef struct chpl_chpl____wide__ref__wide_DefaultRectangularDom_1_int64_t_F_s {
+  chpl_localeID_t locale;
+  _ref__wide_DefaultRectangularDom_1_int64_t_F_chpl addr;
+} chpl____wide__ref__wide_DefaultRectangularDom_1_int64_t_F;
+
+typedef struct chpl_chpl____wide__ref__wide_DummyLocale_s {
+  chpl_localeID_t locale;
+  _ref__wide_DummyLocale_chpl addr;
+} chpl____wide__ref__wide_DummyLocale;
+
+typedef struct chpl_chpl____wide__ref__wide_EOFError_s {
+  chpl_localeID_t locale;
+  _ref__wide_EOFError_chpl addr;
+} chpl____wide__ref__wide_EOFError;
+
+typedef struct chpl_chpl____wide__ref__wide_Error_s {
+  chpl_localeID_t locale;
+  _ref__wide_Error_chpl addr;
+} chpl____wide__ref__wide_Error;
+
+typedef struct chpl_chpl____wide__ref__wide_FileExistsError_s {
+  chpl_localeID_t locale;
+  _ref__wide_FileExistsError_chpl addr;
+} chpl____wide__ref__wide_FileExistsError;
+
+typedef struct chpl_chpl____wide__ref__wide_FileNotFoundError_s {
+  chpl_localeID_t locale;
+  _ref__wide_FileNotFoundError_chpl addr;
+} chpl____wide__ref__wide_FileNotFoundError;
+
+typedef struct chpl_chpl____wide__ref__wide_IOError_s {
+  chpl_localeID_t locale;
+  _ref__wide_IOError_chpl addr;
+} chpl____wide__ref__wide_IOError;
+
+typedef struct chpl_chpl____wide__ref__wide_IllegalArgumentError_s {
+  chpl_localeID_t locale;
+  _ref__wide_IllegalArgumentError_chpl addr;
+} chpl____wide__ref__wide_IllegalArgumentError;
+
+typedef struct chpl_chpl____wide__ref__wide_InterruptedError_s {
+  chpl_localeID_t locale;
+  _ref__wide_InterruptedError_chpl addr;
+} chpl____wide__ref__wide_InterruptedError;
+
+typedef struct chpl_chpl____wide__ref__wide_IsADirectoryError_s {
+  chpl_localeID_t locale;
+  _ref__wide_IsADirectoryError_chpl addr;
+} chpl____wide__ref__wide_IsADirectoryError;
+
+typedef struct chpl_chpl____wide__ref__wide_LocaleModel_s {
+  chpl_localeID_t locale;
+  _ref__wide_LocaleModel_chpl addr;
+} chpl____wide__ref__wide_LocaleModel;
+
+typedef struct chpl_chpl____wide__ref__wide_NilThrownError_s {
+  chpl_localeID_t locale;
+  _ref__wide_NilThrownError_chpl addr;
+} chpl____wide__ref__wide_NilThrownError;
+
+typedef struct chpl_chpl____wide__ref__wide_NotADirectoryError_s {
+  chpl_localeID_t locale;
+  _ref__wide_NotADirectoryError_chpl addr;
+} chpl____wide__ref__wide_NotADirectoryError;
+
+typedef struct chpl_chpl____wide__ref__wide_PermissionError_s {
+  chpl_localeID_t locale;
+  _ref__wide_PermissionError_chpl addr;
+} chpl____wide__ref__wide_PermissionError;
+
+typedef struct chpl_chpl____wide__ref__wide_ProcessLookupError_s {
+  chpl_localeID_t locale;
+  _ref__wide_ProcessLookupError_chpl addr;
+} chpl____wide__ref__wide_ProcessLookupError;
+
+typedef struct chpl_chpl____wide__ref__wide_QioPluginChannel_s {
+  chpl_localeID_t locale;
+  _ref__wide_QioPluginChannel_chpl addr;
+} chpl____wide__ref__wide_QioPluginChannel;
+
+typedef struct chpl_chpl____wide__ref__wide_QioPluginFile_s {
+  chpl_localeID_t locale;
+  _ref__wide_QioPluginFile_chpl addr;
+} chpl____wide__ref__wide_QioPluginFile;
+
+typedef struct chpl_chpl____wide__ref__wide_RootLocale_s {
+  chpl_localeID_t locale;
+  _ref__wide_RootLocale_chpl addr;
+} chpl____wide__ref__wide_RootLocale;
+
+typedef struct chpl_chpl____wide__ref__wide_SystemError_s {
+  chpl_localeID_t locale;
+  _ref__wide_SystemError_chpl addr;
+} chpl____wide__ref__wide_SystemError;
+
+typedef struct chpl_chpl____wide__ref__wide_TaskErrors_s {
+  chpl_localeID_t locale;
+  _ref__wide_TaskErrors_chpl addr;
+} chpl____wide__ref__wide_TaskErrors;
+
+typedef struct chpl_chpl____wide__ref__wide_TimeoutError_s {
+  chpl_localeID_t locale;
+  _ref__wide_TimeoutError_chpl addr;
+} chpl____wide__ref__wide_TimeoutError;
+
+typedef struct chpl_chpl____wide__ref__wide_UnexpectedEOFError_s {
+  chpl_localeID_t locale;
+  _ref__wide_UnexpectedEOFError_chpl addr;
+} chpl____wide__ref__wide_UnexpectedEOFError;
+
+typedef struct chpl_chpl____wide__ref__wide__EndCountBase_s {
+  chpl_localeID_t locale;
+  _ref__wide__EndCountBase_chpl addr;
+} chpl____wide__ref__wide__EndCountBase;
+
+typedef struct chpl_chpl____wide__ref__wide__EndCount_AtomicT_int64_t_int64_t_s {
+  chpl_localeID_t locale;
+  _ref__wide__EndCount_AtomicT_int64_t_int64_t_chpl addr;
+} chpl____wide__ref__wide__EndCount_AtomicT_int64_t_int64_t;
+
+typedef struct chpl_chpl____wide__ref__wide__EndCount_RAtomicT_int64_t_RAtomicT_int64_t_s {
+  chpl_localeID_t locale;
+  _ref__wide__EndCount_RAtomicT_int64_t_RAtomicT_int64_t_chpl addr;
+} chpl____wide__ref__wide__EndCount_RAtomicT_int64_t_RAtomicT_int64_t;
+
+typedef struct chpl_chpl____wide__ref__wide__array_DefaultRectangularArr_1_int64_t_F_locale_int64_t_s {
+  chpl_localeID_t locale;
+  _ref__wide__array_DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl addr;
+} chpl____wide__ref__wide__array_DefaultRectangularArr_1_int64_t_F_locale_int64_t;
+
+typedef struct chpl_chpl____wide__ref__wide__ddata_int64_t_s {
+  chpl_localeID_t locale;
+  _ref__wide__ddata_int64_t_chpl addr;
+} chpl____wide__ref__wide__ddata_int64_t;
+
+typedef struct chpl_chpl____wide__ref__wide__ddata_locale_s {
+  chpl_localeID_t locale;
+  _ref__wide__ddata_locale_chpl addr;
+} chpl____wide__ref__wide__ddata_locale;
+
+typedef struct chpl_chpl____wide__ref__wide__ddata_uint64_t_s {
+  chpl_localeID_t locale;
+  _ref__wide__ddata_uint64_t_chpl addr;
+} chpl____wide__ref__wide__ddata_uint64_t;
+
+typedef struct chpl_chpl____wide__ref__wide__distribution_DefaultDist_s {
+  chpl_localeID_t locale;
+  _ref__wide__distribution_DefaultDist_chpl addr;
+} chpl____wide__ref__wide__distribution_DefaultDist;
+
+typedef struct chpl_chpl____wide__ref__wide__domain_DefaultRectangularDom_1_int64_t_F_s {
+  chpl_localeID_t locale;
+  _ref__wide__domain_DefaultRectangularDom_1_int64_t_F_chpl addr;
+} chpl____wide__ref__wide__domain_DefaultRectangularDom_1_int64_t_F;
+
+typedef struct chpl_chpl____wide__ref__wide__ic_chpl_bytes__ref_string_s {
+  chpl_localeID_t locale;
+  _ref__wide__ic_chpl_bytes__ref_string_chpl addr;
+} chpl____wide__ref__wide__ic_chpl_bytes__ref_string;
+
+typedef struct chpl_chpl____wide__ref__wide__ic_chpl_direct_counted_range_iter_s {
+  chpl_localeID_t locale;
+  _ref__wide__ic_chpl_direct_counted_range_iter_chpl addr;
+} chpl____wide__ref__wide__ic_chpl_direct_counted_range_iter;
+
+typedef struct chpl_chpl____wide__ref__wide__ic_chpl_direct_counted_range_iter_helper_s {
+  chpl_localeID_t locale;
+  _ref__wide__ic_chpl_direct_counted_range_iter_helper_chpl addr;
+} chpl____wide__ref__wide__ic_chpl_direct_counted_range_iter_helper;
+
+typedef struct chpl_chpl____wide__ref__wide__ic_chpl_direct_param_stride_range_iter_s {
+  chpl_localeID_t locale;
+  _ref__wide__ic_chpl_direct_param_stride_range_iter_chpl addr;
+} chpl____wide__ref__wide__ic_chpl_direct_param_stride_range_iter;
+
+typedef struct chpl_chpl____wide__ref__wide__ic_these_range_int64_t_bounded_F_s {
+  chpl_localeID_t locale;
+  _ref__wide__ic_these_range_int64_t_bounded_F_chpl addr;
+} chpl____wide__ref__wide__ic_these_range_int64_t_bounded_F;
+
+typedef struct chpl_chpl____wide__ref__wide_chpl_ModuleDeinit_s {
+  chpl_localeID_t locale;
+  _ref__wide_chpl_ModuleDeinit_chpl addr;
+} chpl____wide__ref__wide_chpl_ModuleDeinit;
+
+typedef struct chpl_chpl____wide__ref__wide_object_s {
+  chpl_localeID_t locale;
+  _ref__wide_object_chpl addr;
+} chpl____wide__ref__wide_object;
+
+typedef struct chpl_chpl____wide__ref_atomic_bool_s {
+  chpl_localeID_t locale;
+  _ref_atomic_bool_chpl addr;
+} chpl____wide__ref_atomic_bool;
+
+typedef struct chpl_chpl____wide__ref_atomic_int_least64_t_s {
+  chpl_localeID_t locale;
+  _ref_atomic_int_least64_t_chpl addr;
+} chpl____wide__ref_atomic_int_least64_t;
+
+typedef struct chpl_chpl____wide__ref_byteIndex_s {
+  chpl_localeID_t locale;
+  _ref_byteIndex_chpl addr;
+} chpl____wide__ref_byteIndex;
+
+typedef struct chpl_chpl____wide__ref_bytes_s {
+  chpl_localeID_t locale;
+  _ref_bytes_chpl addr;
+} chpl____wide__ref_bytes;
+
+typedef struct chpl_chpl____wide__ref_c_ptr__ddata_int64_t_s {
+  chpl_localeID_t locale;
+  _ref_c_ptr__ddata_int64_t_chpl addr;
+} chpl____wide__ref_c_ptr__ddata_int64_t;
+
+typedef struct chpl_chpl____wide__ref_c_ptr__ddata_locale_s {
+  chpl_localeID_t locale;
+  _ref_c_ptr__ddata_locale_chpl addr;
+} chpl____wide__ref_c_ptr__ddata_locale;
+
+typedef struct chpl_chpl____wide__ref_c_ptr__ddata_uint64_t_s {
+  chpl_localeID_t locale;
+  _ref_c_ptr__ddata_uint64_t_chpl addr;
+} chpl____wide__ref_c_ptr__ddata_uint64_t;
+
+typedef struct chpl_chpl____wide__ref_c_ptr__owned_Error_s {
+  chpl_localeID_t locale;
+  _ref_c_ptr__owned_Error_chpl addr;
+} chpl____wide__ref_c_ptr__owned_Error;
+
+typedef struct chpl_chpl____wide__ref_c_ptr_c_string_s {
+  chpl_localeID_t locale;
+  _ref_c_ptr_c_string_chpl addr;
+} chpl____wide__ref_c_ptr_c_string;
+
+typedef struct chpl_chpl____wide__ref_c_ptr_c_void_ptr_s {
+  chpl_localeID_t locale;
+  _ref_c_ptr_c_void_ptr_chpl addr;
+} chpl____wide__ref_c_ptr_c_void_ptr;
+
+typedef struct chpl_chpl____wide__ref_c_ptr_chpl_localeID_t_s {
+  chpl_localeID_t locale;
+  _ref_c_ptr_chpl_localeID_t_chpl addr;
+} chpl____wide__ref_c_ptr_chpl_localeID_t;
+
+typedef struct chpl_chpl____wide__ref_c_ptr_chpl_privateObject_t_s {
+  chpl_localeID_t locale;
+  _ref_c_ptr_chpl_privateObject_t_chpl addr;
+} chpl____wide__ref_c_ptr_chpl_privateObject_t;
+
+typedef struct chpl_chpl____wide__ref_c_ptr_chpl_task_infoChapel_t_s {
+  chpl_localeID_t locale;
+  _ref_c_ptr_chpl_task_infoChapel_t_chpl addr;
+} chpl____wide__ref_c_ptr_chpl_task_infoChapel_t;
+
+typedef struct chpl_chpl____wide__ref_c_ptr_int64_t_s {
+  chpl_localeID_t locale;
+  _ref_c_ptr_int64_t_chpl addr;
+} chpl____wide__ref_c_ptr_int64_t;
+
+typedef struct chpl_chpl____wide__ref_c_ptr_uint8_t_s {
+  chpl_localeID_t locale;
+  _ref_c_ptr_uint8_t_chpl addr;
+} chpl____wide__ref_c_ptr_uint8_t;
+
+typedef struct chpl_chpl____wide__ref_c_string_s {
+  chpl_localeID_t locale;
+  _ref_c_string_chpl addr;
+} chpl____wide__ref_c_string;
+
+typedef struct chpl_chpl____wide__ref_c_void_ptr_s {
+  chpl_localeID_t locale;
+  _ref_c_void_ptr_chpl addr;
+} chpl____wide__ref_c_void_ptr;
+
+typedef struct chpl_chpl____wide__ref_channel_F_dynamic_T_s {
+  chpl_localeID_t locale;
+  _ref_channel_F_dynamic_T_chpl addr;
+} chpl____wide__ref_channel_F_dynamic_T;
+
+typedef struct chpl_chpl____wide__ref_channel_T_dynamic_T_s {
+  chpl_localeID_t locale;
+  _ref_channel_T_dynamic_T_chpl addr;
+} chpl____wide__ref_channel_T_dynamic_T;
+
+typedef struct chpl_chpl____wide__ref_chpl_LocalSpinlock_s {
+  chpl_localeID_t locale;
+  _ref_chpl_LocalSpinlock_chpl addr;
+} chpl____wide__ref_chpl_LocalSpinlock;
+
+typedef struct chpl_chpl____wide__ref_chpl_TaskErrors_s {
+  chpl_localeID_t locale;
+  _ref_chpl_TaskErrors_chpl addr;
+} chpl____wide__ref_chpl_TaskErrors;
+
+typedef struct chpl_chpl____wide__ref_chpl__inPlaceBuffer_s {
+  chpl_localeID_t locale;
+  _ref_chpl__inPlaceBuffer_chpl addr;
+} chpl____wide__ref_chpl__inPlaceBuffer;
+
+typedef struct chpl_chpl____wide__ref_chpl_bool_s {
+  chpl_localeID_t locale;
+  _ref_chpl_bool_chpl addr;
+} chpl____wide__ref_chpl_bool;
+
+typedef struct chpl_chpl____wide__ref_chpl_comm_on_bundle_t_s {
+  chpl_localeID_t locale;
+  _ref_chpl_comm_on_bundle_t_chpl addr;
+} chpl____wide__ref_chpl_comm_on_bundle_t;
+
+typedef struct chpl_chpl____wide__ref_chpl_localeID_t_s {
+  chpl_localeID_t locale;
+  _ref_chpl_localeID_t_chpl addr;
+} chpl____wide__ref_chpl_localeID_t;
+
+typedef struct chpl_chpl____wide__ref_chpl_localeTreeRecord_s {
+  chpl_localeID_t locale;
+  _ref_chpl_localeTreeRecord_chpl addr;
+} chpl____wide__ref_chpl_localeTreeRecord;
+
+typedef struct chpl_chpl____wide__ref_chpl_main_argument_s {
+  chpl_localeID_t locale;
+  _ref_chpl_main_argument_chpl addr;
+} chpl____wide__ref_chpl_main_argument;
+
+typedef struct chpl_chpl____wide__ref_chpl_opaque_array_s {
+  chpl_localeID_t locale;
+  _ref_chpl_opaque_array_chpl addr;
+} chpl____wide__ref_chpl_opaque_array;
+
+typedef struct chpl_chpl____wide__ref_chpl_privateObject_t_s {
+  chpl_localeID_t locale;
+  _ref_chpl_privateObject_t_chpl addr;
+} chpl____wide__ref_chpl_privateObject_t;
+
+typedef struct chpl_chpl____wide__ref_chpl_root_locale_accum_s {
+  chpl_localeID_t locale;
+  _ref_chpl_root_locale_accum_chpl addr;
+} chpl____wide__ref_chpl_root_locale_accum;
+
+typedef struct chpl_chpl____wide__ref_chpl_task_bundle_t_s {
+  chpl_localeID_t locale;
+  _ref_chpl_task_bundle_t_chpl addr;
+} chpl____wide__ref_chpl_task_bundle_t;
+
+typedef struct chpl_chpl____wide__ref_codepointIndex_s {
+  chpl_localeID_t locale;
+  _ref_codepointIndex_chpl addr;
+} chpl____wide__ref_codepointIndex;
+
+typedef struct chpl_chpl____wide__ref_file_s {
+  chpl_localeID_t locale;
+  _ref_file_chpl addr;
+} chpl____wide__ref_file;
+
+typedef struct chpl_chpl____wide__ref_int32_t_s {
+  chpl_localeID_t locale;
+  _ref_int32_t_chpl addr;
+} chpl____wide__ref_int32_t;
+
+typedef struct chpl_chpl____wide__ref_int64_t_s {
+  chpl_localeID_t locale;
+  _ref_int64_t_chpl addr;
+} chpl____wide__ref_int64_t;
+
+typedef struct chpl_chpl____wide__ref_iostyleInternal_s {
+  chpl_localeID_t locale;
+  _ref_iostyleInternal_chpl addr;
+} chpl____wide__ref_iostyleInternal;
+
+typedef struct chpl_chpl____wide__ref_locale_s {
+  chpl_localeID_t locale;
+  _ref_locale_chpl addr;
+} chpl____wide__ref_locale;
+
+typedef struct chpl_chpl____wide__ref_qio_channel_ptr_t_s {
+  chpl_localeID_t locale;
+  _ref_qio_channel_ptr_t_chpl addr;
+} chpl____wide__ref_qio_channel_ptr_t;
+
+typedef struct chpl_chpl____wide__ref_qio_file_ptr_t_s {
+  chpl_localeID_t locale;
+  _ref_qio_file_ptr_t_chpl addr;
+} chpl____wide__ref_qio_file_ptr_t;
+
+typedef struct chpl_chpl____wide__ref_range_byteIndex_boundedHigh_F_s {
+  chpl_localeID_t locale;
+  _ref_range_byteIndex_boundedHigh_F_chpl addr;
+} chpl____wide__ref_range_byteIndex_boundedHigh_F;
+
+typedef struct chpl_chpl____wide__ref_range_byteIndex_boundedLow_F_s {
+  chpl_localeID_t locale;
+  _ref_range_byteIndex_boundedLow_F_chpl addr;
+} chpl____wide__ref_range_byteIndex_boundedLow_F;
+
+typedef struct chpl_chpl____wide__ref_range_byteIndex_bounded_F_s {
+  chpl_localeID_t locale;
+  _ref_range_byteIndex_bounded_F_chpl addr;
+} chpl____wide__ref_range_byteIndex_bounded_F;
+
+typedef struct chpl_chpl____wide__ref_range_int64_t_boundedHigh_F_s {
+  chpl_localeID_t locale;
+  _ref_range_int64_t_boundedHigh_F_chpl addr;
+} chpl____wide__ref_range_int64_t_boundedHigh_F;
+
+typedef struct chpl_chpl____wide__ref_range_int64_t_boundedLow_F_s {
+  chpl_localeID_t locale;
+  _ref_range_int64_t_boundedLow_F_chpl addr;
+} chpl____wide__ref_range_int64_t_boundedLow_F;
+
+typedef struct chpl_chpl____wide__ref_range_int64_t_bounded_F_s {
+  chpl_localeID_t locale;
+  _ref_range_int64_t_bounded_F_chpl addr;
+} chpl____wide__ref_range_int64_t_bounded_F;
+
+typedef struct chpl_chpl____wide__ref_syserr_s {
+  chpl_localeID_t locale;
+  _ref_syserr_chpl addr;
+} chpl____wide__ref_syserr;
+
+typedef struct chpl_chpl____wide__ref_uint64_t_s {
+  chpl_localeID_t locale;
+  _ref_uint64_t_chpl addr;
+} chpl____wide__ref_uint64_t;
+
+typedef struct chpl_chpl____wide__ref_uint8_t_s {
+  chpl_localeID_t locale;
+  _ref_uint8_t_chpl addr;
+} chpl____wide__ref_uint8_t;
+
+typedef struct chpl_chpl____wide_heap_chpl_ModuleDeinit_s {
+  chpl_localeID_t locale;
+  heap_chpl_ModuleDeinit_chpl addr;
+} chpl____wide_heap_chpl_ModuleDeinit;
+
+/*** Classes ***/
+
+typedef struct chpl__class_localson_fn_chpl_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_AtomicBool _1_this;
+} chpl__class_localson_fn_chpl_object;
+
+typedef struct chpl__class_localson_fn_chpl2_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_AtomicBool _1_this;
+  chpl____wide__ref_chpl_bool _2_ret;
+} chpl__class_localson_fn_chpl2_object;
+
+typedef struct chpl__class_localson_fn_chpl3_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_AtomicBool _1_this;
+  chpl_bool _2_value;
+} chpl__class_localson_fn_chpl3_object;
+
+typedef struct chpl__class_localson_fn_chpl4_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_AtomicBool _1_this;
+  chpl_bool _2_value;
+  chpl____wide__ref_chpl_bool _3_ret;
+} chpl__class_localson_fn_chpl4_object;
+
+typedef struct chpl__class_localson_fn_chpl5_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_AtomicT_int64_t _1_this;
+} chpl__class_localson_fn_chpl5_object;
+
+typedef struct chpl__class_localson_fn_chpl6_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_AtomicT_int64_t _1_this;
+  chpl____wide__ref_int64_t _2_ret;
+} chpl__class_localson_fn_chpl6_object;
+
+typedef struct chpl__class_localson_fn_chpl7_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_AtomicT_int64_t _1_this;
+  int64_t _2_value;
+} chpl__class_localson_fn_chpl7_object;
+
+typedef struct chpl__class_localson_fn_chpl8_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_AtomicT_int64_t _1_this;
+  int64_t _2_value;
+} chpl__class_localson_fn_chpl8_object;
+
+typedef struct chpl__class_localson_fn_chpl9_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_AtomicT_int64_t _1_this;
+  int64_t _2_value;
+} chpl__class_localson_fn_chpl9_object;
+
+typedef struct chpl__class_localson_fn_chpl10_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_AtomicT_int64_t _1_this;
+  int64_t _2_value;
+} chpl__class_localson_fn_chpl10_object;
+
+typedef struct chpl__class_localson_fn_chpl11_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_AtomicT_int64_t _1_this;
+  int64_t _2_value;
+} chpl__class_localson_fn_chpl11_object;
+
+typedef struct chpl__class_localson_fn_chpl12_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_AtomicT_int64_t _1_this;
+  int64_t _2_value;
+} chpl__class_localson_fn_chpl12_object;
+
+typedef struct chpl__class_localson_fn_chpl13_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_string _1_x;
+  chpl____serializeHelper _2_needle_data;
+  range_byteIndex_boundedLow_F_chpl _3_region;
+  chpl____wide__ref_int64_t _4_ret;
+} chpl__class_localson_fn_chpl13_object;
+
+typedef struct chpl__class_localson_fn_chpl14_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_string _1_lhs;
+  chpl____wide__ref_string _2_rhs;
+} chpl__class_localson_fn_chpl14_object;
+
+typedef struct chpl__class_localson_fn_chpl15_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_string _1_lhs;
+  chpl____wide__ref_string _2_rhs;
+} chpl__class_localson_fn_chpl15_object;
+
+typedef struct chpl__class_localson_fn_chpl16_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  int64_t _1_pid;
+  chpl____wide_object _2_original;
+} chpl__class_localson_fn_chpl16_object;
+
+typedef struct chpl__class_localscobegin_fn_chpl_s {
+  chpl_task_bundle_t _runtime_hdr;
+  int64_t _0_pid;
+  chpl____wide_object _1_original;
+  chpl___EndCount_AtomicT_int64_t_int64_t _2__cobeginCount;
+} chpl__class_localscobegin_fn_chpl_object;
+
+typedef struct chpl__class_localson_fn_chpl17_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  int64_t _1_pid;
+  chpl____wide_object _2_original;
+} chpl__class_localson_fn_chpl17_object;
+
+typedef struct chpl__class_localscobegin_fn_chpl2_s {
+  chpl_task_bundle_t _runtime_hdr;
+  int64_t _0_pid;
+  chpl____wide_object _1_original;
+  chpl___EndCount_AtomicT_int64_t_int64_t _2__cobeginCount;
+} chpl__class_localscobegin_fn_chpl2_object;
+
+typedef struct chpl__class_localson_fn_chpl18_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  int64_t _1_pid;
+  chpl____wide_object _2_original;
+} chpl__class_localson_fn_chpl18_object;
+
+typedef struct chpl__class_localson_fn_chpl19_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  _distribution_DefaultDist_chpl _1_rvfDerefTmp;
+} chpl__class_localson_fn_chpl19_object;
+
+typedef struct chpl__class_localson_fn_chpl20_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_DefaultRectangularArr_1_int64_t_F_locale_int64_t _1__instance;
+  chpl_bool _2_deinitElts;
+} chpl__class_localson_fn_chpl20_object;
+
+typedef struct chpl__class_localson_fn_chpl21_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_BaseArr _1__instance;
+  chpl_bool _2_deinitElts;
+} chpl__class_localson_fn_chpl21_object;
+
+typedef struct chpl__class_localscoforall_fn_chpl_s {
+  chpl_task_bundle_t _runtime_hdr;
+  int64_t _0_len;
+  int64_t _1_numChunks;
+  range_int64_t_bounded_F_chpl _2_call_tmp;
+  chpl___EndCount_AtomicT_int64_t_int64_t _3__coforallCount;
+  int64_t _4_chunk;
+  _ddata_locale_chpl _5_x;
+} chpl__class_localscoforall_fn_chpl_object;
+
+typedef struct chpl__class_localscoforall_fn_chpl2_s {
+  chpl_task_bundle_t _runtime_hdr;
+  int64_t _0_len;
+  int64_t _1_numChunks;
+  range_int64_t_bounded_F_chpl _2_call_tmp;
+  chpl___EndCount_AtomicT_int64_t_int64_t _3__coforallCount;
+  int64_t _4_chunk;
+  _ddata_int64_t_chpl _5_x;
+} chpl__class_localscoforall_fn_chpl2_object;
+
+typedef struct chpl__class_localscoforall_fn_chpl3_s {
+  chpl_task_bundle_t _runtime_hdr;
+  int64_t _0_len;
+  int64_t _1_numChunks;
+  range_int64_t_bounded_F_chpl _2_call_tmp;
+  chpl___EndCount_AtomicT_int64_t_int64_t _3__coforallCount;
+  int64_t _4_chunk;
+  _ddata_uint64_t_chpl _5_x;
+} chpl__class_localscoforall_fn_chpl3_object;
+
+typedef struct chpl__class_localson_fn_chpl22_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_ConnectionResetError _1_arg;
+} chpl__class_localson_fn_chpl22_object;
+
+typedef struct chpl__class_localson_fn_chpl23_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_ProcessLookupError _1_arg;
+} chpl__class_localson_fn_chpl23_object;
+
+typedef struct chpl__class_localson_fn_chpl24_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__EndCount_AtomicT_int64_t_int64_t _1_arg;
+} chpl__class_localson_fn_chpl24_object;
+
+typedef struct chpl__class_localson_fn_chpl25_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_Error _1_arg;
+} chpl__class_localson_fn_chpl25_object;
+
+typedef struct chpl__class_localson_fn_chpl26_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_TaskErrors _1_arg;
+} chpl__class_localson_fn_chpl26_object;
+
+typedef struct chpl__class_localson_fn_chpl27_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__EndCount_RAtomicT_int64_t_RAtomicT_int64_t _1_arg;
+} chpl__class_localson_fn_chpl27_object;
+
+typedef struct chpl__class_localson_fn_chpl28_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_chpl_ModuleDeinit _1_arg;
+} chpl__class_localson_fn_chpl28_object;
+
+typedef struct chpl__class_localson_fn_chpl29_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_PermissionError _1_arg;
+} chpl__class_localson_fn_chpl29_object;
+
+typedef struct chpl__class_localson_fn_chpl30_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_BaseArr _1_arg;
+} chpl__class_localson_fn_chpl30_object;
+
+typedef struct chpl__class_localson_fn_chpl31_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_object _1_arg;
+} chpl__class_localson_fn_chpl31_object;
+
+typedef struct chpl__class_localson_fn_chpl32_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_BadFormatError _1_arg;
+} chpl__class_localson_fn_chpl32_object;
+
+typedef struct chpl__class_localson_fn_chpl33_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_BaseDom _1_arg;
+} chpl__class_localson_fn_chpl33_object;
+
+typedef struct chpl__class_localson_fn_chpl34_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_BaseDist _1_arg;
+} chpl__class_localson_fn_chpl34_object;
+
+typedef struct chpl__class_localson_fn_chpl35_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_QioPluginChannel _1_arg;
+} chpl__class_localson_fn_chpl35_object;
+
+typedef struct chpl__class_localson_fn_chpl36_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_QioPluginFile _1_arg;
+} chpl__class_localson_fn_chpl36_object;
+
+typedef struct chpl__class_localson_fn_chpl37_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_DecodeError _1_arg;
+} chpl__class_localson_fn_chpl37_object;
+
+typedef struct chpl__class_localson_fn_chpl38_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_BlockingIOError _1_arg;
+} chpl__class_localson_fn_chpl38_object;
+
+typedef struct chpl__class_localson_fn_chpl39_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_ChildProcessError _1_arg;
+} chpl__class_localson_fn_chpl39_object;
+
+typedef struct chpl__class_localson_fn_chpl40_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_BrokenPipeError _1_arg;
+} chpl__class_localson_fn_chpl40_object;
+
+typedef struct chpl__class_localson_fn_chpl41_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_ConnectionAbortedError _1_arg;
+} chpl__class_localson_fn_chpl41_object;
+
+typedef struct chpl__class_localson_fn_chpl42_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_ConnectionRefusedError _1_arg;
+} chpl__class_localson_fn_chpl42_object;
+
+typedef struct chpl__class_localson_fn_chpl43_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_BaseLocale _1_arg;
+} chpl__class_localson_fn_chpl43_object;
+
+typedef struct chpl__class_localson_fn_chpl44_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_FileExistsError _1_arg;
+} chpl__class_localson_fn_chpl44_object;
+
+typedef struct chpl__class_localson_fn_chpl45_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_FileNotFoundError _1_arg;
+} chpl__class_localson_fn_chpl45_object;
+
+typedef struct chpl__class_localson_fn_chpl46_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_InterruptedError _1_arg;
+} chpl__class_localson_fn_chpl46_object;
+
+typedef struct chpl__class_localson_fn_chpl47_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t _1_arg;
+} chpl__class_localson_fn_chpl47_object;
+
+typedef struct chpl__class_localson_fn_chpl48_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_IsADirectoryError _1_arg;
+} chpl__class_localson_fn_chpl48_object;
+
+typedef struct chpl__class_localson_fn_chpl49_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_DefaultRectangularArr_1_int64_t_F_int64_t_int64_t _1_arg;
+} chpl__class_localson_fn_chpl49_object;
+
+typedef struct chpl__class_localson_fn_chpl50_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_UnexpectedEOFError _1_arg;
+} chpl__class_localson_fn_chpl50_object;
+
+typedef struct chpl__class_localson_fn_chpl51_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_NotADirectoryError _1_arg;
+} chpl__class_localson_fn_chpl51_object;
+
+typedef struct chpl__class_localson_fn_chpl52_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_DefaultRectangularArr_1_int64_t_F_locale_int64_t _1_arg;
+} chpl__class_localson_fn_chpl52_object;
+
+typedef struct chpl__class_localson_fn_chpl53_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_DefaultRectangularDom_1_int64_t_F _1_arg;
+} chpl__class_localson_fn_chpl53_object;
+
+typedef struct chpl__class_localson_fn_chpl54_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_CodepointSplittingError _1_arg;
+} chpl__class_localson_fn_chpl54_object;
+
+typedef struct chpl__class_localson_fn_chpl55_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_IllegalArgumentError _1_arg;
+} chpl__class_localson_fn_chpl55_object;
+
+typedef struct chpl__class_localson_fn_chpl56_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_TimeoutError _1_arg;
+} chpl__class_localson_fn_chpl56_object;
+
+typedef struct chpl__class_localson_fn_chpl57_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_SystemError _1_arg;
+} chpl__class_localson_fn_chpl57_object;
+
+typedef struct chpl__class_localson_fn_chpl58_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_IOError _1_arg;
+} chpl__class_localson_fn_chpl58_object;
+
+typedef struct chpl__class_localson_fn_chpl59_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_EOFError _1_arg;
+} chpl__class_localson_fn_chpl59_object;
+
+typedef struct chpl__class_localson_fn_chpl60_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_chpl_bool _1_free_dist;
+  chpl____wide_BaseDist _2_this;
+} chpl__class_localson_fn_chpl60_object;
+
+typedef struct chpl__class_localson_fn_chpl61_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_int64_t _1_count;
+  chpl____wide_BaseDist _2_this;
+} chpl__class_localson_fn_chpl61_object;
+
+typedef struct chpl__class_localson_fn_chpl62_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_BaseDist _1_rvfDerefTmp;
+  chpl____wide__ref_chpl_bool _2_free_dom;
+  chpl____wide__ref_chpl_bool _3_remove_dist;
+  chpl____wide_BaseDom _4_this;
+} chpl__class_localson_fn_chpl62_object;
+
+typedef struct chpl__class_localson_fn_chpl63_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_BaseDom _1_this;
+  chpl____wide_BaseArr _2_x;
+  chpl____wide__ref_int64_t _3_count;
+} chpl__class_localson_fn_chpl63_object;
+
+typedef struct chpl__class_localson_fn_chpl64_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_BaseDom _1_this;
+  chpl____wide_BaseArr _2_x;
+} chpl__class_localson_fn_chpl64_object;
+
+typedef struct chpl__class_localson_fn_chpl65_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  _serialized_domain_1_int64_t_F__tuple_1_star_range_int64_t_bounded_F_T_chpl _1_rhs_data;
+  chpl____wide_BaseArrOverRectangularDom_1_int64_t_F _2_rvfDerefTmp;
+  chpl____wide__ref_int64_t _3_idxType;
+  chpl____wide_BaseArr _4_e;
+} chpl__class_localson_fn_chpl65_object;
+
+typedef struct chpl__class_localson_fn_chpl66_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_BaseArrOverRectangularDom_1_int64_t_F _1_rvfDerefTmp;
+} chpl__class_localson_fn_chpl66_object;
+
+typedef struct chpl__class_localson_fn_chpl67_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  _domain_DefaultRectangularDom_1_int64_t_F_chpl _1_rvfDerefTmp;
+} chpl__class_localson_fn_chpl67_object;
+
+typedef struct chpl__class_localscoforall_fn_chpl4_s {
+  chpl_task_bundle_t _runtime_hdr;
+  chpl___EndCount_AtomicT_int64_t_int64_t _0__coforallCount;
+  int64_t _1_i;
+} chpl__class_localscoforall_fn_chpl4_object;
+
+typedef struct chpl__class_localson_fn_chpl68_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_chpl_LocalSpinlock _1_this;
+} chpl__class_localson_fn_chpl68_object;
+
+typedef struct chpl__class_localscoforall_fn_chpl5_s {
+  chpl_task_bundle_t _runtime_hdr;
+  int64_t _0_numChunks;
+  int64_t _1_parDim;
+  DefaultRectangularDom_1_int64_t_F_chpl _2_coerce_tmp;
+  chpl___EndCount_AtomicT_int64_t_int64_t _3__coforallCount;
+  int64_t _4_chunk;
+  DefaultRectangularArr_1_int64_t_F_int64_t_int64_t_chpl _6_copy;
+  chpl____wide_DefaultRectangularArr_1_int64_t_F_int64_t_int64_t _7_this;
+} chpl__class_localscoforall_fn_chpl5_object;
+
+typedef struct chpl__class_localscoforall_fn_chpl6_s {
+  chpl_task_bundle_t _runtime_hdr;
+  int64_t _0_numChunks;
+  int64_t _1_parDim;
+  DefaultRectangularDom_1_int64_t_F_chpl _2_coerce_tmp;
+  chpl___EndCount_AtomicT_int64_t_int64_t _3__coforallCount;
+  int64_t _4_chunk;
+  DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t_chpl _6_copy;
+  chpl____wide_DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t _7_this;
+} chpl__class_localscoforall_fn_chpl6_object;
+
+typedef struct chpl__class_localscoforall_fn_chpl7_s {
+  chpl_task_bundle_t _runtime_hdr;
+  int64_t _0_numChunks;
+  int64_t _1_parDim;
+  DefaultRectangularDom_1_int64_t_F_chpl _2_coerce_tmp;
+  chpl___EndCount_AtomicT_int64_t_int64_t _3__coforallCount;
+  int64_t _4_chunk;
+  DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl _5_copy;
+  chpl____wide_DefaultRectangularArr_1_int64_t_F_locale_int64_t _6_this;
+} chpl__class_localscoforall_fn_chpl7_object;
+
+typedef struct chpl__class_localson_fn_chpl70_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__EndCount_RAtomicT_int64_t_RAtomicT_int64_t _1__coforallCount;
+  int64_t _2_locIdx;
+  chpl____wide_RootLocale _3_dst;
+  chpl_root_locale_accum _4_rvfDerefTmp;
+} chpl__class_localson_fn_chpl70_object;
+
+typedef struct chpl__class_localson_fn_chpl71_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__EndCount_RAtomicT_int64_t_RAtomicT_int64_t _1__coforallCount;
+  int64_t _2_locIdx;
+  chpl____wide_RootLocale _3_dst;
+} chpl__class_localson_fn_chpl71_object;
+
+typedef struct chpl__class_localson_fn_chpl69_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  locale_chpl _1_rvfDerefTmp;
+} chpl__class_localson_fn_chpl69_object;
+
+typedef struct chpl__class_localson_fn_chpl72_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_BaseLocale _1_rvfDerefTmp;
+  chpl____wide_BaseLocale _2_rvfDerefTmp;
+} chpl__class_localson_fn_chpl72_object;
+
+typedef struct chpl__class_localson_fn_chpl73_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_RAtomicT_int64_t _1_this;
+  int64_t _2_value;
+} chpl__class_localson_fn_chpl73_object;
+
+typedef struct chpl__class_localson_fn_chpl74_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_string _1_this;
+} chpl__class_localson_fn_chpl74_object;
+
+typedef struct chpl__class_localson_fn_chpl75_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_string _1_this;
+  chpl____serializeHelper _2_pattern_data;
+  range_byteIndex_boundedLow_F_chpl _3_indices;
+  chpl____wide__ref_int64_t _4_ret;
+} chpl__class_localson_fn_chpl75_object;
+
+typedef struct chpl_heap_chpl_bool_chpl_s {
+  chpl_bool value;
+} chpl_heap_chpl_bool_chpl_object;
+
+typedef struct chpl_heap_int64_t_chpl_s {
+  int64_t value;
+} chpl_heap_int64_t_chpl_object;
+
+typedef struct chpl_heap_locale_chpl_s {
+  locale_chpl value;
+} chpl_heap_locale_chpl_object;
+
+typedef struct chpl_heap__tuple_6_star_string_chpl_s {
+  _tuple_6_star_string_chpl value;
+} chpl_heap__tuple_6_star_string_chpl_object;
+
+typedef struct chpl_heap_AtomicT_int64_t_chpl_s {
+  AtomicT_int64_t_chpl value;
+} chpl_heap_AtomicT_int64_t_chpl_object;
+
+typedef struct chpl_heap_ArrayInit_chpl_s {
+  ArrayInit_chpl value;
+} chpl_heap_ArrayInit_chpl_object;
+
+typedef struct chpl_heap_chpl_ModuleDeinit_chpl_s {
+  chpl____wide_chpl_ModuleDeinit value;
+} chpl_heap_chpl_ModuleDeinit_chpl_object;
+
+typedef struct chpl__class_localson_fn_chpl76_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide_Error _1_err;
+  chpl____wide__ref_chpl_TaskErrors _2_this;
+} chpl__class_localson_fn_chpl76_object;
+
+typedef struct chpl__class_localson_fn_chpl77_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_file _1_this;
+} chpl__class_localson_fn_chpl77_object;
+
+typedef struct chpl__class_localson_fn_chpl78_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  file_chpl _1_rvfDerefTmp;
+  chpl____wide__ref_iostyleInternal _2_ret;
+  chpl____wide__ref__wide_Error _3_error;
+} chpl__class_localson_fn_chpl78_object;
+
+typedef struct chpl__class_localson_fn_chpl79_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  file_chpl _1_rvfDerefTmp;
+  chpl____wide__ref_string _2_ret;
+  chpl____wide__ref_syserr _3_err;
+  chpl____wide__ref__wide_Error _4_error;
+} chpl__class_localson_fn_chpl79_object;
+
+typedef struct chpl__class_localson_fn_chpl80_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  channel_T_dynamic_T_chpl _1_rvfDerefTmp;
+} chpl__class_localson_fn_chpl80_object;
+
+typedef struct chpl__class_localson_fn_chpl81_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  channel_F_dynamic_T_chpl _1_rvfDerefTmp;
+} chpl__class_localson_fn_chpl81_object;
+
+typedef struct chpl__class_localson_fn_chpl82_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_channel_T_dynamic_T _1_lhs;
+} chpl__class_localson_fn_chpl82_object;
+
+typedef struct chpl__class_localson_fn_chpl83_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_channel_F_dynamic_T _1_lhs;
+} chpl__class_localson_fn_chpl83_object;
+
+typedef struct chpl__class_localson_fn_chpl84_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_channel_T_dynamic_T _1_this;
+  file_chpl _2_rvfDerefTmp;
+  int32_t _3_hints;
+  int64_t _4_start;
+  int64_t _5_end;
+  iostyleInternal _6_rvfDerefTmp;
+  chpl____wide__ref_syserr _7__formal_tmp_error;
+} chpl__class_localson_fn_chpl84_object;
+
+typedef struct chpl__class_localson_fn_chpl85_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_channel_F_dynamic_T _1_this;
+  file_chpl _2_rvfDerefTmp;
+  int32_t _3_hints;
+  int64_t _4_start;
+  int64_t _5_end;
+  iostyleInternal _6_rvfDerefTmp;
+  chpl____wide__ref_syserr _7__formal_tmp_error;
+} chpl__class_localson_fn_chpl85_object;
+
+typedef struct chpl__class_localson_fn_chpl86_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_channel_T_dynamic_T _1_this;
+} chpl__class_localson_fn_chpl86_object;
+
+typedef struct chpl__class_localson_fn_chpl87_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  chpl____wide__ref_channel_F_dynamic_T _1_this;
+} chpl__class_localson_fn_chpl87_object;
+
+typedef struct chpl__class_localson_fn_chpl88_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  channel_T_dynamic_T_chpl _1_rvfDerefTmp;
+  chpl____wide__ref_string _2_path;
+  chpl____wide__ref_int64_t _3_offset;
+  chpl____wide__ref__wide_Error _4_error;
+} chpl__class_localson_fn_chpl88_object;
+
+typedef struct chpl__class_localson_fn_chpl89_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  channel_T_dynamic_T_chpl _1_rvfDerefTmp;
+  chpl____wide__ref_syserr _2_err;
+} chpl__class_localson_fn_chpl89_object;
+
+typedef struct chpl__class_localson_fn_chpl90_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  channel_T_dynamic_T_chpl _1_rvfDerefTmp;
+} chpl__class_localson_fn_chpl90_object;
+
+typedef struct chpl__class_localson_fn_chpl91_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  file_chpl _1_rvfDerefTmp;
+  int64_t _2_start;
+  int64_t _3_end;
+  int32_t _4_hints;
+  iostyleInternal _5_rvfDerefTmp;
+  chpl____wide__ref_channel_F_dynamic_T _6_ret;
+  chpl____wide__ref_syserr _7_err;
+  chpl____wide__ref__wide_Error _8_error;
+} chpl__class_localson_fn_chpl91_object;
+
+typedef struct chpl__class_localson_fn_chpl92_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  file_chpl _1_rvfDerefTmp;
+  int64_t _2_start;
+  int64_t _3_end;
+  int32_t _4_hints;
+  iostyleInternal _5_rvfDerefTmp;
+  chpl____wide__ref_channel_T_dynamic_T _6_ret;
+  chpl____wide__ref_syserr _7_err;
+  chpl____wide__ref__wide_Error _8_error;
+} chpl__class_localson_fn_chpl92_object;
+
+typedef struct chpl__class_localson_fn_chpl93_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+  channel_T_dynamic_T_chpl _1_rvfDerefTmp;
+  chpl____wide__ref__tuple_3__ref_string_int64_t__ref_ioNewline _2_args;
+  locale_chpl _3_rvfDerefTmp;
+  chpl____wide__ref__wide_Error _4_error;
+} chpl__class_localson_fn_chpl93_object;
+
+typedef struct chpl__class_localson_fn_chpl94_s {
+  chpl_comm_on_bundle_t _runtime_hdr;
+  chpl_localeID_t _0_tmp;
+} chpl__class_localson_fn_chpl94_object;
+
+typedef struct chpl_object_chpl_s {
+  chpl__class_id chpl__cid;
+} chpl_object_chpl_object;
+
+typedef struct chpl_chpl___EndCountBase_s /* : object_chpl */ {
+  chpl_object_chpl_object super;
+  chpl_TaskErrors errors;
+} chpl_chpl___EndCountBase_object;
+
+typedef struct chpl_chpl_ModuleDeinit_s /* : object_chpl */ {
+  chpl_object_chpl_object super;
+  c_string moduleName;
+  c_fn_ptr deinitFun;
+  chpl____wide_chpl_ModuleDeinit prevModule;
+} chpl_chpl_ModuleDeinit_object;
+
+typedef struct chpl_BaseDist_chpl_s /* : object_chpl */ {
+  chpl_object_chpl_object super;
+  int64_t _doms_containing_dist;
+  chpl_LocalSpinlock _domsLock;
+  chpl_bool _free_when_no_doms;
+  int64_t pid;
+} chpl_BaseDist_chpl_object;
+
+typedef struct chpl_BaseDom_chpl_s /* : object_chpl */ {
+  chpl_object_chpl_object super;
+  chpl____wide_BaseArr _arrs_head;
+  int64_t _arrs_containing_dom;
+  chpl_LocalSpinlock _arrsLock;
+  chpl_bool _free_when_no_arrs;
+  int64_t pid;
+  chpl_bool definedConst;
+} chpl_BaseDom_chpl_object;
+
+typedef struct chpl_BaseArr_chpl_s /* : object_chpl */ {
+  chpl_object_chpl_object super;
+  chpl____wide_BaseArr prev;
+  chpl____wide_BaseArr next;
+  int64_t pid;
+  chpl_bool _decEltRefCounts;
+  chpl_ddataResizePolicy _resizePolicy;
+} chpl_BaseArr_chpl_object;
+
+typedef struct chpl_BaseLocale_chpl_s /* : object_chpl */ {
+  chpl_object_chpl_object super;
+  locale_chpl parent;
+  int64_t nPUsLogAcc;
+  int64_t nPUsLogAll;
+  int64_t nPUsPhysAcc;
+  int64_t nPUsPhysAll;
+  int64_t maxTaskPar;
+  uint64_t callStackSize;
+  AtomicT_int64_t_chpl runningTaskCounter;
+} chpl_BaseLocale_chpl_object;
+
+typedef struct chpl__ic_chpl_direct_counted_range_iter_chpl_s /* : object_chpl */ {
+  chpl_object_chpl_object super;
+  int64_t more;
+  int64_t F0_low;
+  int64_t F1_count;
+  _ic_chpl_direct_counted_range_iter_helper_chpl F2__iterator;
+  _tuple_2_star_int64_t_chpl F3_tmp;
+  _ic_chpl_direct_param_stride_range_iter_chpl F4__iterator;
+  int64_t F5_i;
+  int64_t F6_low;
+  int64_t value;
+} chpl__ic_chpl_direct_counted_range_iter_chpl_object;
+
+typedef struct chpl__ic_chpl_direct_counted_range_iter_helper_chpl_s /* : object_chpl */ {
+  chpl_object_chpl_object super;
+  int64_t more;
+  int64_t F0_low;
+  int64_t F1_count;
+  _tuple_2_star_int64_t_chpl F2_tmp;
+  _ic_chpl_direct_param_stride_range_iter_chpl F3__iterator;
+  int64_t F4_i;
+  int64_t F5_low;
+  int64_t value;
+} chpl__ic_chpl_direct_counted_range_iter_helper_chpl_object;
+
+typedef struct chpl__ic_chpl_direct_param_stride_range_iter_chpl_s /* : object_chpl */ {
+  chpl_object_chpl_object super;
+  int64_t more;
+  int64_t F0_low;
+  int64_t F1_high;
+  int64_t value;
+} chpl__ic_chpl_direct_param_stride_range_iter_chpl_object;
+
+typedef struct chpl__ic_these_range_int64_t_bounded_F_chpl_s /* : object_chpl */ {
+  chpl_object_chpl_object super;
+  int64_t more;
+  range_int64_t_bounded_F_chpl F0_this;
+  int64_t F1_i;
+  int64_t F2_end;
+  int64_t F3_coerce_tmp;
+  int64_t value;
+} chpl__ic_these_range_int64_t_bounded_F_chpl_object;
+
+typedef struct chpl__ic_chpl_bytes__ref_string_chpl_s /* : object_chpl */ {
+  chpl_object_chpl_object super;
+  int64_t more;
+  _ref_string_chpl F0_this;
+  string_chpl F1_localThis;
+  _ic_chpl_direct_counted_range_iter_chpl F2__iterator;
+  _ic_chpl_direct_counted_range_iter_helper_chpl F3__iterator;
+  _tuple_2_star_int64_t_chpl F4_tmp;
+  _ic_chpl_direct_param_stride_range_iter_chpl F5__iterator;
+  int64_t F6_i;
+  int64_t F7_low;
+  uint8_t value;
+} chpl__ic_chpl_bytes__ref_string_chpl_object;
+
+typedef struct chpl_Error_chpl_s /* : object_chpl */ {
+  chpl_object_chpl_object super;
+  chpl____wide_Error _next;
+  int64_t thrownLine;
+  int32_t thrownFileId;
+  string_chpl _msg;
+  chpl_bool _hasThrowInfo;
+} chpl_Error_chpl_object;
+
+typedef struct chpl_QioPluginFile_chpl_s /* : object_chpl */ {
+  chpl_object_chpl_object super;
+} chpl_QioPluginFile_chpl_object;
+
+typedef struct chpl_QioPluginChannel_chpl_s /* : object_chpl */ {
+  chpl_object_chpl_object super;
+} chpl_QioPluginChannel_chpl_object;
+
+typedef struct chpl_chpl___EndCount_AtomicT_int64_t_int64_t_s /* : chpl___EndCountBase */ {
+  chpl_chpl___EndCountBase_object super;
+  AtomicT_int64_t_chpl i;
+  int64_t taskCnt;
+} chpl_chpl___EndCount_AtomicT_int64_t_int64_t_object;
+
+typedef struct chpl_chpl___EndCount_RAtomicT_int64_t_RAtomicT_int64_t_s /* : chpl___EndCountBase */ {
+  chpl_chpl___EndCountBase_object super;
+  RAtomicT_int64_t_chpl i;
+  RAtomicT_int64_t_chpl taskCnt;
+} chpl_chpl___EndCount_RAtomicT_int64_t_RAtomicT_int64_t_object;
+
+typedef struct chpl_BaseRectangularDom_1_int64_t_F_chpl_s /* : BaseDom_chpl */ {
+  chpl_BaseDom_chpl_object super;
+} chpl_BaseRectangularDom_1_int64_t_F_chpl_object;
+
+typedef struct chpl_BaseArrOverRectangularDom_1_int64_t_F_chpl_s /* : BaseArr_chpl */ {
+  chpl_BaseArr_chpl_object super;
+} chpl_BaseArrOverRectangularDom_1_int64_t_F_chpl_object;
+
+typedef struct chpl_DummyLocale_chpl_s /* : BaseLocale_chpl */ {
+  chpl_BaseLocale_chpl_object super;
+} chpl_DummyLocale_chpl_object;
+
+typedef struct chpl_AbstractLocaleModel_chpl_s /* : BaseLocale_chpl */ {
+  chpl_BaseLocale_chpl_object super;
+  _array_DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl chpl_singletonThisLocaleArray;
+} chpl_AbstractLocaleModel_chpl_object;
+
+typedef struct chpl_AbstractRootLocale_chpl_s /* : BaseLocale_chpl */ {
+  chpl_BaseLocale_chpl_object super;
+} chpl_AbstractRootLocale_chpl_object;
+
+typedef struct chpl_DefaultDist_chpl_s /* : BaseDist_chpl */ {
+  chpl_BaseDist_chpl_object super;
+} chpl_DefaultDist_chpl_object;
+
+typedef struct chpl_NilThrownError_chpl_s /* : Error_chpl */ {
+  chpl_Error_chpl_object super;
+} chpl_NilThrownError_chpl_object;
+
+typedef struct chpl_DecodeError_chpl_s /* : Error_chpl */ {
+  chpl_Error_chpl_object super;
+} chpl_DecodeError_chpl_object;
+
+typedef struct chpl_IllegalArgumentError_chpl_s /* : Error_chpl */ {
+  chpl_Error_chpl_object super;
+} chpl_IllegalArgumentError_chpl_object;
+
+typedef struct chpl_CodepointSplittingError_chpl_s /* : Error_chpl */ {
+  chpl_Error_chpl_object super;
+} chpl_CodepointSplittingError_chpl_object;
+
+typedef struct chpl_TaskErrors_chpl_s /* : Error_chpl */ {
+  chpl_Error_chpl_object super;
+  int64_t nErrors;
+  c_ptr__owned_Error_chpl errorsArray;
+} chpl_TaskErrors_chpl_object;
+
+typedef struct chpl_BadRegexError_chpl_s /* : Error_chpl */ {
+  chpl_Error_chpl_object super;
+  string_chpl msg;
+} chpl_BadRegexError_chpl_object;
+
+typedef struct chpl_SystemError_chpl_s /* : Error_chpl */ {
+  chpl_Error_chpl_object super;
+  syserr err;
+  string_chpl details;
+} chpl_SystemError_chpl_object;
+
+typedef struct chpl_BaseRectangularArr_1_int64_t_F_int64_t_chpl_s /* : BaseArrOverRectangularDom_1_int64_t_F_chpl */ {
+  chpl_BaseArrOverRectangularDom_1_int64_t_F_chpl_object super;
+} chpl_BaseRectangularArr_1_int64_t_F_int64_t_chpl_object;
+
+typedef struct chpl_BaseRectangularArr_1_int64_t_F_locale_chpl_s /* : BaseArrOverRectangularDom_1_int64_t_F_chpl */ {
+  chpl_BaseArrOverRectangularDom_1_int64_t_F_chpl_object super;
+} chpl_BaseRectangularArr_1_int64_t_F_locale_chpl_object;
+
+typedef struct chpl_BaseRectangularArr_1_int64_t_F_uint64_t_chpl_s /* : BaseArrOverRectangularDom_1_int64_t_F_chpl */ {
+  chpl_BaseArrOverRectangularDom_1_int64_t_F_chpl_object super;
+} chpl_BaseRectangularArr_1_int64_t_F_uint64_t_chpl_object;
+
+typedef struct chpl_DefaultRectangularDom_1_int64_t_F_chpl_s /* : BaseRectangularDom_1_int64_t_F_chpl */ {
+  chpl_BaseRectangularDom_1_int64_t_F_chpl_object super;
+  chpl____wide_DefaultDist dist;
+  _tuple_1_star_range_int64_t_bounded_F_chpl ranges;
+} chpl_DefaultRectangularDom_1_int64_t_F_chpl_object;
+
+typedef struct chpl_LocaleModel_chpl_s /* : AbstractLocaleModel_chpl */ {
+  chpl_AbstractLocaleModel_chpl_object super;
+  int64_t _node_id;
+  string_chpl local_name;
+} chpl_LocaleModel_chpl_object;
+
+typedef struct chpl_RootLocale_chpl_s /* : AbstractRootLocale_chpl */ {
+  chpl_AbstractRootLocale_chpl_object super;
+  _domain_DefaultRectangularDom_1_int64_t_F_chpl myLocaleSpace;
+  _array_DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl myLocales;
+} chpl_RootLocale_chpl_object;
+
+typedef struct chpl_BlockingIOError_chpl_s /* : SystemError_chpl */ {
+  chpl_SystemError_chpl_object super;
+} chpl_BlockingIOError_chpl_object;
+
+typedef struct chpl_ChildProcessError_chpl_s /* : SystemError_chpl */ {
+  chpl_SystemError_chpl_object super;
+} chpl_ChildProcessError_chpl_object;
+
+typedef struct chpl_ConnectionError_chpl_s /* : SystemError_chpl */ {
+  chpl_SystemError_chpl_object super;
+} chpl_ConnectionError_chpl_object;
+
+typedef struct chpl_FileExistsError_chpl_s /* : SystemError_chpl */ {
+  chpl_SystemError_chpl_object super;
+} chpl_FileExistsError_chpl_object;
+
+typedef struct chpl_FileNotFoundError_chpl_s /* : SystemError_chpl */ {
+  chpl_SystemError_chpl_object super;
+} chpl_FileNotFoundError_chpl_object;
+
+typedef struct chpl_InterruptedError_chpl_s /* : SystemError_chpl */ {
+  chpl_SystemError_chpl_object super;
+} chpl_InterruptedError_chpl_object;
+
+typedef struct chpl_IsADirectoryError_chpl_s /* : SystemError_chpl */ {
+  chpl_SystemError_chpl_object super;
+} chpl_IsADirectoryError_chpl_object;
+
+typedef struct chpl_NotADirectoryError_chpl_s /* : SystemError_chpl */ {
+  chpl_SystemError_chpl_object super;
+} chpl_NotADirectoryError_chpl_object;
+
+typedef struct chpl_PermissionError_chpl_s /* : SystemError_chpl */ {
+  chpl_SystemError_chpl_object super;
+} chpl_PermissionError_chpl_object;
+
+typedef struct chpl_ProcessLookupError_chpl_s /* : SystemError_chpl */ {
+  chpl_SystemError_chpl_object super;
+} chpl_ProcessLookupError_chpl_object;
+
+typedef struct chpl_TimeoutError_chpl_s /* : SystemError_chpl */ {
+  chpl_SystemError_chpl_object super;
+} chpl_TimeoutError_chpl_object;
+
+typedef struct chpl_IOError_chpl_s /* : SystemError_chpl */ {
+  chpl_SystemError_chpl_object super;
+} chpl_IOError_chpl_object;
+
+typedef struct chpl_DefaultRectangularArr_1_int64_t_F_int64_t_int64_t_chpl_s /* : BaseRectangularArr_1_int64_t_F_int64_t_chpl */ {
+  chpl_BaseRectangularArr_1_int64_t_F_int64_t_chpl_object super;
+  chpl____wide_DefaultRectangularDom_1_int64_t_F dom;
+  _tuple_1_star_int64_t_chpl off;
+  _tuple_1_star_int64_t_chpl blk;
+  _tuple_1_star_int64_t_chpl sizesPerDim;
+  _tuple_1_star_int64_t_chpl str;
+  int64_t factoredOffs;
+  chpl____wide__ddata_int64_t data;
+  chpl____wide__ddata_int64_t shiftedData;
+  c_void_ptr externFreeFunc;
+  chpl_bool externArr;
+  chpl_bool _borrowed;
+  chpl_bool callPostAlloc;
+  chpl_bool deinitElts;
+} chpl_DefaultRectangularArr_1_int64_t_F_int64_t_int64_t_chpl_object;
+
+typedef struct chpl_DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl_s /* : BaseRectangularArr_1_int64_t_F_locale_chpl */ {
+  chpl_BaseRectangularArr_1_int64_t_F_locale_chpl_object super;
+  chpl____wide_DefaultRectangularDom_1_int64_t_F dom;
+  _tuple_1_star_int64_t_chpl off;
+  _tuple_1_star_int64_t_chpl blk;
+  _tuple_1_star_int64_t_chpl sizesPerDim;
+  _tuple_1_star_int64_t_chpl str;
+  int64_t factoredOffs;
+  chpl____wide__ddata_locale data;
+  chpl____wide__ddata_locale shiftedData;
+  c_void_ptr externFreeFunc;
+  chpl_bool externArr;
+  chpl_bool _borrowed;
+  chpl_bool callPostAlloc;
+  chpl_bool deinitElts;
+} chpl_DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl_object;
+
+typedef struct chpl_DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t_chpl_s /* : BaseRectangularArr_1_int64_t_F_uint64_t_chpl */ {
+  chpl_BaseRectangularArr_1_int64_t_F_uint64_t_chpl_object super;
+  chpl____wide_DefaultRectangularDom_1_int64_t_F dom;
+  _tuple_1_star_int64_t_chpl off;
+  _tuple_1_star_int64_t_chpl blk;
+  _tuple_1_star_int64_t_chpl sizesPerDim;
+  _tuple_1_star_int64_t_chpl str;
+  int64_t factoredOffs;
+  chpl____wide__ddata_uint64_t data;
+  chpl____wide__ddata_uint64_t shiftedData;
+  c_void_ptr externFreeFunc;
+  chpl_bool externArr;
+  chpl_bool _borrowed;
+  chpl_bool callPostAlloc;
+  chpl_bool deinitElts;
+} chpl_DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t_chpl_object;
+
+typedef struct chpl_BrokenPipeError_chpl_s /* : ConnectionError_chpl */ {
+  chpl_ConnectionError_chpl_object super;
+} chpl_BrokenPipeError_chpl_object;
+
+typedef struct chpl_ConnectionAbortedError_chpl_s /* : ConnectionError_chpl */ {
+  chpl_ConnectionError_chpl_object super;
+} chpl_ConnectionAbortedError_chpl_object;
+
+typedef struct chpl_ConnectionRefusedError_chpl_s /* : ConnectionError_chpl */ {
+  chpl_ConnectionError_chpl_object super;
+} chpl_ConnectionRefusedError_chpl_object;
+
+typedef struct chpl_ConnectionResetError_chpl_s /* : ConnectionError_chpl */ {
+  chpl_ConnectionError_chpl_object super;
+} chpl_ConnectionResetError_chpl_object;
+
+typedef struct chpl_EOFError_chpl_s /* : IOError_chpl */ {
+  chpl_IOError_chpl_object super;
+} chpl_EOFError_chpl_object;
+
+typedef struct chpl_UnexpectedEOFError_chpl_s /* : IOError_chpl */ {
+  chpl_IOError_chpl_object super;
+} chpl_UnexpectedEOFError_chpl_object;
+
+typedef struct chpl_BadFormatError_chpl_s /* : IOError_chpl */ {
+  chpl_IOError_chpl_object super;
+} chpl_BadFormatError_chpl_object;
+
+/*** Function Prototypes ***/
+
+static void chpl__init_AlignedTSupport(int64_t _ln_chpl,
+                                       int32_t _fn_chpl);
+static void chpl__init_Atomics(int64_t _ln_chpl,
+                               int32_t _fn_chpl);
+static void atomic_fence_chpl(memory_order order_chpl);
+static void init_helper_chpl(AtomicBool_chpl * this_chpl7,
+                             chpl_bool value_chpl);
+static void init_chpl(AtomicBool_chpl * this_chpl7);
+static void deinit_chpl(chpl____wide__ref_AtomicBool this_chpl7);
+static void on_fn_chpl(chpl____wide__ref_AtomicBool this_chpl7);
+static void wrapon_fn_chpl(_class_localson_fn_chpl c_chpl);
+static void _local_on_fn_chpl(chpl____wide__ref_AtomicBool this_chpl7,
+                              chpl____wide__ref_chpl_bool ret_chpl);
+static void _local_wrapon_fn_chpl(_class_localson_fn_chpl2 c_chpl);
+static void on_fn_chpl2(chpl____wide__ref_AtomicBool this_chpl7,
+                        chpl____wide__ref_chpl_bool ret_chpl);
+static void wrapon_fn_chpl2(_class_localson_fn_chpl2 c_chpl);
+static void _local_on_fn_chpl2(chpl____wide__ref_AtomicBool this_chpl7,
+                               chpl_bool value_chpl);
+static void _local_wrapon_fn_chpl2(_class_localson_fn_chpl3 c_chpl);
+static void on_fn_chpl3(chpl____wide__ref_AtomicBool this_chpl7,
+                        chpl_bool value_chpl);
+static void wrapon_fn_chpl3(_class_localson_fn_chpl3 c_chpl);
+static void _local_on_fn_chpl3(chpl____wide__ref_AtomicBool this_chpl7,
+                               chpl_bool value_chpl,
+                               chpl____wide__ref_chpl_bool ret_chpl);
+static void _local_wrapon_fn_chpl3(_class_localson_fn_chpl4 c_chpl);
+static void on_fn_chpl4(chpl____wide__ref_AtomicBool this_chpl7,
+                        chpl_bool value_chpl,
+                        chpl____wide__ref_chpl_bool ret_chpl);
+static void wrapon_fn_chpl4(_class_localson_fn_chpl4 c_chpl);
+static void init_helper_chpl2(chpl____wide__ref_AtomicT_int64_t this_chpl7,
+                              int64_t value_chpl);
+static void init_chpl2(chpl____wide__ref_AtomicT_int64_t this_chpl7);
+static void deinit_chpl2(chpl____wide__ref_AtomicT_int64_t this_chpl7);
+static void on_fn_chpl5(chpl____wide__ref_AtomicT_int64_t this_chpl7);
+static void wrapon_fn_chpl5(_class_localson_fn_chpl5 c_chpl);
+static void on_fn_chpl6(chpl____wide__ref_AtomicT_int64_t this_chpl7,
+                        chpl____wide__ref_int64_t ret_chpl);
+static void wrapon_fn_chpl6(_class_localson_fn_chpl6 c_chpl);
+static void on_fn_chpl7(chpl____wide__ref_AtomicT_int64_t this_chpl7,
+                        int64_t value_chpl);
+static void wrapon_fn_chpl7(_class_localson_fn_chpl7 c_chpl);
+static void on_fn_chpl8(chpl____wide__ref_AtomicT_int64_t this_chpl7,
+                        int64_t value_chpl);
+static void on_fn_chpl9(chpl____wide__ref_AtomicT_int64_t this_chpl7,
+                        int64_t value_chpl);
+static void wrapon_fn_chpl8(_class_localson_fn_chpl8 c_chpl);
+static void wrapon_fn_chpl9(_class_localson_fn_chpl9 c_chpl);
+static void on_fn_chpl10(chpl____wide__ref_AtomicT_int64_t this_chpl7,
+                         int64_t value_chpl);
+static void on_fn_chpl11(chpl____wide__ref_AtomicT_int64_t this_chpl7,
+                         int64_t value_chpl);
+static void wrapon_fn_chpl10(_class_localson_fn_chpl10 c_chpl);
+static void wrapon_fn_chpl11(_class_localson_fn_chpl11 c_chpl);
+static void on_fn_chpl12(chpl____wide__ref_AtomicT_int64_t this_chpl7,
+                         int64_t value_chpl);
+static void wrapon_fn_chpl12(_class_localson_fn_chpl12 c_chpl);
+static void chpl__init_ByteBufferHelpers(int64_t _ln_chpl,
+                                         int32_t _fn_chpl);
+static int16_t offset_STR_COPY_DATA_chpl(void);
+static void bufferRealloc_chpl(uint8_t * buf_chpl,
+                               int64_t requestedSize_chpl,
+                               _tuple_2_c_ptr_uint8_t_int64_t_chpl * _retArg_chpl);
+static void bufferEnsureSize_chpl(uint8_t * buf_chpl,
+                                  int64_t currentSize_chpl,
+                                  int64_t requestedSize_chpl,
+                                  _tuple_2_c_ptr_uint8_t_int64_t_chpl * _retArg_chpl);
+static uint8_t * bufferCopyRemote_chpl(int64_t src_loc_id_chpl,
+                                       uint8_t * src_addr_chpl,
+                                       int64_t len_chpl);
+static void chpl__init_BytesStringCommon(int64_t _ln_chpl,
+                                         int32_t _fn_chpl);
+static void init_chpl4(chpl____serializeHelper * this_chpl7,
+                       int64_t buffLen_chpl,
+                       uint8_t * buff_chpl,
+                       int64_t size_chpl3,
+                       int32_t locale_id_chpl,
+                       chpl__inPlaceBuffer shortData_chpl,
+                       int64_t cachedNumCodepoints_chpl);
+static void decodeByteBuffer_chpl(uint8_t * buff_chpl,
+                                  int64_t length_chpl,
+                                  decodePolicy_chpl policy_chpl,
+                                  chpl____wide_Error * error_out_chpl,
+                                  string_chpl * _retArg_chpl);
+static void decodeHelp_chpl(uint8_t * buff_chpl,
+                            int64_t buffLen_chpl,
+                            int64_t offset_chpl,
+                            chpl_bool allowEsc_chpl,
+                            _tuple_3_syserr_int32_t_int32_t_chpl * _retArg_chpl);
+static void initWithBorrowedBuffer_chpl(string_chpl * x_chpl2,
+                                        chpl____wide__ref_string other_chpl);
+static void initWithBorrowedBuffer_chpl2(string_chpl * x_chpl2,
+                                         uint8_t * other_chpl,
+                                         int64_t length_chpl,
+                                         int64_t size_chpl3);
+static void initWithBorrowedBuffer_chpl3(bytes_chpl * x_chpl2,
+                                         uint8_t * other_chpl,
+                                         int64_t length_chpl,
+                                         int64_t size_chpl3);
+static void initWithNewBuffer_chpl(string_chpl * x_chpl2,
+                                   uint8_t * other_chpl,
+                                   int64_t length_chpl,
+                                   int64_t size_chpl3);
+static void getView_chpl(string_chpl * x_chpl2,
+                         range_byteIndex_boundedHigh_F_chpl r_chpl,
+                         chpl____wide_Error * error_out_chpl,
+                         _tuple_2_range_int64_t_bounded_F_int64_t_chpl * _retArg_chpl);
+static void getView_chpl2(string_chpl * x_chpl2,
+                          range_int64_t_bounded_F_chpl r_chpl,
+                          Error_chpl * error_out_chpl,
+                          _tuple_2_range_int64_t_bounded_F_int64_t_chpl * _retArg_chpl);
+static void getView_chpl3(string_chpl * x_chpl2,
+                          range_byteIndex_bounded_F_chpl r_chpl,
+                          chpl____wide_Error * error_out_chpl,
+                          _tuple_2_range_int64_t_bounded_F_int64_t_chpl * _retArg_chpl);
+static void getView_chpl4(chpl____wide__ref_string x_chpl2,
+                          range_byteIndex_boundedLow_F_chpl r_chpl,
+                          Error_chpl * error_out_chpl,
+                          _tuple_2_range_int64_t_bounded_F_int64_t_chpl * _retArg_chpl);
+static void getView_chpl5(string_chpl * x_chpl2,
+                          range_int64_t_boundedLow_F_chpl r_chpl,
+                          Error_chpl * error_out_chpl,
+                          _tuple_2_range_int64_t_bounded_F_int64_t_chpl * _retArg_chpl);
+static void getView_chpl6(chpl____wide__ref_string x_chpl2,
+                          range_byteIndex_boundedLow_F_chpl r_chpl,
+                          chpl____wide_Error * error_out_chpl,
+                          _tuple_2_range_int64_t_bounded_F_int64_t_chpl * _retArg_chpl);
+static void simpleCaseHelper_chpl(string_chpl * x_chpl2,
+                                  range_byteIndex_bounded_F_chpl r_chpl,
+                                  _tuple_2_range_int64_t_bounded_F_int64_t_chpl * _retArg_chpl);
+static void simpleCaseHelper_chpl2(string_chpl * x_chpl2,
+                                   range_int64_t_boundedLow_F_chpl r_chpl,
+                                   _tuple_2_range_int64_t_bounded_F_int64_t_chpl * _retArg_chpl);
+static void simpleCaseHelper_chpl3(chpl____wide__ref_string x_chpl2,
+                                   range_byteIndex_boundedLow_F_chpl r_chpl,
+                                   _tuple_2_range_int64_t_bounded_F_int64_t_chpl * _retArg_chpl);
+static void simpleCaseHelper_chpl4(string_chpl * x_chpl2,
+                                   range_byteIndex_boundedHigh_F_chpl r_chpl,
+                                   _tuple_2_range_int64_t_bounded_F_int64_t_chpl * _retArg_chpl);
+static void simpleCaseHelper_chpl5(string_chpl * x_chpl2,
+                                   range_int64_t_bounded_F_chpl r_chpl,
+                                   _tuple_2_range_int64_t_bounded_F_int64_t_chpl * _retArg_chpl);
+static void simpleCaseHelper_chpl6(chpl____wide__ref_string x_chpl2,
+                                   range_byteIndex_boundedLow_F_chpl r_chpl,
+                                   _tuple_2_range_int64_t_bounded_F_int64_t_chpl * _retArg_chpl);
+static void getSlice_chpl(string_chpl * x_chpl2,
+                          range_int64_t_boundedLow_F_chpl r_chpl,
+                          Error_chpl * error_out_chpl,
+                          string_chpl * _retArg_chpl);
+static void getSlice_chpl2(string_chpl * x_chpl2,
+                           range_int64_t_bounded_F_chpl r_chpl,
+                           Error_chpl * error_out_chpl,
+                           string_chpl * _retArg_chpl);
+static void getSlice_chpl3(string_chpl * x_chpl2,
+                           range_byteIndex_boundedLow_F_chpl r_chpl,
+                           chpl____wide_Error * error_out_chpl,
+                           string_chpl * _retArg_chpl);
+static void getSlice_chpl4(string_chpl * x_chpl2,
+                           range_byteIndex_bounded_F_chpl r_chpl,
+                           chpl____wide_Error * error_out_chpl,
+                           string_chpl * _retArg_chpl);
+static void getSlice_chpl5(string_chpl * x_chpl2,
+                           range_byteIndex_boundedHigh_F_chpl r_chpl,
+                           chpl____wide_Error * error_out_chpl,
+                           string_chpl * _retArg_chpl);
+static void doReplace_chpl(string_chpl * x_chpl2,
+                           string_chpl * needle_chpl,
+                           string_chpl * replacement_chpl,
+                           int64_t count_chpl,
+                           string_chpl * _retArg_chpl);
+static int64_t doSearchNoEnc_chpl(string_chpl * x_chpl2,
+                                  string_chpl * needle_chpl,
+                                  range_byteIndex_boundedLow_F_chpl region_chpl);
+static void on_fn_chpl13(chpl____wide__ref_string x_chpl2,
+                         chpl____serializeHelper * needle_chpl,
+                         range_byteIndex_boundedLow_F_chpl region_chpl,
+                         chpl____wide__ref_int64_t ret_chpl);
+static void wrapon_fn_chpl13(_class_localson_fn_chpl13 c_chpl);
+static void doAppend_chpl(string_chpl * lhs_chpl,
+                          string_chpl * rhs_chpl);
+static void on_fn_chpl14(chpl____wide__ref_string lhs_chpl,
+                         chpl____wide__ref_string rhs_chpl);
+static void wrapon_fn_chpl14(_class_localson_fn_chpl14 c_chpl);
+static void reinitWithNewBuffer_chpl(chpl____wide__ref_string lhs_chpl,
+                                     uint8_t * buff_chpl,
+                                     int64_t buffLen_chpl,
+                                     int64_t buffSize_chpl,
+                                     int64_t numCodepoints_chpl);
+static void reinitWithOwnedBuffer_chpl(chpl____wide__ref_string lhs_chpl,
+                                       uint8_t * buff_chpl,
+                                       int64_t buffLen_chpl,
+                                       int64_t buffSize_chpl,
+                                       int64_t numCodepoints_chpl);
+static void doAssign_chpl(chpl____wide__ref_string lhs_chpl,
+                          string_chpl * rhs_chpl);
+static void on_fn_chpl15(chpl____wide__ref_string lhs_chpl,
+                         chpl____wide__ref_string rhs_chpl);
+static void wrapon_fn_chpl15(_class_localson_fn_chpl15 c_chpl);
+static void doConcat_chpl(string_chpl * s0_chpl,
+                          chpl____wide__ref_string s1_chpl,
+                          string_chpl * _retArg_chpl);
+static void doStripNoEnc_chpl(string_chpl * x_chpl2,
+                              string_chpl * chars_chpl,
+                              chpl_bool leading_chpl,
+                              chpl_bool trailing_chpl,
+                              string_chpl * _retArg_chpl);
+static int64_t countNumCodepoints_chpl(uint8_t * buff_chpl,
+                                       int64_t buffLen_chpl);
+static int64_t _findStartOfNextCodepointFromByte_chpl(string_chpl * x_chpl2,
+                                                      byteIndex_chpl * i_chpl);
+static void _cleanupForNumericCast_chpl(string_chpl * x_chpl2);
+static chpl_bool _isSingleWord_chpl(string_chpl * x_chpl2);
+static void chpl__init_Bytes(int64_t _ln_chpl,
+                             int32_t _fn_chpl);
+static bytes_chpl chpl_createBytesWithLiteral(c_string buffer_chpl,
+                                              int64_t offset_chpl,
+                                              c_string x_chpl2,
+                                              int64_t length_chpl);
+static void init_chpl3(bytes_chpl * this_chpl7);
+static void chpl__init_CString(int64_t _ln_chpl,
+                               int32_t _fn_chpl);
+static void chpl__deinit_ChapelArray(void);
+static void chpl__init_ChapelArray(int64_t _ln_chpl,
+                                   int32_t _fn_chpl);
+static void _freePrivatizedClass_chpl(int64_t pid_chpl,
+                                      chpl____wide_object original_chpl);
+static void on_fn_chpl16(int64_t pid_chpl,
+                         chpl____wide_object original_chpl);
+static void wrapon_fn_chpl16(_class_localson_fn_chpl16 c_chpl);
+static void _freePrivatizedClassHelp_chpl(int64_t pid_chpl,
+                                          chpl____wide_object original_chpl);
+static void cobegin_fn_chpl(int64_t pid_chpl,
+                            chpl____wide_object original_chpl,
+                            chpl___EndCount_AtomicT_int64_t_int64_t _cobeginCount_chpl);
+static void wrapcobegin_fn_chpl(_class_localscobegin_fn_chpl c_chpl);
+static void on_fn_chpl17(int64_t pid_chpl,
+                         chpl____wide_object original_chpl);
+static void wrapon_fn_chpl17(_class_localson_fn_chpl17 c_chpl);
+static void cobegin_fn_chpl2(int64_t pid_chpl,
+                             chpl____wide_object original_chpl,
+                             chpl___EndCount_AtomicT_int64_t_int64_t _cobeginCount_chpl);
+static void wrapcobegin_fn_chpl2(_class_localscobegin_fn_chpl2 c_chpl);
+static void on_fn_chpl18(int64_t pid_chpl,
+                         chpl____wide_object original_chpl);
+static void wrapon_fn_chpl18(_class_localson_fn_chpl18 c_chpl);
+static void _makeIndexTuple_chpl(_tuple_1_star_int64_t_chpl * t_chpl,
+                                 _tuple_1_star_int64_t_chpl * _retArg_chpl);
+static void _newArray_chpl(DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl value_chpl,
+                           _array_DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl * _retArg_chpl);
+static void _getDistribution_chpl(chpl____wide_DefaultDist value_chpl,
+                                  _distribution_DefaultDist_chpl * _retArg_chpl);
+static chpl___RuntimeTypeInfo2 chpl__buildArrayRuntimeType(_domain_DefaultRectangularDom_1_int64_t_F_chpl * dom_chpl);
+static void chpl__convertRuntimeTypeToValue(_domain_DefaultRectangularDom_1_int64_t_F_chpl * dom_chpl,
+                                            chpl_bool definedConst_chpl,
+                                            _array_DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl * _retArg_chpl);
+static void chpl_incRefCountsForDomainsInArrayEltTypes(BaseArr_chpl arr_chpl);
+static void chpl_decRefCountsForDomainsInArrayEltTypes(chpl____wide_BaseArr arr_chpl);
+static void chpl_decRefCountsForDomainsInArrayEltTypes2(chpl____wide_BaseArr arr_chpl);
+static void chpl_decRefCountsForDomainsInArrayEltTypes3(chpl____wide_BaseArr arr_chpl);
+static void chpl__buildDistValue(DefaultDist_chpl x_chpl2,
+                                 _distribution_DefaultDist_chpl * _retArg_chpl);
+static void init_chpl5(chpl____wide__ref__wide__distribution_DefaultDist this_chpl7,
+                       int64_t _pid_chpl,
+                       chpl____wide_DefaultDist _instance_chpl,
+                       chpl_bool _unowned_chpl);
+static void init_chpl6(_distribution_DefaultDist_chpl * this_chpl7,
+                       DefaultDist_chpl value_chpl);
+static void on_fn_chpl19(_distribution_DefaultDist_chpl * this_chpl7);
+static void wrapon_fn_chpl19(_class_localson_fn_chpl19 c_chpl);
+static void deinit_chpl3(chpl____wide__ref__wide__distribution_DefaultDist this_chpl7);
+static void clone_chpl(_distribution_DefaultDist_chpl * this_chpl7,
+                       _distribution_DefaultDist_chpl * _retArg_chpl);
+static DefaultRectangularDom_1_int64_t_F_chpl newRectangularDom_chpl(_distribution_DefaultDist_chpl * this_chpl7,
+                                                                     _tuple_1_star_range_int64_t_bounded_F_chpl * ranges_chpl,
+                                                                     chpl_bool definedConst_chpl);
+static DefaultRectangularDom_1_int64_t_F_chpl newRectangularDom_chpl2(_distribution_DefaultDist_chpl * this_chpl7,
+                                                                      chpl_bool definedConst_chpl);
+static void init_chpl7(_array_DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl * this_chpl7,
+                       int64_t _pid_chpl,
+                       DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl _instance_chpl,
+                       chpl_bool _unowned_chpl);
+static void deinit_chpl4(_array_DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl * this_chpl7);
+static void _dom_chpl(chpl____wide__ref__wide__array_DefaultRectangularArr_1_int64_t_F_locale_int64_t this_chpl7,
+                      _domain_DefaultRectangularDom_1_int64_t_F_chpl * _retArg_chpl);
+static void checkAccess_chpl(chpl____wide__ref__wide__array_DefaultRectangularArr_1_int64_t_F_locale_int64_t this_chpl7,
+                             _tuple_1_star_int64_t_chpl * indices_chpl2,
+                             chpl____wide_DefaultRectangularArr_1_int64_t_F_locale_int64_t value_chpl,
+                             int64_t _ln_chpl,
+                             int32_t _fn_chpl);
+static void on_fn_chpl20(chpl____wide_DefaultRectangularArr_1_int64_t_F_locale_int64_t _instance_chpl,
+                         chpl_bool deinitElts_chpl);
+static void on_fn_chpl21(chpl____wide_BaseArr _instance_chpl,
+                         chpl_bool deinitElts_chpl);
+static void wrapon_fn_chpl20(_class_localson_fn_chpl21 c_chpl);
+static void wrapon_fn_chpl21(_class_localson_fn_chpl20 c_chpl);
+static _domain_DefaultRectangularDom_1_int64_t_F_chpl chpl__initCopy(_domain_DefaultRectangularDom_1_int64_t_F_chpl * rhs_chpl,
+                                                                     chpl_bool definedConst_chpl);
+static void chpl__auto_destroy_object(chpl____wide_object this_chpl7);
+static void chpl__init_ChapelBase(int64_t _ln_chpl,
+                                  int32_t _fn_chpl);
+static iokind_chpl chpl___COLON_(uint8_t from_chpl,
+                                 chpl____wide_Error * error_out_chpl);
+static ArrayInit_chpl init_elts_method_chpl(int64_t s_chpl);
+static ArrayInit_chpl init_elts_method_chpl2(int64_t s_chpl);
+static ArrayInit_chpl init_elts_method_chpl3(int64_t s_chpl);
+static void init_elts_chpl(_ddata_locale_chpl x_chpl2,
+                           int64_t s_chpl,
+                           int64_t lo_chpl);
+static void init_elts_chpl2(_ddata_int64_t_chpl x_chpl2,
+                            int64_t s_chpl,
+                            int64_t lo_chpl);
+static void init_elts_chpl3(_ddata_uint64_t_chpl x_chpl2,
+                            int64_t s_chpl,
+                            int64_t lo_chpl);
+static void coforall_fn_chpl(int64_t len_chpl,
+                             int64_t numChunks_chpl,
+                             range_int64_t_bounded_F_chpl this_chpl7,
+                             chpl___EndCount_AtomicT_int64_t_int64_t _coforallCount_chpl,
+                             int64_t chunk_chpl,
+                             _ddata_locale_chpl x_chpl2);
+static void coforall_fn_chpl2(int64_t len_chpl,
+                              int64_t numChunks_chpl,
+                              range_int64_t_bounded_F_chpl this_chpl7,
+                              chpl___EndCount_AtomicT_int64_t_int64_t _coforallCount_chpl,
+                              int64_t chunk_chpl,
+                              _ddata_int64_t_chpl x_chpl2);
+static void coforall_fn_chpl3(int64_t len_chpl,
+                              int64_t numChunks_chpl,
+                              range_int64_t_bounded_F_chpl this_chpl7,
+                              chpl___EndCount_AtomicT_int64_t_int64_t _coforallCount_chpl,
+                              int64_t chunk_chpl,
+                              _ddata_uint64_t_chpl x_chpl2);
+static void wrapcoforall_fn_chpl(_class_localscoforall_fn_chpl3 c_chpl);
+static void wrapcoforall_fn_chpl2(_class_localscoforall_fn_chpl c_chpl);
+static void wrapcoforall_fn_chpl3(_class_localscoforall_fn_chpl2 c_chpl);
+static _ddata_int64_t_chpl _ddata_allocate_noinit_chpl(int64_t size_chpl3,
+                                                       chpl_bool * callPostAlloc_chpl,
+                                                       int32_t subloc_chpl);
+static _ddata_uint64_t_chpl _ddata_allocate_noinit_chpl2(int64_t size_chpl3,
+                                                         chpl_bool * callPostAlloc_chpl,
+                                                         int32_t subloc_chpl);
+static _ddata_locale_chpl _ddata_allocate_noinit_chpl3(int64_t size_chpl3,
+                                                       chpl_bool * callPostAlloc_chpl,
+                                                       int32_t subloc_chpl);
+static void chpl_resetTaskSpawn(int64_t numTasks_chpl);
+static void chpl__auto_destroy__EndCountBase(chpl____wide__EndCountBase this_chpl7);
+static void chpl__auto_destroy__EndCount(chpl____wide__EndCount_RAtomicT_int64_t_RAtomicT_int64_t this_chpl7);
+static void chpl__auto_destroy__EndCount2(chpl____wide__EndCount_AtomicT_int64_t_int64_t this_chpl7);
+static chpl___EndCount_AtomicT_int64_t_int64_t _new_chpl(int64_t _ln_chpl,
+                                                         int32_t _fn_chpl);
+static chpl___EndCount_RAtomicT_int64_t_RAtomicT_int64_t _new_chpl2(int64_t _ln_chpl,
+                                                                    int32_t _fn_chpl);
+static void init_chpl8(chpl___EndCount_AtomicT_int64_t_int64_t this_chpl7);
+static void init_chpl9(chpl___EndCount_RAtomicT_int64_t_RAtomicT_int64_t this_chpl7);
+static void _upEndCount_chpl(chpl___EndCount_AtomicT_int64_t_int64_t e_chpl,
+                             int64_t numTasks_chpl);
+static void _upEndCount_chpl2(chpl___EndCount_RAtomicT_int64_t_RAtomicT_int64_t e_chpl,
+                              int64_t numTasks_chpl);
+static void chpl_after_forall_fence(void);
+static void _downEndCount_chpl(chpl___EndCount_AtomicT_int64_t_int64_t e_chpl,
+                               Error_chpl err_chpl);
+static void _downEndCount_chpl2(chpl____wide__EndCount_RAtomicT_int64_t_RAtomicT_int64_t e_chpl,
+                                Error_chpl err_chpl);
+static void _waitEndCount_chpl(chpl____wide__EndCount_RAtomicT_int64_t_RAtomicT_int64_t e_chpl,
+                               chpl____wide_Error * error_out_chpl);
+static void _waitEndCount_chpl2(chpl___EndCount_RAtomicT_int64_t_RAtomicT_int64_t e_chpl,
+                                int64_t numTasks_chpl,
+                                chpl____wide_Error * error_out_chpl);
+static void _waitEndCount_chpl3(chpl___EndCount_AtomicT_int64_t_int64_t e_chpl,
+                                int64_t numTasks_chpl,
+                                chpl____wide_Error * error_out_chpl);
+static uint64_t _do_command_line_cast_chpl(c_string x_chpl2,
+                                           chpl____wide_Error * error_out_chpl);
+static chpl_bool _do_command_line_cast_chpl2(c_string x_chpl2,
+                                             chpl____wide_Error * error_out_chpl);
+static int64_t _do_command_line_cast_chpl3(c_string x_chpl2,
+                                           chpl____wide_Error * error_out_chpl);
+static void _do_command_line_cast_chpl4(c_string x_chpl2,
+                                        Error_chpl * error_out_chpl,
+                                        string_chpl * _retArg_chpl);
+static chpl_bool _command_line_cast_chpl(c_string x_chpl2);
+static chpl_bool _command_line_cast_chpl10(c_string x_chpl2);
+static void _command_line_cast_chpl11(c_string x_chpl2,
+                                      string_chpl * _retArg_chpl);
+static void _command_line_cast_chpl12(c_string x_chpl2,
+                                      string_chpl * _retArg_chpl);
+static chpl_bool _command_line_cast_chpl13(c_string x_chpl2);
+static int64_t _command_line_cast_chpl14(c_string x_chpl2);
+static chpl_bool _command_line_cast_chpl2(c_string x_chpl2);
+static chpl_bool _command_line_cast_chpl3(c_string x_chpl2);
+static int64_t _command_line_cast_chpl4(c_string x_chpl2);
+static chpl_bool _command_line_cast_chpl5(c_string x_chpl2);
+static uint64_t _command_line_cast_chpl6(c_string x_chpl2);
+static uint64_t _command_line_cast_chpl7(c_string x_chpl2);
+static int64_t _command_line_cast_chpl8(c_string x_chpl2);
+static void _command_line_cast_chpl9(c_string x_chpl2,
+                                     string_chpl * _retArg_chpl);
+static void chpl__autoDestroy(_distribution_DefaultDist_chpl * x_chpl2);
+static void chpl__autoDestroy2(_domain_DefaultRectangularDom_1_int64_t_F_chpl * x_chpl2);
+static void chpl__autoDestroy3(_array_DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl * x_chpl2);
+static void chpl__delete(ConnectionResetError_chpl arg_chpl);
+static void chpl__delete10(chpl____wide_BaseDom arg_chpl);
+static void chpl__delete11(chpl____wide_BaseDist arg_chpl);
+static void chpl__delete12(QioPluginChannel_chpl arg_chpl);
+static void chpl__delete13(QioPluginFile_chpl arg_chpl);
+static void chpl__delete14(DecodeError_chpl arg_chpl);
+static void chpl__delete15(BlockingIOError_chpl arg_chpl);
+static void chpl__delete16(ChildProcessError_chpl arg_chpl);
+static void chpl__delete17(BrokenPipeError_chpl arg_chpl);
+static void chpl__delete18(ConnectionAbortedError_chpl arg_chpl);
+static void chpl__delete19(ConnectionRefusedError_chpl arg_chpl);
+static void chpl__delete2(IllegalArgumentError_chpl arg_chpl);
+static void chpl__delete20(FileExistsError_chpl arg_chpl);
+static void chpl__delete21(FileNotFoundError_chpl arg_chpl);
+static void chpl__delete22(InterruptedError_chpl arg_chpl);
+static void chpl__delete23(IsADirectoryError_chpl arg_chpl);
+static void chpl__delete24(NotADirectoryError_chpl arg_chpl);
+static void chpl__delete25(PermissionError_chpl arg_chpl);
+static void chpl__delete26(ProcessLookupError_chpl arg_chpl);
+static void chpl__delete27(TimeoutError_chpl arg_chpl);
+static void chpl__delete28(EOFError_chpl arg_chpl);
+static void chpl__delete29(UnexpectedEOFError_chpl arg_chpl);
+static void chpl__delete3(chpl___EndCount_AtomicT_int64_t_int64_t arg_chpl);
+static void chpl__delete30(BadFormatError_chpl arg_chpl);
+static void chpl__delete31(IOError_chpl arg_chpl);
+static void chpl__delete32(SystemError_chpl arg_chpl);
+static void chpl__delete33(CodepointSplittingError_chpl arg_chpl);
+static void chpl__delete34(chpl____wide_BaseLocale arg_chpl);
+static void chpl__delete35(chpl____wide_DefaultRectangularDom_1_int64_t_F arg_chpl);
+static void chpl__delete36(DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl arg_chpl);
+static void chpl__delete37(DefaultRectangularArr_1_int64_t_F_int64_t_int64_t_chpl arg_chpl);
+static void chpl__delete38(DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t_chpl arg_chpl);
+static void chpl__delete4(chpl____wide_Error arg_chpl);
+static void chpl__delete5(chpl____wide_TaskErrors arg_chpl);
+static void chpl__delete6(chpl____wide__EndCount_RAtomicT_int64_t_RAtomicT_int64_t arg_chpl);
+static void chpl__delete7(chpl____wide_chpl_ModuleDeinit arg_chpl);
+static void chpl__delete8(chpl____wide_BaseArr arg_chpl);
+static void chpl__delete9(object_chpl arg_chpl);
+static void on_fn_chpl22(chpl____wide_PermissionError arg_chpl);
+static void on_fn_chpl23(chpl____wide_BrokenPipeError arg_chpl);
+static void on_fn_chpl24(chpl____wide__EndCount_AtomicT_int64_t_int64_t arg_chpl);
+static void on_fn_chpl25(chpl____wide_Error arg_chpl);
+static void on_fn_chpl26(chpl____wide_TaskErrors arg_chpl);
+static void on_fn_chpl27(chpl____wide__EndCount_RAtomicT_int64_t_RAtomicT_int64_t arg_chpl);
+static void on_fn_chpl28(chpl____wide_chpl_ModuleDeinit arg_chpl);
+static void on_fn_chpl29(chpl____wide_BaseArr arg_chpl);
+static void on_fn_chpl30(chpl____wide_object arg_chpl);
+static void on_fn_chpl31(chpl____wide_BaseDom arg_chpl);
+static void on_fn_chpl32(chpl____wide_BaseDist arg_chpl);
+static void on_fn_chpl33(chpl____wide_QioPluginChannel arg_chpl);
+static void on_fn_chpl34(chpl____wide_QioPluginFile arg_chpl);
+static void on_fn_chpl35(chpl____wide_DecodeError arg_chpl);
+static void on_fn_chpl36(chpl____wide_BlockingIOError arg_chpl);
+static void on_fn_chpl37(chpl____wide_ChildProcessError arg_chpl);
+static void on_fn_chpl38(chpl____wide_ConnectionAbortedError arg_chpl);
+static void on_fn_chpl39(chpl____wide_ConnectionRefusedError arg_chpl);
+static void on_fn_chpl40(chpl____wide_ConnectionResetError arg_chpl);
+static void on_fn_chpl41(chpl____wide_FileExistsError arg_chpl);
+static void on_fn_chpl42(chpl____wide_FileNotFoundError arg_chpl);
+static void on_fn_chpl43(chpl____wide_InterruptedError arg_chpl);
+static void on_fn_chpl44(chpl____wide_IsADirectoryError arg_chpl);
+static void on_fn_chpl45(chpl____wide_NotADirectoryError arg_chpl);
+static void on_fn_chpl46(chpl____wide_ProcessLookupError arg_chpl);
+static void on_fn_chpl47(chpl____wide_TimeoutError arg_chpl);
+static void on_fn_chpl48(chpl____wide_EOFError arg_chpl);
+static void on_fn_chpl49(chpl____wide_UnexpectedEOFError arg_chpl);
+static void on_fn_chpl50(chpl____wide_BadFormatError arg_chpl);
+static void on_fn_chpl51(chpl____wide_IOError arg_chpl);
+static void on_fn_chpl52(chpl____wide_SystemError arg_chpl);
+static void on_fn_chpl53(chpl____wide_IllegalArgumentError arg_chpl);
+static void on_fn_chpl54(chpl____wide_CodepointSplittingError arg_chpl);
+static void on_fn_chpl55(chpl____wide_BaseLocale arg_chpl);
+static void on_fn_chpl56(chpl____wide_DefaultRectangularDom_1_int64_t_F arg_chpl);
+static void on_fn_chpl57(chpl____wide_DefaultRectangularArr_1_int64_t_F_locale_int64_t arg_chpl);
+static void on_fn_chpl58(chpl____wide_DefaultRectangularArr_1_int64_t_F_int64_t_int64_t arg_chpl);
+static void on_fn_chpl59(chpl____wide_DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t arg_chpl);
+static void wrapon_fn_chpl22(_class_localson_fn_chpl41 c_chpl);
+static void wrapon_fn_chpl23(_class_localson_fn_chpl34 c_chpl);
+static void wrapon_fn_chpl24(_class_localson_fn_chpl46 c_chpl);
+static void wrapon_fn_chpl25(_class_localson_fn_chpl48 c_chpl);
+static void wrapon_fn_chpl26(_class_localson_fn_chpl51 c_chpl);
+static void wrapon_fn_chpl27(_class_localson_fn_chpl29 c_chpl);
+static void wrapon_fn_chpl28(_class_localson_fn_chpl23 c_chpl);
+static void wrapon_fn_chpl29(_class_localson_fn_chpl56 c_chpl);
+static void wrapon_fn_chpl30(_class_localson_fn_chpl59 c_chpl);
+static void wrapon_fn_chpl31(_class_localson_fn_chpl50 c_chpl);
+static void wrapon_fn_chpl32(_class_localson_fn_chpl32 c_chpl);
+static void wrapon_fn_chpl33(_class_localson_fn_chpl58 c_chpl);
+static void wrapon_fn_chpl34(_class_localson_fn_chpl42 c_chpl);
+static void wrapon_fn_chpl35(_class_localson_fn_chpl57 c_chpl);
+static void wrapon_fn_chpl36(_class_localson_fn_chpl55 c_chpl);
+static void wrapon_fn_chpl37(_class_localson_fn_chpl54 c_chpl);
+static void wrapon_fn_chpl38(_class_localson_fn_chpl24 c_chpl);
+static void wrapon_fn_chpl39(_class_localson_fn_chpl53 c_chpl);
+static void wrapon_fn_chpl40(_class_localson_fn_chpl40 c_chpl);
+static void wrapon_fn_chpl41(_class_localson_fn_chpl39 c_chpl);
+static void wrapon_fn_chpl42(_class_localson_fn_chpl38 c_chpl);
+static void wrapon_fn_chpl43(_class_localson_fn_chpl25 c_chpl);
+static void wrapon_fn_chpl44(_class_localson_fn_chpl52 c_chpl);
+static void wrapon_fn_chpl45(_class_localson_fn_chpl45 c_chpl);
+static void wrapon_fn_chpl46(_class_localson_fn_chpl43 c_chpl);
+static void wrapon_fn_chpl47(_class_localson_fn_chpl26 c_chpl);
+static void wrapon_fn_chpl48(_class_localson_fn_chpl37 c_chpl);
+static void wrapon_fn_chpl49(_class_localson_fn_chpl44 c_chpl);
+static void wrapon_fn_chpl50(_class_localson_fn_chpl49 c_chpl);
+static void wrapon_fn_chpl51(_class_localson_fn_chpl27 c_chpl);
+static void wrapon_fn_chpl52(_class_localson_fn_chpl22 c_chpl);
+static void wrapon_fn_chpl53(_class_localson_fn_chpl47 c_chpl);
+static void wrapon_fn_chpl54(_class_localson_fn_chpl28 c_chpl);
+static void wrapon_fn_chpl55(_class_localson_fn_chpl30 c_chpl);
+static void wrapon_fn_chpl56(_class_localson_fn_chpl31 c_chpl);
+static void wrapon_fn_chpl57(_class_localson_fn_chpl33 c_chpl);
+static void wrapon_fn_chpl58(_class_localson_fn_chpl35 c_chpl);
+static void wrapon_fn_chpl59(_class_localson_fn_chpl36 c_chpl);
+static chpl_ModuleDeinit _new_chpl3(c_string moduleName_chpl,
+                                    c_fn_ptr deinitFun_chpl,
+                                    chpl____wide_chpl_ModuleDeinit prevModule_chpl,
+                                    int64_t _ln_chpl,
+                                    int32_t _fn_chpl);
+static void chpl__auto_destroy_chpl_ModuleDeinit(chpl____wide_chpl_ModuleDeinit this_chpl7);
+static int64_t chpl_boundedCoforallSize(range_int64_t_bounded_F_chpl iterable_chpl);
+static void chpl__init_ChapelDebugPrint(int64_t _ln_chpl,
+                                        int32_t _fn_chpl);
+static void chpl__init_ChapelDistribution(int64_t _ln_chpl,
+                                          int32_t _fn_chpl);
+static void deinit_chpl5(chpl____wide_BaseDist this_chpl7);
+static chpl____wide_BaseDist remove_chpl(chpl____wide_BaseDist this_chpl7);
+static void on_fn_chpl60(chpl____wide__ref_chpl_bool free_dist_chpl,
+                         chpl____wide_BaseDist this_chpl7);
+static void wrapon_fn_chpl60(_class_localson_fn_chpl60 c_chpl);
+static void on_fn_chpl61(chpl____wide__ref_int64_t count_chpl,
+                         chpl____wide_BaseDist this_chpl7);
+static void wrapon_fn_chpl61(_class_localson_fn_chpl61 c_chpl);
+static void dsiDestroyDist_chpl(chpl____wide_BaseDist this_chpl7);
+static chpl_bool dsiTrackDomains_chpl(chpl____wide_BaseDist this_chpl7);
+static void deinit_chpl6(chpl____wide_BaseDom this_chpl7);
+static chpl____wide_BaseDist dsiMyDist_chpl(chpl____wide_BaseDom this_chpl7);
+static void remove_chpl2(chpl____wide_BaseDom this_chpl7,
+                         _tuple_2_BaseDom_BaseDist_chpl * _retArg_chpl);
+static void on_fn_chpl62(chpl____wide_BaseDist dist_chpl2,
+                         chpl____wide__ref_chpl_bool free_dom_chpl,
+                         chpl____wide__ref_chpl_bool remove_dist_chpl,
+                         chpl____wide_BaseDom this_chpl7);
+static void wrapon_fn_chpl62(_class_localson_fn_chpl62 c_chpl);
+static void on_fn_chpl63(chpl____wide_BaseDom this_chpl7,
+                         chpl____wide_BaseArr x_chpl2,
+                         chpl____wide__ref_int64_t count_chpl);
+static void wrapon_fn_chpl63(_class_localson_fn_chpl63 c_chpl);
+static void on_fn_chpl64(chpl____wide_BaseDom this_chpl7,
+                         chpl____wide_BaseArr x_chpl2);
+static void wrapon_fn_chpl64(_class_localson_fn_chpl64 c_chpl);
+static chpl_bool dsiLinksDistribution_chpl(chpl____wide_BaseDom this_chpl7);
+static void dsiDestroyDom_chpl(chpl____wide_BaseDom this_chpl7);
+static void init_chpl10(BaseRectangularDom_1_int64_t_F_chpl this_chpl7);
+static void deinit_chpl7(chpl____wide_BaseRectangularDom_1_int64_t_F this_chpl7);
+static void deinit_chpl8(chpl____wide_BaseArr this_chpl7);
+static chpl____wide_BaseDom dsiGetBaseDom_chpl(chpl____wide_BaseArr this_chpl7);
+static void remove_chpl3(chpl____wide_BaseArr this_chpl7,
+                         _tuple_2_BaseArr_BaseDom_chpl * _retArg_chpl);
+static void dsiDestroyArr_chpl(chpl____wide_BaseArr this_chpl7,
+                               chpl_bool deinitElts_chpl);
+static void decEltCountsIfNeeded_chpl(chpl____wide_BaseArr this_chpl7);
+static void init_chpl11(BaseArrOverRectangularDom_1_int64_t_F_chpl this_chpl7,
+                        BaseArr_chpl prev_chpl,
+                        BaseArr_chpl next_chpl,
+                        int64_t pid_chpl,
+                        chpl_bool _decEltRefCounts_chpl,
+                        chpl_ddataResizePolicy _resizePolicy_chpl);
+static void dsiReallocate_chpl(chpl____wide_BaseArrOverRectangularDom_1_int64_t_F this_chpl7,
+                               chpl____wide__ref__tuple_1_star_range_int64_t_bounded_F bounds_chpl);
+static void dsiPostReallocate_chpl(chpl____wide_BaseArrOverRectangularDom_1_int64_t_F this_chpl7);
+static void deinit_chpl9(chpl____wide_BaseArrOverRectangularDom_1_int64_t_F this_chpl7);
+static void init_chpl12(BaseRectangularArr_1_int64_t_F_locale_chpl this_chpl7,
+                        BaseArr_chpl prev_chpl,
+                        BaseArr_chpl next_chpl,
+                        int64_t pid_chpl,
+                        chpl_bool _decEltRefCounts_chpl,
+                        chpl_ddataResizePolicy _resizePolicy_chpl);
+static void init_chpl13(BaseRectangularArr_1_int64_t_F_int64_t_chpl this_chpl7,
+                        BaseArr_chpl prev_chpl,
+                        BaseArr_chpl next_chpl,
+                        int64_t pid_chpl,
+                        chpl_bool _decEltRefCounts_chpl,
+                        chpl_ddataResizePolicy _resizePolicy_chpl);
+static void init_chpl14(BaseRectangularArr_1_int64_t_F_uint64_t_chpl this_chpl7,
+                        BaseArr_chpl prev_chpl,
+                        BaseArr_chpl next_chpl,
+                        int64_t pid_chpl,
+                        chpl_bool _decEltRefCounts_chpl,
+                        chpl_ddataResizePolicy _resizePolicy_chpl);
+static void deinit_chpl10(chpl____wide_BaseRectangularArr_1_int64_t_F_uint64_t this_chpl7);
+static void deinit_chpl11(chpl____wide_BaseRectangularArr_1_int64_t_F_int64_t this_chpl7);
+static void deinit_chpl12(chpl____wide_BaseRectangularArr_1_int64_t_F_locale this_chpl7);
+static void decEltCountsIfNeeded_chpl2(chpl____wide_BaseRectangularArr_1_int64_t_F_uint64_t this_chpl7);
+static void decEltCountsIfNeeded_chpl3(chpl____wide_BaseRectangularArr_1_int64_t_F_locale this_chpl7);
+static void decEltCountsIfNeeded_chpl4(chpl____wide_BaseRectangularArr_1_int64_t_F_int64_t this_chpl7);
+static void _delete_dist_chpl(chpl____wide_BaseDist dist_chpl2,
+                              chpl_bool privatized_chpl);
+static void _delete_dom_chpl(chpl____wide_DefaultRectangularDom_1_int64_t_F dom_chpl,
+                             chpl_bool privatized_chpl);
+static void _delete_dom_chpl2(chpl____wide_BaseDom dom_chpl,
+                              chpl_bool privatized_chpl);
+static void _delete_arr_chpl(chpl____wide_BaseArr arr_chpl,
+                             chpl_bool deinitElts_chpl);
+static void chpl_assignDomainWithGetSetIndices(DefaultRectangularDom_1_int64_t_F_chpl lhs_chpl,
+                                               _domain_DefaultRectangularDom_1_int64_t_F_chpl * rhs_chpl);
+static void on_fn_chpl65(_serialized_domain_1_int64_t_F__tuple_1_star_range_int64_t_bounded_F_T_chpl * rhs_chpl,
+                         chpl____wide_BaseArrOverRectangularDom_1_int64_t_F arrType_chpl,
+                         chpl____wide__ref_int64_t idxType_chpl,
+                         chpl____wide_BaseArr e_chpl);
+static void wrapon_fn_chpl65(_class_localson_fn_chpl65 c_chpl);
+static void on_fn_chpl66(chpl____wide_BaseArrOverRectangularDom_1_int64_t_F eCast_chpl);
+static void wrapon_fn_chpl66(_class_localson_fn_chpl66 c_chpl);
+static void chpl__init_ChapelDomain(int64_t _ln_chpl,
+                                    int32_t _fn_chpl);
+static void _getDomain_chpl(chpl____wide_DefaultRectangularDom_1_int64_t_F value_chpl,
+                            _domain_DefaultRectangularDom_1_int64_t_F_chpl * _retArg_chpl);
+static chpl___RuntimeTypeInfo chpl__buildDomainRuntimeType(_distribution_DefaultDist_chpl * dist_chpl2);
+static void chpl__convertRuntimeTypeToValue2(_distribution_DefaultDist_chpl * dist_chpl2,
+                                             chpl_bool definedConst_chpl,
+                                             _domain_DefaultRectangularDom_1_int64_t_F_chpl * _retArg_chpl);
+static void chpl__buildDomainExpr(range_int64_t_bounded_F_chpl _e0_ranges_chpl,
+                                  chpl_bool definedConst_chpl,
+                                  _domain_DefaultRectangularDom_1_int64_t_F_chpl * _retArg_chpl);
+static void chpl__setDomainConst(_domain_DefaultRectangularDom_1_int64_t_F_chpl * dom_chpl);
+static _domain_DefaultRectangularDom_1_int64_t_F_chpl * chpl__ensureDomainExpr(_domain_DefaultRectangularDom_1_int64_t_F_chpl * x_chpl2);
+static void chpl__ensureDomainExpr2(range_int64_t_bounded_F_chpl _e0_x_chpl,
+                                    _domain_DefaultRectangularDom_1_int64_t_F_chpl * _retArg_chpl);
+static void chpl___ASSIGN_(_domain_DefaultRectangularDom_1_int64_t_F_chpl * a_chpl,
+                           _domain_DefaultRectangularDom_1_int64_t_F_chpl * b_chpl);
+static void chpl__coerceMove(chpl___RuntimeTypeInfo * dstType_chpl,
+                             _domain_DefaultRectangularDom_1_int64_t_F_chpl * rhs_chpl,
+                             chpl_bool definedConst_chpl,
+                             _domain_DefaultRectangularDom_1_int64_t_F_chpl * _retArg_chpl);
+static void init_chpl15(chpl____wide__ref__wide__domain_DefaultRectangularDom_1_int64_t_F this_chpl7,
+                        int64_t _pid_chpl,
+                        chpl____wide_DefaultRectangularDom_1_int64_t_F _instance_chpl,
+                        chpl_bool _unowned_chpl);
+static void init_chpl16(_domain_DefaultRectangularDom_1_int64_t_F_chpl * this_chpl7,
+                        DefaultRectangularDom_1_int64_t_F_chpl value_chpl);
+static void init_chpl17(_domain_DefaultRectangularDom_1_int64_t_F_chpl * this_chpl7,
+                        _distribution_DefaultDist_chpl * d_chpl,
+                        chpl_bool definedConst_chpl);
+static void init_chpl18(_domain_DefaultRectangularDom_1_int64_t_F_chpl * this_chpl7,
+                        _distribution_DefaultDist_chpl * d_chpl,
+                        _tuple_1_star_range_int64_t_bounded_F_chpl * ranges_chpl,
+                        chpl_bool definedConst_chpl);
+static void chpl__serialize(_domain_DefaultRectangularDom_1_int64_t_F_chpl * this_chpl7,
+                            _serialized_domain_1_int64_t_F__tuple_1_star_range_int64_t_bounded_F_T_chpl * _retArg_chpl);
+static void chpl__deserialize(chpl___RuntimeTypeInfo * this_chpl7,
+                              _serialized_domain_1_int64_t_F__tuple_1_star_range_int64_t_bounded_F_T_chpl * data_chpl,
+                              _domain_DefaultRectangularDom_1_int64_t_F_chpl * _retArg_chpl);
+static void _do_destroy_chpl(chpl____wide__ref__wide__domain_DefaultRectangularDom_1_int64_t_F this_chpl7);
+static void on_fn_chpl67(_domain_DefaultRectangularDom_1_int64_t_F_chpl * this_chpl7);
+static void wrapon_fn_chpl67(_class_localson_fn_chpl67 c_chpl);
+static void deinit_chpl13(_domain_DefaultRectangularDom_1_int64_t_F_chpl * this_chpl7);
+static void dist_chpl(_domain_DefaultRectangularDom_1_int64_t_F_chpl * this_chpl7,
+                      _distribution_DefaultDist_chpl * _retArg_chpl);
+static void this_chpl(_domain_DefaultRectangularDom_1_int64_t_F_chpl * this_chpl7,
+                      range_int64_t_bounded_F_chpl _e0_ranges_chpl,
+                      _domain_DefaultRectangularDom_1_int64_t_F_chpl * _retArg_chpl);
+static void dims_chpl(_domain_DefaultRectangularDom_1_int64_t_F_chpl * this_chpl7,
+                      _tuple_1_star_range_int64_t_bounded_F_chpl * _retArg_chpl);
+static void buildArray_chpl(_domain_DefaultRectangularDom_1_int64_t_F_chpl * this_chpl7,
+                            _array_DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl * _retArg_chpl);
+static void help_chpl(_domain_DefaultRectangularDom_1_int64_t_F_chpl * this_chpl7,
+                      DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl * x_chpl2);
+static int64_t size_chpl(chpl____wide__ref__wide__domain_DefaultRectangularDom_1_int64_t_F this_chpl7);
+static int64_t sizeAs_chpl(chpl____wide__ref__wide__domain_DefaultRectangularDom_1_int64_t_F this_chpl7);
+static uint64_t sizeAs_chpl2(_domain_DefaultRectangularDom_1_int64_t_F_chpl * this_chpl7);
+static int64_t low_chpl(_domain_DefaultRectangularDom_1_int64_t_F_chpl * this_chpl7);
+static int64_t stride_chpl(_domain_DefaultRectangularDom_1_int64_t_F_chpl * this_chpl7);
+static chpl_bool contains_chpl(_domain_DefaultRectangularDom_1_int64_t_F_chpl * this_chpl7,
+                               _tuple_1_star_int64_t_chpl * idx_chpl);
+static void setIndices_chpl(_domain_DefaultRectangularDom_1_int64_t_F_chpl * this_chpl7,
+                            _tuple_1_star_range_int64_t_bounded_F_chpl * x_chpl2);
+static void getIndices_chpl(_domain_DefaultRectangularDom_1_int64_t_F_chpl * this_chpl7,
+                            _tuple_1_star_range_int64_t_bounded_F_chpl * _retArg_chpl);
+static void chpl___COLON_2(chpl____wide__ref__wide__domain_DefaultRectangularDom_1_int64_t_F val_chpl,
+                           string_chpl * _retArg_chpl);
+static void chpl__init_ChapelHashtable(int64_t _ln_chpl,
+                                       int32_t _fn_chpl);
+static void chpl__init_ChapelIOStringifyHelper(int64_t _ln_chpl,
+                                               int32_t _fn_chpl);
+static void stringify_simple_chpl(string_chpl * _e0_args_chpl,
+                                  range_byteIndex_boundedHigh_F_chpl _e1_args_chpl,
+                                  string_chpl * _e2_args_chpl,
+                                  int64_t _e3_args_chpl,
+                                  string_chpl * _retArg_chpl);
+static void stringify_simple_chpl10(string_chpl * _e0_args_chpl,
+                                    range_int64_t_bounded_F_chpl _e1_args_chpl,
+                                    string_chpl * _e2_args_chpl,
+                                    int64_t _e3_args_chpl,
+                                    string_chpl * _retArg_chpl);
+static void stringify_simple_chpl11(string_chpl * _e0_args_chpl,
+                                    range_byteIndex_boundedLow_F_chpl _e1_args_chpl,
+                                    string_chpl * _e2_args_chpl,
+                                    int64_t _e3_args_chpl,
+                                    string_chpl * _retArg_chpl);
+static void stringify_simple_chpl12(string_chpl * _e0_args_chpl,
+                                    string_chpl * _e1_args_chpl,
+                                    int64_t _e2_args_chpl,
+                                    string_chpl * _e3_args_chpl,
+                                    range_int64_t_bounded_F_chpl _e4_args_chpl,
+                                    string_chpl * _retArg_chpl);
+static void stringify_simple_chpl2(string_chpl * _e0_args_chpl,
+                                   int64_t _e1_args_chpl,
+                                   string_chpl * _e2_args_chpl,
+                                   int64_t _e3_args_chpl,
+                                   string_chpl * _e4_args_chpl,
+                                   string_chpl * _retArg_chpl);
+static void stringify_simple_chpl3(string_chpl * _e0_args_chpl,
+                                   string_chpl * _e1_args_chpl,
+                                   string_chpl * _e2_args_chpl,
+                                   string_chpl * _e3_args_chpl,
+                                   string_chpl * _retArg_chpl);
+static void stringify_simple_chpl4(string_chpl * _e0_args_chpl,
+                                   range_byteIndex_bounded_F_chpl _e1_args_chpl,
+                                   string_chpl * _e2_args_chpl,
+                                   int64_t _e3_args_chpl,
+                                   string_chpl * _retArg_chpl);
+static void stringify_simple_chpl5(string_chpl * _e0_args_chpl,
+                                   int64_t _e1_args_chpl,
+                                   string_chpl * _e2_args_chpl,
+                                   string_chpl * _retArg_chpl);
+static void stringify_simple_chpl6(string_chpl * _e0_args_chpl,
+                                   int64_t _e1_args_chpl,
+                                   string_chpl * _e2_args_chpl,
+                                   int64_t _e3_args_chpl,
+                                   string_chpl * _retArg_chpl);
+static void stringify_simple_chpl7(string_chpl * _e0_args_chpl,
+                                   range_int64_t_boundedLow_F_chpl _e1_args_chpl,
+                                   string_chpl * _e2_args_chpl,
+                                   int64_t _e3_args_chpl,
+                                   string_chpl * _retArg_chpl);
+static void stringify_simple_chpl8(c_string _e0_args_chpl,
+                                   string_chpl * _retArg_chpl);
+static void stringify_simple_chpl9(string_chpl * _e0_args_chpl,
+                                   int64_t _e1_args_chpl,
+                                   string_chpl * _retArg_chpl);
+static chpl_bool chpl___EQUALS_(locale_chpl * _arg1_chpl,
+                                locale_chpl * _arg2_chpl);
+static chpl_bool chpl___EXCLAMATION__ASSIGN_(locale_chpl * _arg1_chpl,
+                                             locale_chpl * _arg2_chpl);
+static void chpl__init_ChapelLocale(int64_t _ln_chpl,
+                                    int32_t _fn_chpl);
+static void init_chpl19(locale_chpl * this_chpl7);
+static void init_chpl20(locale_chpl * this_chpl7,
+                        chpl____wide_BaseLocale _instance_chpl);
+static void init_chpl21(locale_chpl * this_chpl7,
+                        BaseLocale_chpl _instance_chpl);
+static void init_chpl22(locale_chpl * this_chpl7);
+static void init_chpl23(locale_chpl * this_chpl7);
+static void init_chpl24(locale_chpl * this_chpl7);
+static void init_ASSIGN__chpl(chpl____wide__ref_locale this_chpl7,
+                              chpl____wide__ref_locale other_chpl);
+static void deinit_chpl14(chpl____wide__ref_locale this_chpl7);
+static int64_t runningTasks_chpl(locale_chpl * this_chpl7);
+static void chpl___ASSIGN_2(chpl____wide__ref_locale l1_chpl,
+                            chpl____wide__ref_locale l2_chpl);
+static void chpl__auto_destroy_BaseLocale(chpl____wide_BaseLocale this_chpl7);
+static int64_t id_chpl(chpl____wide_BaseLocale this_chpl7);
+static int64_t getChildCount_chpl(chpl____wide_BaseLocale this_chpl7);
+static void getChild_chpl(chpl____wide_BaseLocale this_chpl7,
+                          int64_t idx_chpl,
+                          chpl____wide__ref_locale _retArg_chpl);
+static void chpl__auto_destroy_DummyLocale(chpl____wide_DummyLocale this_chpl7);
+static DummyLocale_chpl _new_chpl4(int64_t _ln_chpl,
+                                   int32_t _fn_chpl);
+static int64_t getChildCount_chpl2(chpl____wide_DummyLocale this_chpl7);
+static void getChild_chpl2(chpl____wide_DummyLocale this_chpl7,
+                           int64_t idx_chpl,
+                           chpl____wide__ref_locale _retArg_chpl);
+static void chpl__auto_destroy_AbstractLocaleModel(chpl____wide_AbstractLocaleModel this_chpl7);
+static void chpl__auto_destroy_AbstractRootLocale(chpl____wide_AbstractRootLocale this_chpl7);
+static void localeIDtoLocale_chpl(chpl____wide_AbstractRootLocale this_chpl7,
+                                  chpl____wide__ref_chpl_localeID_t id_chpl2,
+                                  chpl____wide__ref_locale _retArg_chpl);
+static void warmupRuntime_chpl(void);
+static void coforall_fn_chpl4(chpl___EndCount_AtomicT_int64_t_int64_t _coforallCount_chpl,
+                              int64_t i_chpl);
+static void wrapcoforall_fn_chpl4(_class_localscoforall_fn_chpl4 c_chpl);
+static void chpl_init_rootLocale(void);
+static void chpl_rootLocaleInitPrivate(int64_t locIdx_chpl);
+static void chpl_defaultLocaleInitPrivate(void);
+static void chpl_singletonCurrentLocaleInitPrivateSublocs(locale_chpl * arg_chpl);
+static void chpl_singletonCurrentLocaleInitPrivate(int64_t locIdx_chpl);
+void chpl_getLocaleID(chpl_localeID_t * localeID,
+                      int64_t _ln,
+                      int32_t _fn);
+static void chpl_localeID_to_locale(chpl____wide__ref_chpl_localeID_t id_chpl2,
+                                    locale_chpl * _retArg_chpl);
+void chpl_taskRunningCntInc(int64_t _ln,
+                            int32_t _fn);
+void chpl_taskRunningCntDec(int64_t _ln,
+                            int32_t _fn);
+void chpl_taskRunningCntReset(int64_t _ln,
+                              int32_t _fn);
+static void deinit_chpl15(void);
+static void chpl__init_ChapelLocks(int64_t _ln_chpl,
+                                   int32_t _fn_chpl);
+static void init_chpl25(chpl_LocalSpinlock * this_chpl7);
+static void _local_on_fn_chpl4(chpl____wide__ref_chpl_LocalSpinlock this_chpl7);
+static void _local_wrapon_fn_chpl4(_class_localson_fn_chpl68 c_chpl);
+static void on_fn_chpl68(chpl____wide__ref_chpl_LocalSpinlock this_chpl7);
+static void wrapon_fn_chpl68(_class_localson_fn_chpl68 c_chpl);
+static void chpl__init_ChapelNumLocales(int64_t _ln_chpl,
+                                        int32_t _fn_chpl);
+static void chpl__init_ChapelPrivatization(int64_t _ln_chpl,
+                                           int32_t _fn_chpl);
+static void chpl__init_ChapelRange(int64_t _ln_chpl,
+                                   int32_t _fn_chpl);
+static void init_chpl26(range_int64_t_bounded_F_chpl * this_chpl7,
+                        int64_t low_chpl2,
+                        int64_t high_chpl);
+static void init_chpl27(range_byteIndex_bounded_F_chpl * this_chpl7,
+                        byteIndex_chpl * low_chpl2,
+                        byteIndex_chpl * high_chpl);
+static void init_chpl28(range_int64_t_boundedLow_F_chpl * this_chpl7,
+                        int64_t low_chpl2);
+static void init_chpl29(range_byteIndex_boundedLow_F_chpl * this_chpl7,
+                        byteIndex_chpl * low_chpl2);
+static void init_chpl30(range_byteIndex_boundedHigh_F_chpl * this_chpl7,
+                        byteIndex_chpl * high_chpl);
+static void init_chpl31(range_int64_t_boundedHigh_F_chpl * this_chpl7);
+static void init_chpl32(range_int64_t_bounded_F_chpl * this_chpl7);
+static void init_chpl33(range_int64_t_boundedLow_F_chpl * this_chpl7);
+static void init_chpl34(range_int64_t_boundedHigh_F_chpl * this_chpl7,
+                        int64_t _low_chpl,
+                        int64_t _high_chpl,
+                        int64_t _stride_chpl,
+                        int64_t _alignment_chpl,
+                        chpl_bool _aligned_chpl);
+static void init_chpl35(range_int64_t_boundedLow_F_chpl * this_chpl7,
+                        int64_t _low_chpl,
+                        int64_t _high_chpl,
+                        int64_t _stride_chpl,
+                        int64_t _alignment_chpl,
+                        chpl_bool _aligned_chpl);
+static void init_chpl36(range_int64_t_bounded_F_chpl * this_chpl7,
+                        int64_t _low_chpl,
+                        int64_t _high_chpl,
+                        int64_t _stride_chpl,
+                        int64_t _alignment_chpl,
+                        chpl_bool _aligned_chpl);
+static void init_chpl37(range_int64_t_bounded_F_chpl * this_chpl7,
+                        int64_t _low_chpl,
+                        int64_t _high_chpl,
+                        int64_t _stride_chpl,
+                        chpl_bool _aligned_chpl);
+static void init_chpl38(range_int64_t_bounded_F_chpl * this_chpl7,
+                        int64_t _low_chpl,
+                        int64_t _high_chpl,
+                        chpl_bool _aligned_chpl);
+static void chpl_build_bounded_range(int64_t low_chpl2,
+                                     int64_t high_chpl,
+                                     range_int64_t_bounded_F_chpl * _retArg_chpl);
+static int64_t chpl__nudgeHighBound(int64_t high_chpl);
+static void chpl_build_low_bounded_range(int64_t low_chpl2,
+                                         range_int64_t_boundedLow_F_chpl * _retArg_chpl);
+static int64_t alignment_chpl(range_int64_t_boundedLow_F_chpl this_chpl7);
+static int64_t alignment_chpl2(range_int64_t_bounded_F_chpl this_chpl7);
+static int64_t alignment_chpl3(range_int64_t_boundedHigh_F_chpl this_chpl7);
+static int64_t size_chpl2(range_int64_t_bounded_F_chpl this_chpl7);
+static int64_t sizeAs_chpl3(range_int64_t_bounded_F_chpl this_chpl7);
+static uint64_t sizeAs_chpl4(range_int64_t_bounded_F_chpl this_chpl7);
+static chpl_bool chpl___EQUALS_2(range_int64_t_bounded_F_chpl r1_chpl,
+                                 range_int64_t_bounded_F_chpl r2_chpl);
+static chpl_bool chpl___EXCLAMATION__ASSIGN_2(range_int64_t_bounded_F_chpl r1_chpl,
+                                              range_int64_t_bounded_F_chpl r2_chpl);
+static void safeCast_chpl(range_int64_t_bounded_F_chpl this_chpl7,
+                          range_int64_t_bounded_F_chpl * _retArg_chpl);
+static void chpl___COLON_3(range_byteIndex_boundedHigh_F_chpl r_chpl,
+                           range_int64_t_boundedHigh_F_chpl * _retArg_chpl);
+static void chpl___COLON_4(range_byteIndex_bounded_F_chpl r_chpl,
+                           range_int64_t_bounded_F_chpl * _retArg_chpl);
+static void chpl___COLON_5(range_byteIndex_boundedLow_F_chpl r_chpl,
+                           range_int64_t_boundedLow_F_chpl * _retArg_chpl);
+static int64_t orderToIndex_chpl(range_int64_t_bounded_F_chpl this_chpl7,
+                                 int64_t ord_chpl);
+static void this_chpl2(range_int64_t_bounded_F_chpl this_chpl7,
+                       range_int64_t_bounded_F_chpl other_chpl,
+                       range_int64_t_bounded_F_chpl * _retArg_chpl);
+static void this_chpl3(range_int64_t_boundedHigh_F_chpl this_chpl7,
+                       range_int64_t_bounded_F_chpl other_chpl,
+                       range_int64_t_bounded_F_chpl * _retArg_chpl);
+static void this_chpl4(range_int64_t_boundedLow_F_chpl this_chpl7,
+                       range_int64_t_bounded_F_chpl other_chpl,
+                       range_int64_t_bounded_F_chpl * _retArg_chpl);
+static void chpl_count_help(range_int64_t_boundedLow_F_chpl r_chpl,
+                            int64_t count_chpl,
+                            range_int64_t_bounded_F_chpl * _retArg_chpl);
+static int64_t absSameType_chpl(int64_t str_chpl);
+static void chpl___POUND_(range_int64_t_boundedLow_F_chpl r_chpl,
+                          int64_t count_chpl,
+                          range_int64_t_bounded_F_chpl * _retArg_chpl);
+static chpl_bool chpl_checkIfRangeIterWillOverflow(int64_t low_chpl2,
+                                                   int64_t high_chpl,
+                                                   int64_t stride_chpl2,
+                                                   int64_t first_chpl,
+                                                   int64_t last_chpl,
+                                                   chpl_bool shouldHalt_chpl);
+static chpl_bool chpl_checkIfRangeIterWillOverflow2(int32_t low_chpl2,
+                                                    int32_t high_chpl,
+                                                    int64_t stride_chpl2,
+                                                    int32_t first_chpl,
+                                                    int32_t last_chpl,
+                                                    chpl_bool shouldHalt_chpl);
+static chpl_bool checkIfIterWillOverflow_chpl(range_int64_t_bounded_F_chpl this_chpl7,
+                                              chpl_bool shouldHalt_chpl);
+static void advance_chpl(_ic_these_range_int64_t_bounded_F_chpl this_chpl7);
+static void chpl___COLON_10(range_byteIndex_boundedLow_F_chpl x_chpl2,
+                            string_chpl * _retArg_chpl);
+static void chpl___COLON_6(range_byteIndex_boundedHigh_F_chpl x_chpl2,
+                           string_chpl * _retArg_chpl);
+static void chpl___COLON_7(range_int64_t_bounded_F_chpl x_chpl2,
+                           string_chpl * _retArg_chpl);
+static void chpl___COLON_8(range_byteIndex_bounded_F_chpl x_chpl2,
+                           string_chpl * _retArg_chpl);
+static void chpl___COLON_9(range_int64_t_boundedLow_F_chpl x_chpl2,
+                           string_chpl * _retArg_chpl);
+static int64_t chpl__add(int64_t a_chpl,
+                         int64_t b_chpl);
+static int64_t chpl__addRangeStrides(int64_t start_chpl,
+                                     int64_t stride_chpl2,
+                                     int64_t count_chpl);
+static int64_t mul_chpl(int64_t a_chpl,
+                        int64_t b_chpl);
+static int64_t add_chpl(int64_t a_chpl,
+                        int64_t b_chpl);
+static int64_t chpl__defaultLowBound(void);
+static int64_t chpl__defaultHighBound(void);
+void chpl__init_ChapelStandard(int64_t _ln,
+                               int32_t _fn);
+void chpl__initStringLiterals(void);
+static void chpl__init_ChapelStringLiterals(int64_t _ln_chpl,
+                                            int32_t _fn_chpl);
+static void chpl__init_ChapelTaskDataHelp(int64_t _ln_chpl,
+                                          int32_t _fn_chpl);
+static void chpl_task_data_setup(chpl_task_bundle_p args_chpl,
+                                 chpl_task_infoChapel_t * infoChapel_chpl);
+static void chpl_save_task_error(chpl____wide__EndCountBase e_chpl,
+                                 Error_chpl err_chpl);
+static void chpl__init_ChapelTaskData(int64_t _ln_chpl,
+                                      int32_t _fn_chpl);
+static uint64_t sizeof_endcount_ptr_chpl(void);
+static void chpl_task_data_setDynamicEndCount(chpl_task_infoChapel_t * tls_chpl,
+                                              chpl___EndCount_RAtomicT_int64_t_RAtomicT_int64_t end_chpl);
+static chpl____wide__EndCount_RAtomicT_int64_t_RAtomicT_int64_t chpl_task_data_getDynamicEndCount(chpl_task_infoChapel_t * tls_chpl);
+static void chpl_task_data_setSerial(chpl_task_infoChapel_t * tls_chpl,
+                                     chpl_bool makeSerial_chpl);
+static chpl_bool chpl_task_data_getSerial(chpl_task_infoChapel_t * tls_chpl);
+static void chpl_task_data_setNextCoStmtSerial(chpl_task_infoChapel_t * tls_chpl,
+                                               chpl_bool makeSerial_chpl);
+static chpl_bool chpl_task_data_getNextCoStmtSerial(chpl_task_infoChapel_t * tls_chpl);
+static void chpl_task_setDynamicEndCount(chpl___EndCount_RAtomicT_int64_t_RAtomicT_int64_t end_chpl);
+static chpl____wide__EndCount_RAtomicT_int64_t_RAtomicT_int64_t chpl_task_getDynamicEndCount(void);
+void chpl_task_setSerial(chpl_bool makeSerial);
+chpl_bool chpl_task_getSerial(void);
+static void chpl__init_ChapelTaskTable(int64_t _ln_chpl,
+                                       int32_t _fn_chpl);
+void chpldev_taskTable_add(chpl_taskID_t taskID,
+                           uint32_t lineno,
+                           int32_t filename,
+                           uint64_t tl_info);
+void chpldev_taskTable_remove(chpl_taskID_t taskID);
+void chpldev_taskTable_set_active(chpl_taskID_t taskID);
+void chpldev_taskTable_set_suspended(chpl_taskID_t taskID);
+void chpldev_taskTable_get_tl_info(chpl_taskID_t taskID);
+void chpldev_taskTable_print(void);
+static void chpl__init_ChapelThreads(int64_t _ln_chpl,
+                                     int32_t _fn_chpl);
+static void chpl__init_ChapelTuple(int64_t _ln_chpl,
+                                   int32_t _fn_chpl);
+static chpl____wide__ref_range_int64_t_bounded_F this_chpl5(chpl____wide__ref__tuple_1_star_range_int64_t_bounded_F this_chpl7,
+                                                            int64_t i_chpl);
+static void indices_chpl(chpl____wide__ref__tuple_1_star_range_int64_t_bounded_F this_chpl7,
+                         range_int64_t_bounded_F_chpl * _retArg_chpl);
+static void chpl__init_ChapelUtil(int64_t _ln_chpl,
+                                  int32_t _fn_chpl);
+static chpl_bool safeAdd_chpl(int64_t a_chpl,
+                              int64_t b_chpl);
+static chpl_bool safeMul_chpl(uint64_t a_chpl,
+                              uint64_t b_chpl);
+static void chpl_addModule(c_string moduleName_chpl,
+                           c_fn_ptr deinitFun_chpl);
+void chpl_deinitModules(void);
+static void chpl__deinit_DefaultRectangular(void);
+static void chpl__init_DefaultRectangular(int64_t _ln_chpl,
+                                          int32_t _fn_chpl);
+static DefaultDist_chpl _new_chpl5(int64_t _doms_containing_dist_chpl,
+                                   chpl_LocalSpinlock * _domsLock_chpl,
+                                   chpl_bool _free_when_no_doms_chpl,
+                                   int64_t pid_chpl,
+                                   int64_t _ln_chpl,
+                                   int32_t _fn_chpl);
+static void chpl__auto_destroy_DefaultDist(chpl____wide_DefaultDist this_chpl7);
+static DefaultRectangularDom_1_int64_t_F_chpl dsiNewRectangularDom_chpl(chpl____wide_DefaultDist this_chpl7,
+                                                                        _tuple_1_star_range_int64_t_bounded_F_chpl * inds_chpl);
+static DefaultDist_chpl dsiClone_chpl(DefaultDist_chpl this_chpl7);
+static chpl_bool dsiTrackDomains_chpl2(chpl____wide_DefaultDist this_chpl7);
+static void chpl_defaultDistInitPrivate(void);
+static void chpl__auto_destroy_DefaultRectangularDom(chpl____wide_DefaultRectangularDom_1_int64_t_F this_chpl7);
+static chpl_bool dsiLinksDistribution_chpl2(chpl____wide_DefaultRectangularDom_1_int64_t_F this_chpl7);
+static DefaultRectangularDom_1_int64_t_F_chpl _new_chpl6(chpl____wide_DefaultDist dist_chpl2,
+                                                         int64_t _ln_chpl,
+                                                         int32_t _fn_chpl);
+static void init_chpl39(DefaultRectangularDom_1_int64_t_F_chpl this_chpl7,
+                        chpl____wide_DefaultDist dist_chpl2);
+static chpl____wide_DefaultDist dsiMyDist_chpl2(chpl____wide_DefaultRectangularDom_1_int64_t_F this_chpl7);
+static void init_chpl40(_serialized_domain_1_int64_t_F__tuple_1_star_range_int64_t_bounded_F_T_chpl * this_chpl7,
+                        _tuple_1_star_range_int64_t_bounded_F_chpl * dims_chpl2);
+static void chpl__serialize2(DefaultRectangularDom_1_int64_t_F_chpl this_chpl7,
+                             _serialized_domain_1_int64_t_F__tuple_1_star_range_int64_t_bounded_F_T_chpl * _retArg_chpl);
+static DefaultRectangularDom_1_int64_t_F_chpl chpl__deserialize2(_serialized_domain_1_int64_t_F__tuple_1_star_range_int64_t_bounded_F_T_chpl * data_chpl);
+static void dsiGetIndices_chpl(DefaultRectangularDom_1_int64_t_F_chpl this_chpl7,
+                               _tuple_1_star_range_int64_t_bounded_F_chpl * _retArg_chpl);
+static void dsiSetIndices_chpl(DefaultRectangularDom_1_int64_t_F_chpl this_chpl7,
+                               _tuple_1_star_range_int64_t_bounded_F_chpl * x_chpl2);
+static void dsiAssignDomain_chpl(DefaultRectangularDom_1_int64_t_F_chpl this_chpl7,
+                                 _domain_DefaultRectangularDom_1_int64_t_F_chpl * rhs_chpl,
+                                 chpl_bool lhsPrivate_chpl);
+static chpl_bool dsiMember_chpl(chpl____wide_DefaultRectangularDom_1_int64_t_F this_chpl7,
+                                _tuple_1_star_int64_t_chpl * ind_chpl);
+static void dsiDims_chpl(chpl____wide_DefaultRectangularDom_1_int64_t_F this_chpl7,
+                         _tuple_1_star_range_int64_t_bounded_F_chpl * _retArg_chpl);
+static void dsiDim_chpl(chpl____wide_DefaultRectangularDom_1_int64_t_F this_chpl7,
+                        int64_t d_chpl,
+                        range_int64_t_bounded_F_chpl * _retArg_chpl);
+static void dsiDim_chpl2(chpl____wide_DefaultRectangularDom_1_int64_t_F this_chpl7,
+                         range_int64_t_bounded_F_chpl * _retArg_chpl);
+static int64_t dsiNumIndices_chpl(chpl____wide_DefaultRectangularDom_1_int64_t_F this_chpl7);
+static int64_t dsiLow_chpl(chpl____wide_DefaultRectangularDom_1_int64_t_F this_chpl7);
+static int64_t dsiStride_chpl(chpl____wide_DefaultRectangularDom_1_int64_t_F this_chpl7);
+static DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl dsiBuildArray_chpl(chpl____wide_DefaultRectangularDom_1_int64_t_F this_chpl7);
+static void chpl__auto_destroy_DefaultRectangularArr(chpl____wide_DefaultRectangularArr_1_int64_t_F_int64_t_int64_t this_chpl7);
+static void chpl__auto_destroy_DefaultRectangularArr2(chpl____wide_DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t this_chpl7);
+static void chpl__auto_destroy_DefaultRectangularArr3(chpl____wide_DefaultRectangularArr_1_int64_t_F_locale_int64_t this_chpl7);
+static DefaultRectangularArr_1_int64_t_F_int64_t_int64_t_chpl _new_chpl7(DefaultRectangularDom_1_int64_t_F_chpl dom_chpl,
+                                                                         _ddata_int64_t_chpl data_chpl,
+                                                                         chpl_bool externArr_chpl,
+                                                                         chpl_bool _borrowed_chpl,
+                                                                         c_void_ptr externFreeFunc_chpl,
+                                                                         int64_t _ln_chpl,
+                                                                         int32_t _fn_chpl);
+static DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl _new_chpl8(chpl____wide_DefaultRectangularDom_1_int64_t_F dom_chpl,
+                                                                        _ddata_locale_chpl data_chpl,
+                                                                        chpl_bool externArr_chpl,
+                                                                        chpl_bool _borrowed_chpl,
+                                                                        c_void_ptr externFreeFunc_chpl,
+                                                                        int64_t _ln_chpl,
+                                                                        int32_t _fn_chpl);
+static DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t_chpl _new_chpl9(DefaultRectangularDom_1_int64_t_F_chpl dom_chpl,
+                                                                          _ddata_uint64_t_chpl data_chpl,
+                                                                          chpl_bool externArr_chpl,
+                                                                          chpl_bool _borrowed_chpl,
+                                                                          c_void_ptr externFreeFunc_chpl,
+                                                                          int64_t _ln_chpl,
+                                                                          int32_t _fn_chpl);
+static void init_chpl41(DefaultRectangularArr_1_int64_t_F_int64_t_int64_t_chpl this_chpl7,
+                        DefaultRectangularDom_1_int64_t_F_chpl dom_chpl,
+                        _ddata_int64_t_chpl data_chpl,
+                        chpl_bool externArr_chpl,
+                        chpl_bool _borrowed_chpl,
+                        c_void_ptr externFreeFunc_chpl);
+static void init_chpl42(DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl this_chpl7,
+                        chpl____wide_DefaultRectangularDom_1_int64_t_F dom_chpl,
+                        _ddata_locale_chpl data_chpl,
+                        chpl_bool externArr_chpl,
+                        chpl_bool _borrowed_chpl,
+                        c_void_ptr externFreeFunc_chpl);
+static void init_chpl43(DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t_chpl this_chpl7,
+                        DefaultRectangularDom_1_int64_t_F_chpl dom_chpl,
+                        _ddata_uint64_t_chpl data_chpl,
+                        chpl_bool externArr_chpl,
+                        chpl_bool _borrowed_chpl,
+                        c_void_ptr externFreeFunc_chpl);
+static chpl____wide_DefaultRectangularDom_1_int64_t_F dsiGetBaseDom_chpl2(chpl____wide_DefaultRectangularArr_1_int64_t_F_locale_int64_t this_chpl7);
+static chpl____wide_DefaultRectangularDom_1_int64_t_F dsiGetBaseDom_chpl3(chpl____wide_DefaultRectangularArr_1_int64_t_F_int64_t_int64_t this_chpl7);
+static chpl____wide_DefaultRectangularDom_1_int64_t_F dsiGetBaseDom_chpl4(chpl____wide_DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t this_chpl7);
+static void dsiElementInitializationComplete_chpl(DefaultRectangularArr_1_int64_t_F_int64_t_int64_t_chpl this_chpl7);
+static void dsiElementInitializationComplete_chpl2(DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl this_chpl7);
+static void dsiElementInitializationComplete_chpl3(DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t_chpl this_chpl7);
+static void dsiDestroyArr_chpl2(chpl____wide_DefaultRectangularArr_1_int64_t_F_locale_int64_t this_chpl7,
+                                chpl_bool deinitElts_chpl);
+static void dsiDestroyArr_chpl3(chpl____wide_DefaultRectangularArr_1_int64_t_F_int64_t_int64_t this_chpl7,
+                                chpl_bool deinitElts_chpl);
+static void dsiDestroyArr_chpl4(chpl____wide_DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t this_chpl7,
+                                chpl_bool deinitElts_chpl);
+static void computeFactoredOffs_chpl(DefaultRectangularArr_1_int64_t_F_int64_t_int64_t_chpl this_chpl7);
+static void computeFactoredOffs_chpl2(DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t_chpl this_chpl7);
+static void computeFactoredOffs_chpl3(DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl this_chpl7);
+static void setupFieldsAndAllocate_chpl(DefaultRectangularArr_1_int64_t_F_int64_t_int64_t_chpl this_chpl7);
+static void setupFieldsAndAllocate_chpl2(DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl this_chpl7);
+static void setupFieldsAndAllocate_chpl3(DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t_chpl this_chpl7);
+static void dsiReallocate_chpl2(chpl____wide_DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t this_chpl7,
+                                chpl____wide__ref__tuple_1_star_range_int64_t_bounded_F bounds_chpl);
+static void dsiReallocate_chpl3(chpl____wide_DefaultRectangularArr_1_int64_t_F_int64_t_int64_t this_chpl7,
+                                chpl____wide__ref__tuple_1_star_range_int64_t_bounded_F bounds_chpl);
+static void dsiReallocate_chpl4(chpl____wide_DefaultRectangularArr_1_int64_t_F_locale_int64_t this_chpl7,
+                                chpl____wide__ref__tuple_1_star_range_int64_t_bounded_F bounds_chpl);
+static void coforall_fn_chpl5(int64_t numChunks_chpl,
+                              int64_t parDim_chpl,
+                              DefaultRectangularDom_1_int64_t_F_chpl this_chpl7,
+                              chpl___EndCount_AtomicT_int64_t_int64_t _coforallCount_chpl,
+                              int64_t chunk_chpl,
+                              Error_chpl * error_out_chpl,
+                              DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t_chpl copy_chpl,
+                              chpl____wide_DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t this_chpl8);
+static void coforall_fn_chpl6(int64_t numChunks_chpl,
+                              int64_t parDim_chpl,
+                              DefaultRectangularDom_1_int64_t_F_chpl this_chpl7,
+                              chpl___EndCount_AtomicT_int64_t_int64_t _coforallCount_chpl,
+                              int64_t chunk_chpl,
+                              Error_chpl * error_out_chpl,
+                              DefaultRectangularArr_1_int64_t_F_int64_t_int64_t_chpl copy_chpl,
+                              chpl____wide_DefaultRectangularArr_1_int64_t_F_int64_t_int64_t this_chpl8);
+static void coforall_fn_chpl7(int64_t numChunks_chpl,
+                              int64_t parDim_chpl,
+                              DefaultRectangularDom_1_int64_t_F_chpl this_chpl7,
+                              chpl___EndCount_AtomicT_int64_t_int64_t _coforallCount_chpl,
+                              int64_t chunk_chpl,
+                              DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl copy_chpl,
+                              chpl____wide_DefaultRectangularArr_1_int64_t_F_locale_int64_t this_chpl8);
+static void wrapcoforall_fn_chpl5(_class_localscoforall_fn_chpl7 c_chpl);
+static void wrapcoforall_fn_chpl6(_class_localscoforall_fn_chpl5 c_chpl);
+static void wrapcoforall_fn_chpl7(_class_localscoforall_fn_chpl6 c_chpl);
+static void dsiPostReallocate_chpl2(chpl____wide_DefaultRectangularArr_1_int64_t_F_locale_int64_t this_chpl7);
+static void dsiPostReallocate_chpl3(chpl____wide_DefaultRectangularArr_1_int64_t_F_int64_t_int64_t this_chpl7);
+static void dsiPostReallocate_chpl4(chpl____wide_DefaultRectangularArr_1_int64_t_F_uint64_t_int64_t this_chpl7);
+static void doiToString_chpl(chpl____wide_DefaultRectangularDom_1_int64_t_F this_chpl7,
+                             string_chpl * _retArg_chpl);
+static void chpl__init_ExportWrappers(int64_t _ln_chpl,
+                                      int32_t _fn_chpl);
+static void _initDynamicEndCount_chpl(void);
+static void _destroyDynamicEndCount_chpl(void);
+void chpl_libraryModuleLevelSetup(void);
+void chpl_libraryModuleLevelCleanup(void);
+static void chpl__init_ExternalArray(int64_t _ln_chpl,
+                                     int32_t _fn_chpl);
+void cleanupOpaqueArray(chpl_opaque_array * arr);
+static void chpl__init_LocaleModelHelpFlat(int64_t _ln_chpl,
+                                           int32_t _fn_chpl);
+chpl_bool _local_chpl_doDirectExecuteOn(chpl_localeID_t loc);
+chpl_bool chpl_doDirectExecuteOn(chpl_localeID_t loc);
+void chpl_executeOn(chpl_localeID_t loc,
+                    int64_t fn,
+                    chpl_comm_on_bundle_p args,
+                    uint64_t args_size,
+                    int64_t _ln,
+                    int32_t _fn);
+void chpl_executeOnFast(chpl_localeID_t loc,
+                        int64_t fn,
+                        chpl_comm_on_bundle_p args,
+                        uint64_t args_size,
+                        int64_t _ln,
+                        int32_t _fn);
+void chpl_executeOnNB(chpl_localeID_t loc,
+                      int64_t fn,
+                      chpl_comm_on_bundle_p args,
+                      uint64_t args_size,
+                      int64_t _ln,
+                      int32_t _fn);
+static void chpl__init_LocaleModelHelpMem(int64_t _ln_chpl,
+                                          int32_t _fn_chpl);
+static c_void_ptr chpl_here_alloc(int64_t size_chpl3,
+                                  int16_t md_chpl,
+                                  int64_t _ln_chpl,
+                                  int32_t _fn_chpl);
+static c_void_ptr chpl_here_alloc2(uint64_t size_chpl3,
+                                   int16_t md_chpl,
+                                   int64_t _ln_chpl,
+                                   int32_t _fn_chpl);
+static c_void_ptr chpl_here_calloc(uint64_t size_chpl3,
+                                   int64_t number_chpl,
+                                   int16_t md_chpl,
+                                   int64_t _ln_chpl,
+                                   int32_t _fn_chpl);
+static c_void_ptr chpl_here_realloc(c_void_ptr ptr_chpl,
+                                    int64_t size_chpl3,
+                                    int16_t md_chpl,
+                                    int64_t _ln_chpl,
+                                    int32_t _fn_chpl);
+static int64_t chpl_here_good_alloc_size(int64_t min_size_chpl,
+                                         int64_t _ln_chpl,
+                                         int32_t _fn_chpl);
+static void chpl_here_free(c_void_ptr ptr_chpl,
+                           int64_t _ln_chpl,
+                           int32_t _fn_chpl);
+static void chpl__init_LocaleModelHelpRuntime(int64_t _ln_chpl,
+                                              int32_t _fn_chpl);
+static chpl_localeID_t chpl_buildLocaleID(int32_t node_chpl,
+                                          int32_t subloc_chpl,
+                                          int64_t _ln_chpl,
+                                          int32_t _fn_chpl);
+static int32_t _local_chpl_nodeFromLocaleID_chpl(chpl_localeID_t loc_chpl,
+                                                 int64_t _ln_chpl,
+                                                 int32_t _fn_chpl);
+static int32_t chpl_nodeFromLocaleID(chpl_localeID_t loc_chpl,
+                                     int64_t _ln_chpl,
+                                     int32_t _fn_chpl);
+static int32_t chpl_sublocFromLocaleID(chpl_localeID_t loc_chpl,
+                                       int64_t _ln_chpl,
+                                       int32_t _fn_chpl);
+static void chpl_taskAddBegin(int64_t subloc_id_chpl,
+                              int64_t fn_chpl,
+                              chpl_task_bundle_p args_chpl,
+                              uint64_t args_size_chpl,
+                              int64_t _ln_chpl,
+                              int32_t _fn_chpl);
+static void chpl_taskAddCoStmt(int64_t subloc_id_chpl,
+                               int64_t fn_chpl,
+                               chpl_task_bundle_p args_chpl,
+                               uint64_t args_size_chpl,
+                               int64_t _ln_chpl,
+                               int32_t _fn_chpl);
+static void chpl__init_LocaleModelHelpSetup(int64_t _ln_chpl,
+                                            int32_t _fn_chpl);
+static void init_chpl44(chpl_root_locale_accum * this_chpl7);
+static void accum_chpl(chpl_root_locale_accum * this_chpl7,
+                       locale_chpl * loc_chpl);
+static void setRootLocaleValues_chpl(chpl_root_locale_accum * this_chpl7,
+                                     chpl____wide_RootLocale dst_chpl);
+static void helpSetupRootLocaleFlat_chpl(chpl____wide_RootLocale dst_chpl);
+static void on_fn_chpl70(chpl____wide__EndCount_RAtomicT_int64_t_RAtomicT_int64_t _coforallCount_chpl,
+                         int64_t locIdx_chpl,
+                         chpl____wide_RootLocale dst_chpl,
+                         chpl_root_locale_accum * root_accum_chpl);
+static void on_fn_chpl71(chpl____wide__EndCount_RAtomicT_int64_t_RAtomicT_int64_t _coforallCount_chpl,
+                         int64_t locIdx_chpl,
+                         chpl____wide_RootLocale dst_chpl);
+static void wrapon_fn_chpl70(_class_localson_fn_chpl70 c_chpl);
+static void wrapon_fn_chpl71(_class_localson_fn_chpl71 c_chpl);
+static void helpSetupLocaleFlat_chpl(LocaleModel_chpl dst_chpl,
+                                     string_chpl * local_name_chpl);
+static void chpl__init_LocaleModel(int64_t _ln_chpl,
+                                   int32_t _fn_chpl);
+int32_t chpl_localeModel_sublocToExecutionSubloc(int32_t full_subloc);
+int32_t chpl_localeModel_sublocMerge(int32_t full_subloc,
+                                     int32_t execution_subloc);
+static void chpl__auto_destroy_LocaleModel(chpl____wide_LocaleModel this_chpl7);
+static LocaleModel_chpl _new_chpl10(locale_chpl * parent_loc_chpl,
+                                    int64_t _ln_chpl,
+                                    int32_t _fn_chpl);
+static int64_t getChildCount_chpl3(chpl____wide_LocaleModel this_chpl7);
+static void getChild_chpl3(chpl____wide_LocaleModel this_chpl7,
+                           int64_t idx_chpl,
+                           chpl____wide__ref_locale _retArg_chpl);
+static void setup_chpl(LocaleModel_chpl this_chpl7);
+static RootLocale_chpl _new_chpl11(int64_t _ln_chpl,
+                                   int32_t _fn_chpl);
+static void setup_chpl2(chpl____wide_RootLocale this_chpl7);
+static int64_t getChildCount_chpl4(chpl____wide_RootLocale this_chpl7);
+static void getChild_chpl4(chpl____wide_RootLocale this_chpl7,
+                           int64_t idx_chpl,
+                           chpl____wide__ref_locale _retArg_chpl);
+static chpl____wide__ref__wide__array_DefaultRectangularArr_1_int64_t_F_locale_int64_t getDefaultLocaleArray_chpl(chpl____wide_RootLocale this_chpl7);
+static void localeIDtoLocale_chpl2(chpl____wide_RootLocale this_chpl7,
+                                   chpl____wide__ref_chpl_localeID_t id_chpl2,
+                                   chpl____wide__ref_locale _retArg_chpl);
+static void deinit_chpl16(chpl____wide_RootLocale this_chpl7);
+static void on_fn_chpl69(locale_chpl * loc_chpl);
+static void wrapon_fn_chpl69(_class_localson_fn_chpl69 c_chpl);
+static void deinit_chpl17(void);
+static void chpl__deinit_LocaleTree(void);
+static void chpl__init_LocaleTree(int64_t _ln_chpl,
+                                  int32_t _fn_chpl);
+static void init_chpl45(chpl_localeTreeRecord * this_chpl7,
+                        locale_chpl * left_chpl,
+                        locale_chpl * right_chpl);
+static void chpl_initLocaleTree(void);
+static void on_fn_chpl72(chpl____wide_BaseLocale left_chpl,
+                         chpl____wide_BaseLocale right_chpl);
+static void wrapon_fn_chpl72(_class_localson_fn_chpl72 c_chpl);
+static void chpl__deinit_LocalesArray(void);
+static void chpl__init_LocalesArray(int64_t _ln_chpl,
+                                    int32_t _fn_chpl);
+static void chpl__init_MemConsistency(int64_t _ln_chpl,
+                                      int32_t _fn_chpl);
+static void _local_chpl_rmem_consist_maybe_release_chpl(void);
+static void _local_chpl_rmem_consist_maybe_release_chpl2(void);
+static void _local_chpl_rmem_consist_maybe_release_chpl3(void);
+static void chpl_rmem_consist_maybe_release2(void);
+static void chpl_rmem_consist_maybe_release3(void);
+static void chpl_rmem_consist_maybe_release4(void);
+static void chpl_rmem_consist_maybe_release5(void);
+static void _local_chpl_rmem_consist_maybe_acquire_chpl(void);
+static void _local_chpl_rmem_consist_maybe_acquire_chpl2(void);
+static void chpl_rmem_consist_maybe_acquire2(void);
+static void chpl_rmem_consist_maybe_acquire3(void);
+static void chpl_rmem_consist_maybe_acquire4(void);
+static void chpl_rmem_consist_maybe_acquire5(void);
+static void chpl__deinit_MemTracking(void);
+static void chpl__init_MemTracking(int64_t _ln_chpl,
+                                   int32_t _fn_chpl);
+void chpl_memTracking_returnConfigVals(chpl_bool * ret_memTrack,
+                                       chpl_bool * ret_memStats,
+                                       chpl_bool * ret_memLeaksByType,
+                                       c_string * ret_memLeaksByDesc,
+                                       chpl_bool * ret_memLeaks,
+                                       uint64_t * ret_memMax,
+                                       uint64_t * ret_memThreshold,
+                                       c_string * ret_memLog,
+                                       c_string * ret_memLeaksLog);
+static void chpl__init_NVStringFactory(int64_t _ln_chpl,
+                                       int32_t _fn_chpl);
+static void chpl__init_NetworkAtomics(int64_t _ln_chpl,
+                                      int32_t _fn_chpl);
+static void init_chpl46(RAtomicT_int64_t_chpl * this_chpl7,
+                        int64_t _v_chpl);
+static void on_fn_chpl73(chpl____wide__ref_RAtomicT_int64_t this_chpl7,
+                         int64_t value_chpl);
+static void wrapon_fn_chpl73(_class_localson_fn_chpl73 c_chpl);
+static void chpl__init_OwnedObject(int64_t _ln_chpl,
+                                   int32_t _fn_chpl);
+static void init_chpl47(_owned_ProcessLookupError_chpl * this_chpl7,
+                        ProcessLookupError_chpl p_chpl);
+static void init_chpl48(_owned_BadFormatError_chpl * this_chpl7,
+                        BadFormatError_chpl p_chpl);
+static void init_chpl49(_owned_DecodeError_chpl * this_chpl7,
+                        DecodeError_chpl p_chpl);
+static void init_chpl50(_owned_TaskErrors_chpl * this_chpl7,
+                        TaskErrors_chpl p_chpl);
+static void init_chpl51(_owned_CodepointSplittingError_chpl * this_chpl7,
+                        CodepointSplittingError_chpl p_chpl);
+static void init_chpl52(_owned_BlockingIOError_chpl * this_chpl7,
+                        BlockingIOError_chpl p_chpl);
+static void init_chpl53(_owned_ChildProcessError_chpl * this_chpl7,
+                        ChildProcessError_chpl p_chpl);
+static void init_chpl54(_owned_IllegalArgumentError_chpl * this_chpl7,
+                        IllegalArgumentError_chpl p_chpl);
+static void init_chpl55(_owned_BrokenPipeError_chpl * this_chpl7,
+                        BrokenPipeError_chpl p_chpl);
+static void init_chpl56(_owned_ConnectionAbortedError_chpl * this_chpl7,
+                        ConnectionAbortedError_chpl p_chpl);
+static void init_chpl57(_owned_ConnectionRefusedError_chpl * this_chpl7,
+                        ConnectionRefusedError_chpl p_chpl);
+static void init_chpl58(_owned_ConnectionResetError_chpl * this_chpl7,
+                        ConnectionResetError_chpl p_chpl);
+static void init_chpl59(_owned_FileExistsError_chpl * this_chpl7,
+                        FileExistsError_chpl p_chpl);
+static void init_chpl60(_owned_FileNotFoundError_chpl * this_chpl7,
+                        FileNotFoundError_chpl p_chpl);
+static void init_chpl61(_owned_InterruptedError_chpl * this_chpl7,
+                        InterruptedError_chpl p_chpl);
+static void init_chpl62(_owned_IsADirectoryError_chpl * this_chpl7,
+                        IsADirectoryError_chpl p_chpl);
+static void init_chpl63(_owned_NotADirectoryError_chpl * this_chpl7,
+                        NotADirectoryError_chpl p_chpl);
+static void init_chpl64(_owned_PermissionError_chpl * this_chpl7,
+                        PermissionError_chpl p_chpl);
+static void init_chpl65(_owned_TimeoutError_chpl * this_chpl7,
+                        TimeoutError_chpl p_chpl);
+static void init_chpl66(_owned_SystemError_chpl * this_chpl7,
+                        SystemError_chpl p_chpl);
+static void init_chpl67(_owned_IOError_chpl * this_chpl7,
+                        IOError_chpl p_chpl);
+static void init_chpl68(_owned_Error_chpl2 * this_chpl7,
+                        chpl____wide_Error p_chpl);
+static void init_chpl69(_owned_UnexpectedEOFError_chpl * this_chpl7,
+                        UnexpectedEOFError_chpl p_chpl);
+static void init_chpl70(_owned_EOFError_chpl * this_chpl7,
+                        EOFError_chpl p_chpl);
+static void init_ASSIGN__chpl10(_owned_SystemError_chpl * this_chpl7,
+                                _owned_NotADirectoryError_chpl * src_chpl);
+static void init_ASSIGN__chpl11(_owned_SystemError_chpl * this_chpl7,
+                                _owned_IsADirectoryError_chpl * src_chpl);
+static void init_ASSIGN__chpl12(_owned_SystemError_chpl * this_chpl7,
+                                _owned_InterruptedError_chpl * src_chpl);
+static void init_ASSIGN__chpl13(_owned_SystemError_chpl * this_chpl7,
+                                _owned_FileNotFoundError_chpl * src_chpl);
+static void init_ASSIGN__chpl14(_owned_SystemError_chpl * this_chpl7,
+                                _owned_FileExistsError_chpl * src_chpl);
+static void init_ASSIGN__chpl15(_owned_SystemError_chpl * this_chpl7,
+                                _owned_ConnectionResetError_chpl * src_chpl);
+static void init_ASSIGN__chpl16(_owned_SystemError_chpl * this_chpl7,
+                                _owned_ConnectionRefusedError_chpl * src_chpl);
+static void init_ASSIGN__chpl17(_owned_SystemError_chpl * this_chpl7,
+                                _owned_ChildProcessError_chpl * src_chpl);
+static void init_ASSIGN__chpl18(_owned_SystemError_chpl * this_chpl7,
+                                _owned_BrokenPipeError_chpl * src_chpl);
+static void init_ASSIGN__chpl19(_owned_SystemError_chpl * this_chpl7,
+                                _owned_ConnectionAbortedError_chpl * src_chpl);
+static void init_ASSIGN__chpl2(_owned_SystemError_chpl * this_chpl7,
+                               _owned_BlockingIOError_chpl * src_chpl);
+static void init_ASSIGN__chpl3(_owned_SystemError_chpl * this_chpl7,
+                               _owned_IOError_chpl * src_chpl);
+static void init_ASSIGN__chpl4(_owned_SystemError_chpl * this_chpl7,
+                               _owned_BadFormatError_chpl * src_chpl);
+static void init_ASSIGN__chpl5(_owned_SystemError_chpl * this_chpl7,
+                               _owned_UnexpectedEOFError_chpl * src_chpl);
+static void init_ASSIGN__chpl6(_owned_SystemError_chpl * this_chpl7,
+                               _owned_EOFError_chpl * src_chpl);
+static void init_ASSIGN__chpl7(_owned_SystemError_chpl * this_chpl7,
+                               _owned_TimeoutError_chpl * src_chpl);
+static void init_ASSIGN__chpl8(_owned_SystemError_chpl * this_chpl7,
+                               _owned_ProcessLookupError_chpl * src_chpl);
+static void init_ASSIGN__chpl9(_owned_SystemError_chpl * this_chpl7,
+                               _owned_PermissionError_chpl * src_chpl);
+static void deinit_chpl18(_owned_ChildProcessError_chpl * this_chpl7);
+static void deinit_chpl19(_owned_InterruptedError_chpl * this_chpl7);
+static void deinit_chpl20(_owned_BlockingIOError_chpl * this_chpl7);
+static void deinit_chpl21(_owned_Error_chpl2 * this_chpl7);
+static void deinit_chpl22(_owned_DecodeError_chpl * this_chpl7);
+static void deinit_chpl23(_owned_BrokenPipeError_chpl * this_chpl7);
+static void deinit_chpl24(_owned_ConnectionAbortedError_chpl * this_chpl7);
+static void deinit_chpl25(_owned_ConnectionRefusedError_chpl * this_chpl7);
+static void deinit_chpl26(_owned_ConnectionResetError_chpl * this_chpl7);
+static void deinit_chpl27(_owned_FileExistsError_chpl * this_chpl7);
+static void deinit_chpl28(_owned_FileNotFoundError_chpl * this_chpl7);
+static void deinit_chpl29(_owned_IsADirectoryError_chpl * this_chpl7);
+static void deinit_chpl30(_owned_NotADirectoryError_chpl * this_chpl7);
+static void deinit_chpl31(_owned_CodepointSplittingError_chpl * this_chpl7);
+static void deinit_chpl32(_owned_PermissionError_chpl * this_chpl7);
+static void deinit_chpl33(_owned_ProcessLookupError_chpl * this_chpl7);
+static void deinit_chpl34(_owned_TaskErrors_chpl * this_chpl7);
+static void deinit_chpl35(_owned_TimeoutError_chpl * this_chpl7);
+static void deinit_chpl36(_owned_EOFError_chpl * this_chpl7);
+static void deinit_chpl37(_owned_UnexpectedEOFError_chpl * this_chpl7);
+static void deinit_chpl38(_owned_IllegalArgumentError_chpl * this_chpl7);
+static void deinit_chpl39(_owned_BadFormatError_chpl * this_chpl7);
+static void deinit_chpl40(_owned_IOError_chpl * this_chpl7);
+static void deinit_chpl41(_owned_SystemError_chpl * this_chpl7);
+static void clear_chpl(_owned_Error_chpl * this_chpl7);
+static void retain_chpl(_owned_Error_chpl * this_chpl7,
+                        chpl____wide_Error newPtr_chpl);
+static void retain_chpl2(_owned_Error_chpl * this_chpl7,
+                         chpl____wide_Error newPtr_chpl);
+static chpl____wide_Error release_chpl(_owned_Error_chpl * this_chpl7);
+static PermissionError_chpl release_chpl10(_owned_PermissionError_chpl * this_chpl7);
+static ProcessLookupError_chpl release_chpl11(_owned_ProcessLookupError_chpl * this_chpl7);
+static TimeoutError_chpl release_chpl12(_owned_TimeoutError_chpl * this_chpl7);
+static EOFError_chpl release_chpl13(_owned_EOFError_chpl * this_chpl7);
+static UnexpectedEOFError_chpl release_chpl14(_owned_UnexpectedEOFError_chpl * this_chpl7);
+static BadFormatError_chpl release_chpl15(_owned_BadFormatError_chpl * this_chpl7);
+static IOError_chpl release_chpl16(_owned_IOError_chpl * this_chpl7);
+static ConnectionAbortedError_chpl release_chpl17(_owned_ConnectionAbortedError_chpl * this_chpl7);
+static chpl____wide_Error release_chpl18(_owned_Error_chpl2 * this_chpl7);
+static BrokenPipeError_chpl release_chpl19(_owned_BrokenPipeError_chpl * this_chpl7);
+static ConnectionRefusedError_chpl release_chpl2(_owned_ConnectionRefusedError_chpl * this_chpl7);
+static BlockingIOError_chpl release_chpl20(_owned_BlockingIOError_chpl * this_chpl7);
+static ConnectionResetError_chpl release_chpl3(_owned_ConnectionResetError_chpl * this_chpl7);
+static FileExistsError_chpl release_chpl4(_owned_FileExistsError_chpl * this_chpl7);
+static FileNotFoundError_chpl release_chpl5(_owned_FileNotFoundError_chpl * this_chpl7);
+static ChildProcessError_chpl release_chpl6(_owned_ChildProcessError_chpl * this_chpl7);
+static InterruptedError_chpl release_chpl7(_owned_InterruptedError_chpl * this_chpl7);
+static IsADirectoryError_chpl release_chpl8(_owned_IsADirectoryError_chpl * this_chpl7);
+static NotADirectoryError_chpl release_chpl9(_owned_NotADirectoryError_chpl * this_chpl7);
+static chpl____wide_Error borrow_chpl(_owned_Error_chpl * this_chpl7);
+static void chpl___ASSIGN_3(_owned_Error_chpl * lhs_chpl,
+                            _owned_Error_chpl * rhs_chpl);
+static void chpl__autoDestroy10(_owned_TimeoutError_chpl * x_chpl2);
+static void chpl__autoDestroy11(_owned_IllegalArgumentError_chpl * x_chpl2);
+static void chpl__autoDestroy12(_owned_BrokenPipeError_chpl * x_chpl2);
+static void chpl__autoDestroy13(_owned_IsADirectoryError_chpl * x_chpl2);
+static void chpl__autoDestroy14(_owned_ProcessLookupError_chpl * x_chpl2);
+static void chpl__autoDestroy15(_owned_BlockingIOError_chpl * x_chpl2);
+static void chpl__autoDestroy16(_owned_UnexpectedEOFError_chpl * x_chpl2);
+static void chpl__autoDestroy17(_owned_ConnectionAbortedError_chpl * x_chpl2);
+static void chpl__autoDestroy18(_owned_IOError_chpl * x_chpl2);
+static void chpl__autoDestroy19(_owned_Error_chpl2 * x_chpl2);
+static void chpl__autoDestroy20(_owned_InterruptedError_chpl * x_chpl2);
+static void chpl__autoDestroy21(_owned_ConnectionRefusedError_chpl * x_chpl2);
+static void chpl__autoDestroy22(_owned_FileNotFoundError_chpl * x_chpl2);
+static void chpl__autoDestroy23(_owned_CodepointSplittingError_chpl * x_chpl2);
+static void chpl__autoDestroy24(_owned_SystemError_chpl * x_chpl2);
+static void chpl__autoDestroy25(_owned_FileExistsError_chpl * x_chpl2);
+static void chpl__autoDestroy26(_owned_ChildProcessError_chpl * x_chpl2);
+static void chpl__autoDestroy27(_owned_EOFError_chpl * x_chpl2);
+static void chpl__autoDestroy4(_owned_ConnectionResetError_chpl * x_chpl2);
+static void chpl__autoDestroy5(_owned_BadFormatError_chpl * x_chpl2);
+static void chpl__autoDestroy6(_owned_PermissionError_chpl * x_chpl2);
+static void chpl__autoDestroy7(_owned_TaskErrors_chpl * x_chpl2);
+static void chpl__autoDestroy8(_owned_DecodeError_chpl * x_chpl2);
+static void chpl__autoDestroy9(_owned_NotADirectoryError_chpl * x_chpl2);
+void chpl__init_PrintModuleInitOrder(int64_t _ln,
+                                     int32_t _fn);
+static void printModuleInit_chpl(c_string s1_chpl,
+                                 c_string s2_chpl,
+                                 int64_t len_chpl);
+static void initPrint_chpl(void);
+static void chpl__init_StringCasts(int64_t _ln_chpl,
+                                   int32_t _fn_chpl);
+static chpl_bool chpl___COLON_13(string_chpl * x_chpl2,
+                                 chpl____wide_Error * error_out_chpl);
+static void chpl___COLON_14(uint64_t x_chpl2,
+                            string_chpl * _retArg_chpl);
+static void chpl___COLON_15(uint8_t x_chpl2,
+                            string_chpl * _retArg_chpl);
+static void chpl___COLON_16(int64_t x_chpl2,
+                            string_chpl * _retArg_chpl);
+static uint64_t chpl___COLON_17(string_chpl * x_chpl2,
+                                chpl____wide_Error * error_out_chpl);
+static int64_t chpl___COLON_18(string_chpl * x_chpl2,
+                               chpl____wide_Error * error_out_chpl);
+static void chpl__init_String(int64_t _ln_chpl,
+                              int32_t _fn_chpl);
+static void init_chpl71(byteIndex_chpl * this_chpl7);
+static void init_ASSIGN__chpl20(byteIndex_chpl * this_chpl7,
+                                int64_t i_chpl);
+static void chpl___COLON_11(byteIndex_chpl * val_chpl,
+                            string_chpl * _retArg_chpl);
+static void init_chpl72(codepointIndex_chpl * this_chpl7);
+static void chpl_build_bounded_range2(byteIndex_chpl * low_chpl2,
+                                      byteIndex_chpl * high_chpl,
+                                      range_byteIndex_bounded_F_chpl * _retArg_chpl);
+static void chpl_build_low_bounded_range2(byteIndex_chpl * low_chpl2,
+                                          range_byteIndex_boundedLow_F_chpl * _retArg_chpl);
+static void chpl_build_high_bounded_range(byteIndex_chpl * high_chpl,
+                                          range_byteIndex_boundedHigh_F_chpl * _retArg_chpl);
+static int64_t validateEncoding_chpl(uint8_t * buf_chpl,
+                                     int64_t len_chpl,
+                                     chpl____wide_Error * error_out_chpl);
+static string_chpl chpl_createStringWithLiteral(c_string buffer_chpl,
+                                                int64_t offset_chpl,
+                                                c_string x_chpl2,
+                                                int64_t length_chpl,
+                                                int64_t numCodepoints_chpl);
+static void init_chpl73(string_chpl * this_chpl7);
+static void init_ASSIGN__chpl21(string_chpl * this_chpl7,
+                                chpl____wide__ref_string s_chpl);
+static void deinit_chpl42(chpl____wide__ref_string this_chpl7);
+static void on_fn_chpl74(chpl____wide__ref_string this_chpl7);
+static void wrapon_fn_chpl74(_class_localson_fn_chpl74 c_chpl);
+static void chpl__serialize3(string_chpl * this_chpl7,
+                             chpl____serializeHelper * _retArg_chpl);
+static void chpl__deserialize3(chpl____serializeHelper * data_chpl,
+                               string_chpl * _retArg_chpl);
+static void _cpIndexLenHelpNoAdjustment_chpl(string_chpl * this_chpl7,
+                                             int64_t * start_chpl,
+                                             _tuple_3_int32_t_byteIndex_int64_t_chpl * _retArg_chpl);
+static int64_t doSearchUTF8_chpl(string_chpl * this_chpl7,
+                                 string_chpl * pattern_chpl,
+                                 range_byteIndex_boundedLow_F_chpl indices_chpl2);
+static void on_fn_chpl75(chpl____wide__ref_string this_chpl7,
+                         chpl____serializeHelper * pattern_chpl,
+                         range_byteIndex_boundedLow_F_chpl indices_chpl2,
+                         chpl____wide__ref_int64_t ret_chpl);
+static void wrapon_fn_chpl75(_class_localson_fn_chpl75 c_chpl);
+static void advance_chpl2(_ic_chpl_bytes__ref_string_chpl this_chpl7);
+static uint8_t byte_chpl(chpl____wide__ref_string this_chpl7,
+                         int64_t i_chpl);
+static void this_chpl6(string_chpl * this_chpl7,
+                       codepointIndex_chpl * i_chpl,
+                       string_chpl * _retArg_chpl);
+static void item_chpl(string_chpl * this_chpl7,
+                      codepointIndex_chpl * i_chpl,
+                      string_chpl * _retArg_chpl);
+static void strip_chpl(string_chpl * this_chpl7,
+                       string_chpl * chars_chpl,
+                       chpl_bool leading_chpl,
+                       chpl_bool trailing_chpl,
+                       string_chpl * _retArg_chpl);
+static void chpl___ASSIGN_4(byteIndex_chpl * lhs_chpl,
+                            int64_t rhs_chpl);
+static void chpl___ASSIGN_5(byteIndex_chpl * lhs_chpl,
+                            byteIndex_chpl * rhs_chpl);
+static void chpl___ASSIGN_6(chpl____wide__ref_string lhs_chpl,
+                            string_chpl * rhs_chpl);
+static void chpl___PLUS_(string_chpl * s0_chpl,
+                         chpl____wide__ref_string s1_chpl,
+                         string_chpl * _retArg_chpl);
+static void chpl___PLUS__ASSIGN_(string_chpl * lhs_chpl,
+                                 string_chpl * rhs_chpl);
+static chpl_bool chpl___EQUALS_3(string_chpl * a_chpl,
+                                 string_chpl * b_chpl);
+static void chpl___COLON_12(c_string cs_chpl,
+                            string_chpl * _retArg_chpl);
+void chpl__heapAllocateGlobals(void);
+void chpl__init_preInit(int64_t _ln,
+                        int32_t _fn);
+static void chpl__init_AggregationPrimitives(int64_t _ln_chpl,
+                                             int32_t _fn_chpl);
+static int64_t getEnvInt_chpl(string_chpl * name_chpl,
+                              int64_t default_chpl);
+static void chpl__init_CTypes(int64_t _ln_chpl,
+                              int32_t _fn_chpl);
+static int16_t offset_ARRAY_ELEMENTS_chpl(void);
+static void chpl__init_ChapelIO(int64_t _ln_chpl,
+                                int32_t _fn_chpl);
+static void writeln_chpl(string_chpl * _e0_args_chpl,
+                         int64_t _e1_args_chpl);
+static void chpl_stringify_wrapper(string_chpl * _e0_args_chpl,
+                                   string_chpl * _e1_args_chpl,
+                                   int64_t _e2_args_chpl,
+                                   string_chpl * _e3_args_chpl,
+                                   range_int64_t_bounded_F_chpl _e4_args_chpl,
+                                   string_chpl * _retArg_chpl);
+static void chpl_stringify_wrapper10(string_chpl * _e0_args_chpl,
+                                     range_byteIndex_bounded_F_chpl _e1_args_chpl,
+                                     string_chpl * _e2_args_chpl,
+                                     int64_t _e3_args_chpl,
+                                     string_chpl * _retArg_chpl);
+static void chpl_stringify_wrapper11(string_chpl * _e0_args_chpl,
+                                     range_byteIndex_boundedLow_F_chpl _e1_args_chpl,
+                                     string_chpl * _e2_args_chpl,
+                                     int64_t _e3_args_chpl,
+                                     string_chpl * _retArg_chpl);
+static void chpl_stringify_wrapper12(string_chpl * _e0_args_chpl,
+                                     int64_t _e1_args_chpl,
+                                     string_chpl * _e2_args_chpl,
+                                     string_chpl * _retArg_chpl);
+static void chpl_stringify_wrapper2(string_chpl * _e0_args_chpl,
+                                    int64_t _e1_args_chpl,
+                                    string_chpl * _retArg_chpl);
+static void chpl_stringify_wrapper3(string_chpl * _e0_args_chpl,
+                                    range_int64_t_bounded_F_chpl _e1_args_chpl,
+                                    string_chpl * _e2_args_chpl,
+                                    int64_t _e3_args_chpl,
+                                    string_chpl * _retArg_chpl);
+static void chpl_stringify_wrapper4(c_string _e0_args_chpl,
+                                    string_chpl * _retArg_chpl);
+static void chpl_stringify_wrapper5(string_chpl * _e0_args_chpl,
+                                    int64_t _e1_args_chpl,
+                                    string_chpl * _e2_args_chpl,
+                                    int64_t _e3_args_chpl,
+                                    string_chpl * _e4_args_chpl,
+                                    string_chpl * _retArg_chpl);
+static void chpl_stringify_wrapper6(string_chpl * _e0_args_chpl,
+                                    int64_t _e1_args_chpl,
+                                    string_chpl * _e2_args_chpl,
+                                    int64_t _e3_args_chpl,
+                                    string_chpl * _retArg_chpl);
+static void chpl_stringify_wrapper7(string_chpl * _e0_args_chpl,
+                                    range_byteIndex_boundedHigh_F_chpl _e1_args_chpl,
+                                    string_chpl * _e2_args_chpl,
+                                    int64_t _e3_args_chpl,
+                                    string_chpl * _retArg_chpl);
+static void chpl_stringify_wrapper8(string_chpl * _e0_args_chpl,
+                                    range_int64_t_boundedLow_F_chpl _e1_args_chpl,
+                                    string_chpl * _e2_args_chpl,
+                                    int64_t _e3_args_chpl,
+                                    string_chpl * _retArg_chpl);
+static void chpl_stringify_wrapper9(string_chpl * _e0_args_chpl,
+                                    string_chpl * _e1_args_chpl,
+                                    string_chpl * _e2_args_chpl,
+                                    string_chpl * _e3_args_chpl,
+                                    string_chpl * _retArg_chpl);
+static void chpl__init_ChapelSysCTypes(int64_t _ln_chpl,
+                                       int32_t _fn_chpl);
+static void chpl__init_CopyAggregation(int64_t _ln_chpl,
+                                       int32_t _fn_chpl);
+static void chpl__init_DSIUtil(int64_t _ln_chpl,
+                               int32_t _fn_chpl);
+static void createTuple_chpl(int64_t val_chpl,
+                             _tuple_1_star_int64_t_chpl * _retArg_chpl);
+static void _computeChunkStuff_chpl(int64_t maxTasks_chpl,
+                                    chpl_bool ignoreRunning_chpl,
+                                    int64_t minSize_chpl,
+                                    _tuple_1_star_range_int64_t_bounded_F_chpl * ranges_chpl,
+                                    _tuple_2_star_int64_t_chpl * _retArg_chpl);
+static int64_t _computeNumChunks_chpl(int64_t maxTasks_chpl,
+                                      chpl_bool ignoreRunning_chpl,
+                                      int64_t minSize_chpl,
+                                      uint64_t numElems_chpl);
+static int64_t _computeNumChunks_chpl2(int64_t maxTasks_chpl,
+                                       chpl_bool ignoreRunning_chpl,
+                                       int64_t minSize_chpl,
+                                       int64_t numElems_chpl);
+static int64_t _computeNumChunks_chpl3(int64_t numElems_chpl);
+static uint64_t intCeilXDivByY_chpl(uint64_t x_chpl2,
+                                    uint64_t y_chpl);
+static void _computeBlock_chpl(int64_t numelems_chpl,
+                               int64_t numblocks_chpl,
+                               int64_t blocknum_chpl,
+                               int64_t wayhi_chpl,
+                               int64_t waylo_chpl,
+                               int64_t lo_chpl,
+                               _tuple_2_star_int64_t_chpl * _retArg_chpl);
+static void chpl__init_Errors(int64_t _ln_chpl,
+                              int32_t _fn_chpl);
+static void chpl__auto_destroy_Error(chpl____wide_Error this_chpl7);
+static void message_chpl(chpl____wide_Error this_chpl7,
+                         chpl____wide__ref_string _retArg_chpl);
+static NilThrownError_chpl _new_chpl12(int64_t _ln_chpl,
+                                       int32_t _fn_chpl);
+static void chpl__auto_destroy_NilThrownError(chpl____wide_NilThrownError this_chpl7);
+static void message_chpl2(chpl____wide_NilThrownError this_chpl7,
+                          chpl____wide__ref_string _retArg_chpl);
+static DecodeError_chpl _new_chpl13(int64_t _ln_chpl,
+                                    int32_t _fn_chpl);
+static void chpl__auto_destroy_DecodeError(chpl____wide_DecodeError this_chpl7);
+static void message_chpl3(chpl____wide_DecodeError this_chpl7,
+                          chpl____wide__ref_string _retArg_chpl);
+static void chpl__auto_destroy_IllegalArgumentError(chpl____wide_IllegalArgumentError this_chpl7);
+static IllegalArgumentError_chpl _new_chpl14(string_chpl * info_chpl,
+                                             int64_t _ln_chpl,
+                                             int32_t _fn_chpl);
+static IllegalArgumentError_chpl _new_chpl15(string_chpl * formal_chpl,
+                                             string_chpl * info_chpl,
+                                             int64_t _ln_chpl,
+                                             int32_t _fn_chpl);
+static void chpl__auto_destroy_CodepointSplittingError(chpl____wide_CodepointSplittingError this_chpl7);
+static CodepointSplittingError_chpl _new_chpl16(string_chpl * info_chpl,
+                                                int64_t _ln_chpl,
+                                                int32_t _fn_chpl);
+static void message_chpl4(chpl____wide_CodepointSplittingError this_chpl7,
+                          chpl____wide__ref_string _retArg_chpl);
+static void init_chpl74(chpl_TaskErrors * this_chpl7,
+                        Error_chpl _head_chpl,
+                        chpl_LocalSpinlock * _errorsLock_chpl);
+static void append_chpl(chpl____wide__ref_chpl_TaskErrors this_chpl7,
+                        Error_chpl err_chpl);
+static void on_fn_chpl76(chpl____wide_Error err_chpl,
+                         chpl____wide__ref_chpl_TaskErrors this_chpl7);
+static void wrapon_fn_chpl76(_class_localson_fn_chpl76 c_chpl);
+static chpl_bool empty_chpl(chpl____wide__ref_chpl_TaskErrors this_chpl7);
+static TaskErrors_chpl _new_chpl17(chpl____wide__ref_chpl_TaskErrors group_chpl,
+                                   int64_t _ln_chpl,
+                                   int32_t _fn_chpl);
+static TaskErrors_chpl _new_chpl18(Error_chpl err_chpl,
+                                   int64_t _ln_chpl,
+                                   int32_t _fn_chpl);
+static void deinit_chpl43(chpl____wide_TaskErrors this_chpl7);
+static void message_chpl5(chpl____wide_TaskErrors this_chpl7,
+                          chpl____wide__ref_string _retArg_chpl);
+static void chpl_error_type_name(chpl____wide_Error err_chpl,
+                                 string_chpl * _retArg_chpl);
+static void chpl_describe_error(chpl____wide_Error err_chpl,
+                                string_chpl * _retArg_chpl);
+static chpl____wide_Error chpl_do_fix_thrown_error(chpl____wide_Error err_chpl,
+                                                   int64_t _ln_chpl,
+                                                   int32_t _fn_chpl);
+static chpl____wide_Error chpl_fix_thrown_error(_owned_Error_chpl2 * err_chpl,
+                                                int64_t _ln_chpl,
+                                                int32_t _fn_chpl);
+static void chpl_delete_error(Error_chpl err_chpl);
+static void chpl_uncaught_error(chpl____wide_Error err_chpl,
+                                int64_t _ln_chpl,
+                                int32_t _fn_chpl);
+static void chpl_propagate_error(chpl____wide_Error err_chpl,
+                                 int64_t _ln_chpl,
+                                 int32_t _fn_chpl);
+static Error_chpl chpl_forall_error(Error_chpl err_chpl);
+static void chpl_enum_cast_error(uint8_t casted_chpl,
+                                 string_chpl * enumName_chpl,
+                                 chpl____wide_Error * error_out_chpl,
+                                 int64_t _ln_chpl,
+                                 int32_t _fn_chpl);
+static void assert_chpl(chpl_bool test_chpl,
+                        int64_t _ln_chpl,
+                        int32_t _fn_chpl);
+static void compilerAssert_chpl(void);
+static void halt_chpl(string_chpl * msg_chpl,
+                      int64_t _ln_chpl,
+                      int32_t _fn_chpl);
+static void halt_chpl10(string_chpl * _e0_args_chpl,
+                        range_byteIndex_boundedLow_F_chpl _e1_args_chpl,
+                        string_chpl * _e2_args_chpl,
+                        int64_t _e3_args_chpl,
+                        int64_t _ln_chpl,
+                        int32_t _fn_chpl);
+static void halt_chpl11(string_chpl * _e0_args_chpl,
+                        string_chpl * _e1_args_chpl,
+                        int64_t _e2_args_chpl,
+                        string_chpl * _e3_args_chpl,
+                        range_int64_t_bounded_F_chpl _e4_args_chpl,
+                        int64_t _ln_chpl,
+                        int32_t _fn_chpl);
+static void halt_chpl12(string_chpl * _e0_args_chpl,
+                        int64_t _e1_args_chpl,
+                        string_chpl * _e2_args_chpl,
+                        int64_t _e3_args_chpl,
+                        string_chpl * _e4_args_chpl,
+                        int64_t _ln_chpl,
+                        int32_t _fn_chpl);
+static void halt_chpl13(c_string _e0_args_chpl,
+                        int64_t _ln_chpl,
+                        int32_t _fn_chpl);
+static void halt_chpl2(string_chpl * _e0_args_chpl,
+                       range_byteIndex_boundedHigh_F_chpl _e1_args_chpl,
+                       string_chpl * _e2_args_chpl,
+                       int64_t _e3_args_chpl,
+                       int64_t _ln_chpl,
+                       int32_t _fn_chpl);
+static void halt_chpl3(string_chpl * _e0_args_chpl,
+                       string_chpl * _e1_args_chpl,
+                       string_chpl * _e2_args_chpl,
+                       string_chpl * _e3_args_chpl,
+                       int64_t _ln_chpl,
+                       int32_t _fn_chpl);
+static void halt_chpl4(string_chpl * _e0_args_chpl,
+                       range_byteIndex_bounded_F_chpl _e1_args_chpl,
+                       string_chpl * _e2_args_chpl,
+                       int64_t _e3_args_chpl,
+                       int64_t _ln_chpl,
+                       int32_t _fn_chpl);
+static void halt_chpl5(string_chpl * _e0_args_chpl,
+                       int64_t _e1_args_chpl,
+                       string_chpl * _e2_args_chpl,
+                       int64_t _e3_args_chpl,
+                       int64_t _ln_chpl,
+                       int32_t _fn_chpl);
+static void halt_chpl6(string_chpl * _e0_args_chpl,
+                       int64_t _e1_args_chpl,
+                       string_chpl * _e2_args_chpl,
+                       int64_t _ln_chpl,
+                       int32_t _fn_chpl);
+static void halt_chpl7(string_chpl * _e0_args_chpl,
+                       int64_t _e1_args_chpl,
+                       int64_t _ln_chpl,
+                       int32_t _fn_chpl);
+static void halt_chpl8(string_chpl * _e0_args_chpl,
+                       range_int64_t_bounded_F_chpl _e1_args_chpl,
+                       string_chpl * _e2_args_chpl,
+                       int64_t _e3_args_chpl,
+                       int64_t _ln_chpl,
+                       int32_t _fn_chpl);
+static void halt_chpl9(string_chpl * _e0_args_chpl,
+                       range_int64_t_boundedLow_F_chpl _e1_args_chpl,
+                       string_chpl * _e2_args_chpl,
+                       int64_t _e3_args_chpl,
+                       int64_t _ln_chpl,
+                       int32_t _fn_chpl);
+static void chpl__init_FormattedIO(int64_t _ln_chpl,
+                                   int32_t _fn_chpl);
+static void chpl__init_HaltWrappers(int64_t _ln_chpl,
+                                    int32_t _fn_chpl);
+static void pureVirtualMethodHalt_chpl(int64_t _ln_chpl,
+                                       int32_t _fn_chpl);
+static void nilCheckHalt_chpl(string_chpl * s_chpl,
+                              int64_t _ln_chpl,
+                              int32_t _fn_chpl);
+static void boundsCheckHalt_chpl(string_chpl * s_chpl,
+                                 int64_t _ln_chpl,
+                                 int32_t _fn_chpl);
+static void safeCastCheckHalt_chpl(string_chpl * s_chpl,
+                                   int64_t _ln_chpl,
+                                   int32_t _fn_chpl);
+static void chpl__deinit_IO(void);
+static void chpl__init_IO(int64_t _ln_chpl,
+                          int32_t _fn_chpl);
+static void chpl__auto_destroy_QioPluginFile(chpl____wide_QioPluginFile this_chpl7);
+static syserr setupChannel_chpl(QioPluginFile_chpl this_chpl7,
+                                QioPluginChannel_chpl * pluginChannel_chpl,
+                                int64_t start_chpl,
+                                int64_t end_chpl,
+                                qio_channel_ptr_t qioChannelPtr_chpl);
+static syserr filelength_chpl(QioPluginFile_chpl this_chpl7,
+                              int64_t * length_chpl);
+static syserr getpath_chpl(QioPluginFile_chpl this_chpl7,
+                           c_string * path_chpl2,
+                           int64_t * len_chpl);
+static syserr fsync_chpl(QioPluginFile_chpl this_chpl7);
+static syserr getChunk_chpl(QioPluginFile_chpl this_chpl7,
+                            int64_t * length_chpl);
+static syserr getLocalesForRegion_chpl(QioPluginFile_chpl this_chpl7,
+                                       int64_t start_chpl,
+                                       int64_t end_chpl,
+                                       c_ptr_c_string_chpl * localeNames_chpl,
+                                       int64_t * nLocales_chpl);
+static syserr close_chpl(QioPluginFile_chpl this_chpl7);
+static void chpl__auto_destroy_QioPluginChannel(chpl____wide_QioPluginChannel this_chpl7);
+static syserr readAtLeast_chpl(QioPluginChannel_chpl this_chpl7,
+                               int64_t amt_chpl);
+static syserr write_chpl(QioPluginChannel_chpl this_chpl7,
+                         int64_t amt_chpl);
+static syserr close_chpl2(QioPluginChannel_chpl this_chpl7);
+syserr chpl_qio_setup_plugin_channel(c_void_ptr file,
+                                     c_void_ptr * plugin_ch,
+                                     int64_t start,
+                                     int64_t end,
+                                     qio_channel_ptr_t qio_ch);
+syserr chpl_qio_read_atleast(c_void_ptr ch_plugin,
+                             int64_t amt);
+syserr chpl_qio_write(c_void_ptr ch_plugin,
+                      int64_t amt);
+syserr chpl_qio_channel_close(c_void_ptr ch);
+syserr chpl_qio_filelength(c_void_ptr file,
+                           int64_t * length);
+syserr chpl_qio_getpath(c_void_ptr file,
+                        c_string * str,
+                        int64_t * len);
+syserr chpl_qio_fsync(c_void_ptr file);
+syserr chpl_qio_get_chunk(c_void_ptr file,
+                          int64_t * length);
+syserr chpl_qio_get_locales_for_region(c_void_ptr file,
+                                       int64_t start,
+                                       int64_t end,
+                                       c_void_ptr * localeNames,
+                                       int64_t * nLocales);
+syserr chpl_qio_file_close(c_void_ptr file);
+static iostyleInternal defaultIOStyleInternal_chpl(void);
+static void init_chpl75(file_chpl * this_chpl7);
+static void checkAssumingLocal_chpl(file_chpl * this_chpl7,
+                                    chpl____wide_Error * error_out_chpl);
+static void deinit_chpl44(file_chpl * this_chpl7);
+static void on_fn_chpl77(chpl____wide__ref_file this_chpl7);
+static void wrapon_fn_chpl77(_class_localson_fn_chpl77 c_chpl);
+static iostyleInternal _style_chpl(file_chpl * this_chpl7,
+                                   chpl____wide_Error * error_out_chpl);
+static void on_fn_chpl78(file_chpl * this_chpl7,
+                         chpl____wide__ref_iostyleInternal ret_chpl,
+                         chpl____wide__ref__wide_Error error_out_chpl);
+static void wrapon_fn_chpl78(_class_localson_fn_chpl78 c_chpl);
+static void path_chpl(file_chpl * this_chpl7,
+                      chpl____wide_Error * error_out_chpl,
+                      string_chpl * _retArg_chpl);
+static void on_fn_chpl79(file_chpl * this_chpl7,
+                         chpl____wide__ref_string ret_chpl,
+                         chpl____wide__ref_syserr err_chpl,
+                         chpl____wide__ref__wide_Error error_out_chpl);
+static void wrapon_fn_chpl79(_class_localson_fn_chpl79 c_chpl);
+static void tryGetPath_chpl(file_chpl * this_chpl7,
+                            string_chpl * _retArg_chpl);
+static void openfd_chpl(int32_t fd_chpl,
+                        int32_t hints_chpl,
+                        chpl____wide_Error * error_out_chpl,
+                        file_chpl * _retArg_chpl);
+static void openfdHelper_chpl(int32_t fd_chpl,
+                              int32_t hints_chpl,
+                              iostyleInternal * style_chpl,
+                              chpl____wide_Error * error_out_chpl,
+                              file_chpl * _retArg_chpl);
+static void openfp_chpl(_cfile fp_chpl,
+                        int32_t hints_chpl,
+                        chpl____wide_Error * error_out_chpl,
+                        file_chpl * _retArg_chpl);
+static void openfpHelper_chpl(_cfile fp_chpl,
+                              int32_t hints_chpl,
+                              iostyleInternal * style_chpl,
+                              chpl____wide_Error * error_out_chpl,
+                              file_chpl * _retArg_chpl);
+static void chpl___ASSIGN_7(chpl____wide__ref_channel_F_dynamic_T lhs_chpl,
+                            channel_F_dynamic_T_chpl * rhs_chpl);
+static void chpl___ASSIGN_8(chpl____wide__ref_channel_T_dynamic_T lhs_chpl,
+                            channel_T_dynamic_T_chpl * rhs_chpl);
+static void on_fn_chpl80(channel_F_dynamic_T_chpl * rhs_chpl);
+static void on_fn_chpl81(channel_T_dynamic_T_chpl * rhs_chpl);
+static void wrapon_fn_chpl80(_class_localson_fn_chpl80 c_chpl);
+static void wrapon_fn_chpl81(_class_localson_fn_chpl81 c_chpl);
+static void on_fn_chpl82(chpl____wide__ref_channel_T_dynamic_T lhs_chpl);
+static void on_fn_chpl83(chpl____wide__ref_channel_F_dynamic_T lhs_chpl);
+static void wrapon_fn_chpl82(_class_localson_fn_chpl82 c_chpl);
+static void wrapon_fn_chpl83(_class_localson_fn_chpl83 c_chpl);
+static void init_chpl76(channel_F_dynamic_T_chpl * this_chpl7);
+static void init_chpl77(channel_T_dynamic_T_chpl * this_chpl7);
+static void init_chpl78(channel_F_dynamic_T_chpl * this_chpl7,
+                        file_chpl * f_chpl,
+                        syserr * error_chpl,
+                        int32_t hints_chpl,
+                        int64_t start_chpl,
+                        int64_t end_chpl,
+                        iostyleInternal local_style_chpl);
+static void init_chpl79(channel_T_dynamic_T_chpl * this_chpl7,
+                        file_chpl * f_chpl,
+                        syserr * error_chpl,
+                        int32_t hints_chpl,
+                        int64_t start_chpl,
+                        int64_t end_chpl,
+                        iostyleInternal local_style_chpl);
+static void on_fn_chpl84(chpl____wide__ref_channel_F_dynamic_T this_chpl7,
+                         file_chpl * f_chpl,
+                         int32_t hints_chpl,
+                         int64_t start_chpl,
+                         int64_t end_chpl,
+                         iostyleInternal local_style_chpl,
+                         chpl____wide__ref_syserr _formal_tmp_error_chpl);
+static void on_fn_chpl85(chpl____wide__ref_channel_T_dynamic_T this_chpl7,
+                         file_chpl * f_chpl,
+                         int32_t hints_chpl,
+                         int64_t start_chpl,
+                         int64_t end_chpl,
+                         iostyleInternal local_style_chpl,
+                         chpl____wide__ref_syserr _formal_tmp_error_chpl);
+static void wrapon_fn_chpl84(_class_localson_fn_chpl84 c_chpl);
+static void wrapon_fn_chpl85(_class_localson_fn_chpl85 c_chpl);
+static void deinit_chpl45(channel_F_dynamic_T_chpl * this_chpl7);
+static void deinit_chpl46(channel_T_dynamic_T_chpl * this_chpl7);
+static void on_fn_chpl86(chpl____wide__ref_channel_F_dynamic_T this_chpl7);
+static void on_fn_chpl87(chpl____wide__ref_channel_T_dynamic_T this_chpl7);
+static void wrapon_fn_chpl86(_class_localson_fn_chpl87 c_chpl);
+static void wrapon_fn_chpl87(_class_localson_fn_chpl86 c_chpl);
+static void init_chpl80(ioNewline_chpl * this_chpl7,
+                        chpl_bool skipWhitespaceOnly_chpl);
+static void _ch_ioerror_chpl(channel_T_dynamic_T_chpl * this_chpl7,
+                             syserr error_chpl,
+                             string_chpl * msg_chpl,
+                             chpl____wide_Error * error_out_chpl);
+static void on_fn_chpl88(channel_T_dynamic_T_chpl * this_chpl7,
+                         chpl____wide__ref_string path_chpl2,
+                         chpl____wide__ref_int64_t offset_chpl,
+                         chpl____wide__ref__wide_Error error_out_chpl);
+static void wrapon_fn_chpl88(_class_localson_fn_chpl88 c_chpl);
+static void on_fn_chpl89(channel_T_dynamic_T_chpl * this_chpl7,
+                         chpl____wide__ref_syserr err_chpl);
+static void wrapon_fn_chpl89(_class_localson_fn_chpl89 c_chpl);
+static void on_fn_chpl90(channel_T_dynamic_T_chpl * this_chpl7);
+static void wrapon_fn_chpl90(_class_localson_fn_chpl90 c_chpl);
+static void reader_chpl(file_chpl * this_chpl7,
+                        int64_t start_chpl,
+                        int64_t end_chpl,
+                        int32_t hints_chpl,
+                        chpl____wide_Error * error_out_chpl,
+                        channel_F_dynamic_T_chpl * _retArg_chpl);
+static void readerHelper_chpl(file_chpl * this_chpl7,
+                              int64_t start_chpl,
+                              int64_t end_chpl,
+                              int32_t hints_chpl,
+                              iostyleInternal * style_chpl,
+                              chpl____wide_Error * error_out_chpl,
+                              channel_F_dynamic_T_chpl * _retArg_chpl);
+static void on_fn_chpl91(file_chpl * this_chpl7,
+                         int64_t start_chpl,
+                         int64_t end_chpl,
+                         int32_t hints_chpl,
+                         iostyleInternal style_chpl,
+                         chpl____wide__ref_channel_F_dynamic_T ret_chpl,
+                         chpl____wide__ref_syserr err_chpl,
+                         chpl____wide__ref__wide_Error error_out_chpl);
+static void wrapon_fn_chpl91(_class_localson_fn_chpl91 c_chpl);
+static void writer_chpl(file_chpl * this_chpl7,
+                        int64_t start_chpl,
+                        int64_t end_chpl,
+                        int32_t hints_chpl,
+                        chpl____wide_Error * error_out_chpl,
+                        channel_T_dynamic_T_chpl * _retArg_chpl);
+static void writerHelper_chpl(file_chpl * this_chpl7,
+                              int64_t start_chpl,
+                              int64_t end_chpl,
+                              int32_t hints_chpl,
+                              iostyleInternal * style_chpl,
+                              chpl____wide_Error * error_out_chpl,
+                              channel_T_dynamic_T_chpl * _retArg_chpl);
+static void on_fn_chpl92(file_chpl * this_chpl7,
+                         int64_t start_chpl,
+                         int64_t end_chpl,
+                         int32_t hints_chpl,
+                         iostyleInternal style_chpl,
+                         chpl____wide__ref_channel_T_dynamic_T ret_chpl,
+                         chpl____wide__ref_syserr err_chpl,
+                         chpl____wide__ref__wide_Error error_out_chpl);
+static void wrapon_fn_chpl92(_class_localson_fn_chpl92 c_chpl);
+static syserr _write_text_internal_chpl(qio_channel_ptr_t _channel_internal_chpl,
+                                        int64_t x_chpl2);
+static syserr _write_text_internal_chpl2(qio_channel_ptr_t _channel_internal_chpl,
+                                         chpl____wide__ref_string x_chpl2);
+static syserr _write_binary_internal_chpl(qio_channel_ptr_t _channel_internal_chpl,
+                                          int64_t x_chpl2);
+static syserr _write_binary_internal_chpl2(qio_channel_ptr_t _channel_internal_chpl,
+                                           int64_t x_chpl2);
+static syserr _write_binary_internal_chpl3(qio_channel_ptr_t _channel_internal_chpl,
+                                           chpl____wide__ref_string x_chpl2);
+static syserr _write_binary_internal_chpl4(qio_channel_ptr_t _channel_internal_chpl,
+                                           chpl____wide__ref_string x_chpl2);
+static syserr _write_binary_internal_chpl5(qio_channel_ptr_t _channel_internal_chpl,
+                                           chpl____wide__ref_string x_chpl2);
+static syserr _write_binary_internal_chpl6(qio_channel_ptr_t _channel_internal_chpl,
+                                           int64_t x_chpl2);
+static void _constructIoErrorMsg_chpl(channel_T_dynamic_T_chpl * this_chpl7,
+                                      chpl____wide__ref_string x_chpl2,
+                                      string_chpl * _retArg_chpl);
+static void _constructIoErrorMsg_chpl2(channel_T_dynamic_T_chpl * this_chpl7,
+                                       chpl____wide__ref_ioNewline x_chpl2,
+                                       string_chpl * _retArg_chpl);
+static void _constructIoErrorMsg_chpl3(channel_T_dynamic_T_chpl * this_chpl7,
+                                       int64_t x_chpl2,
+                                       string_chpl * _retArg_chpl);
+static void _writeOne_chpl(channel_T_dynamic_T_chpl * this_chpl7,
+                           int64_t x_chpl2,
+                           locale_chpl * loc_chpl,
+                           chpl____wide_Error * error_out_chpl);
+static void _writeOne_chpl2(channel_T_dynamic_T_chpl * this_chpl7,
+                            chpl____wide__ref_string x_chpl2,
+                            locale_chpl * loc_chpl,
+                            chpl____wide_Error * error_out_chpl);
+static void _writeOne_chpl3(channel_T_dynamic_T_chpl * this_chpl7,
+                            chpl____wide__ref_ioNewline x_chpl2,
+                            locale_chpl * loc_chpl,
+                            chpl____wide_Error * error_out_chpl);
+static syserr _write_one_internal_chpl(qio_channel_ptr_t _channel_internal_chpl,
+                                       chpl____wide__ref_ioNewline x_chpl2,
+                                       locale_chpl * loc_chpl,
+                                       Error_chpl * error_out_chpl);
+static syserr _write_one_internal_chpl2(qio_channel_ptr_t _channel_internal_chpl,
+                                        chpl____wide__ref_string x_chpl2,
+                                        locale_chpl * loc_chpl,
+                                        chpl____wide_Error * error_out_chpl);
+static syserr _write_one_internal_chpl3(qio_channel_ptr_t _channel_internal_chpl,
+                                        int64_t x_chpl2,
+                                        locale_chpl * loc_chpl,
+                                        chpl____wide_Error * error_out_chpl);
+static void stringify_chpl(string_chpl * _e0_args_chpl,
+                           int64_t _e1_args_chpl,
+                           string_chpl * _retArg_chpl);
+static void stringify_chpl10(string_chpl * _e0_args_chpl,
+                             range_byteIndex_boundedHigh_F_chpl _e1_args_chpl,
+                             string_chpl * _e2_args_chpl,
+                             int64_t _e3_args_chpl,
+                             string_chpl * _retArg_chpl);
+static void stringify_chpl11(string_chpl * _e0_args_chpl,
+                             int64_t _e1_args_chpl,
+                             string_chpl * _e2_args_chpl,
+                             int64_t _e3_args_chpl,
+                             string_chpl * _e4_args_chpl,
+                             string_chpl * _retArg_chpl);
+static void stringify_chpl12(string_chpl * _e0_args_chpl,
+                             string_chpl * _e1_args_chpl,
+                             string_chpl * _e2_args_chpl,
+                             string_chpl * _e3_args_chpl,
+                             string_chpl * _retArg_chpl);
+static void stringify_chpl2(string_chpl * _e0_args_chpl,
+                            range_int64_t_boundedLow_F_chpl _e1_args_chpl,
+                            string_chpl * _e2_args_chpl,
+                            int64_t _e3_args_chpl,
+                            string_chpl * _retArg_chpl);
+static void stringify_chpl3(c_string _e0_args_chpl,
+                            string_chpl * _retArg_chpl);
+static void stringify_chpl4(string_chpl * _e0_args_chpl,
+                            int64_t _e1_args_chpl,
+                            string_chpl * _e2_args_chpl,
+                            int64_t _e3_args_chpl,
+                            string_chpl * _retArg_chpl);
+static void stringify_chpl5(string_chpl * _e0_args_chpl,
+                            range_byteIndex_boundedLow_F_chpl _e1_args_chpl,
+                            string_chpl * _e2_args_chpl,
+                            int64_t _e3_args_chpl,
+                            string_chpl * _retArg_chpl);
+static void stringify_chpl6(string_chpl * _e0_args_chpl,
+                            string_chpl * _e1_args_chpl,
+                            int64_t _e2_args_chpl,
+                            string_chpl * _e3_args_chpl,
+                            range_int64_t_bounded_F_chpl _e4_args_chpl,
+                            string_chpl * _retArg_chpl);
+static void stringify_chpl7(string_chpl * _e0_args_chpl,
+                            int64_t _e1_args_chpl,
+                            string_chpl * _e2_args_chpl,
+                            string_chpl * _retArg_chpl);
+static void stringify_chpl8(string_chpl * _e0_args_chpl,
+                            range_byteIndex_bounded_F_chpl _e1_args_chpl,
+                            string_chpl * _e2_args_chpl,
+                            int64_t _e3_args_chpl,
+                            string_chpl * _retArg_chpl);
+static void stringify_chpl9(string_chpl * _e0_args_chpl,
+                            range_int64_t_bounded_F_chpl _e1_args_chpl,
+                            string_chpl * _e2_args_chpl,
+                            int64_t _e3_args_chpl,
+                            string_chpl * _retArg_chpl);
+static void on_fn_chpl93(channel_T_dynamic_T_chpl * this_chpl7,
+                         chpl____wide__ref__tuple_3__ref_string_int64_t__ref_ioNewline args_chpl,
+                         locale_chpl * origLocale_chpl,
+                         chpl____wide__ref__wide_Error error_out_chpl);
+static void wrapon_fn_chpl93(_class_localson_fn_chpl93 c_chpl);
+static chpl_bool writeln_chpl2(channel_T_dynamic_T_chpl * this_chpl7,
+                               string_chpl * _e0_args_chpl,
+                               int64_t _e1_args_chpl,
+                               chpl____wide_Error * error_out_chpl);
+static void chpl__init_Initialization(int64_t _ln_chpl,
+                                      int32_t _fn_chpl);
+static void chpl__init_InsertionSort(int64_t _ln_chpl,
+                                     int32_t _fn_chpl);
+static void chpl__init_List(int64_t _ln_chpl,
+                            int32_t _fn_chpl);
+static void chpl__init_MSBRadixSort(int64_t _ln_chpl,
+                                    int32_t _fn_chpl);
+static void chpl__init_Memory(int64_t _ln_chpl,
+                              int32_t _fn_chpl);
+static void chpl__init_OS(int64_t _ln_chpl,
+                          int32_t _fn_chpl);
+static void chpl__init_POSIX(int64_t _ln_chpl,
+                             int32_t _fn_chpl);
+static void chpl__init_QuickSort(int64_t _ln_chpl,
+                                 int32_t _fn_chpl);
+static void chpl__init_RadixSortHelp(int64_t _ln_chpl,
+                                     int32_t _fn_chpl);
+static void chpl__init_RangeChunk(int64_t _ln_chpl,
+                                  int32_t _fn_chpl);
+static void chpl__init_Regex(int64_t _ln_chpl,
+                             int32_t _fn_chpl);
+static void chpl__auto_destroy_BadRegexError(chpl____wide_BadRegexError this_chpl7);
+static void message_chpl6(chpl____wide_BadRegexError this_chpl7,
+                          chpl____wide__ref_string _retArg_chpl);
+static void chpl__init_ShallowCopy(int64_t _ln_chpl,
+                                   int32_t _fn_chpl);
+static void chpl__init_ShellSort(int64_t _ln_chpl,
+                                 int32_t _fn_chpl);
+static void chpl__deinit_Sort(void);
+static void chpl__init_Sort(int64_t _ln_chpl,
+                            int32_t _fn_chpl);
+static void init_ASSIGN__chpl22(DefaultComparator_chpl * this_chpl7,
+                                DefaultComparator_chpl * other_chpl);
+static void init_chpl81(DefaultComparator_chpl * this_chpl7);
+static void init_chpl82(ReverseComparator_DefaultComparator_chpl * this_chpl7);
+static void chpl__init_SysBasic(int64_t _ln_chpl,
+                                int32_t _fn_chpl);
+static void chpl__init_SysError(int64_t _ln_chpl,
+                                int32_t _fn_chpl);
+static void chpl__auto_destroy_SystemError(chpl____wide_SystemError this_chpl7);
+static SystemError_chpl _new_chpl19(syserr err_chpl,
+                                    string_chpl * details_chpl,
+                                    int64_t _ln_chpl,
+                                    int32_t _fn_chpl);
+static void message_chpl7(chpl____wide_SystemError this_chpl7,
+                          chpl____wide__ref_string _retArg_chpl);
+static void fromSyserr_chpl(syserr err_chpl,
+                            string_chpl * details_chpl,
+                            _owned_SystemError_chpl * _retArg_chpl,
+                            int64_t _ln_chpl,
+                            int32_t _fn_chpl);
+static void fromSyserr_chpl2(int64_t err_chpl,
+                             string_chpl * details_chpl,
+                             _owned_SystemError_chpl * _retArg_chpl,
+                             int64_t _ln_chpl,
+                             int32_t _fn_chpl);
+static void chpl__auto_destroy_BlockingIOError(chpl____wide_BlockingIOError this_chpl7);
+static BlockingIOError_chpl _new_chpl20(string_chpl * details_chpl,
+                                        syserr err_chpl,
+                                        int64_t _ln_chpl,
+                                        int32_t _fn_chpl);
+static void chpl__auto_destroy_ChildProcessError(chpl____wide_ChildProcessError this_chpl7);
+static ChildProcessError_chpl _new_chpl21(string_chpl * details_chpl,
+                                          syserr err_chpl,
+                                          int64_t _ln_chpl,
+                                          int32_t _fn_chpl);
+static void chpl__auto_destroy_ConnectionError(chpl____wide_ConnectionError this_chpl7);
+static void chpl__auto_destroy_BrokenPipeError(chpl____wide_BrokenPipeError this_chpl7);
+static BrokenPipeError_chpl _new_chpl22(string_chpl * details_chpl,
+                                        syserr err_chpl,
+                                        int64_t _ln_chpl,
+                                        int32_t _fn_chpl);
+static void chpl__auto_destroy_ConnectionAbortedError(chpl____wide_ConnectionAbortedError this_chpl7);
+static ConnectionAbortedError_chpl _new_chpl23(string_chpl * details_chpl,
+                                               syserr err_chpl,
+                                               int64_t _ln_chpl,
+                                               int32_t _fn_chpl);
+static void chpl__auto_destroy_ConnectionRefusedError(chpl____wide_ConnectionRefusedError this_chpl7);
+static ConnectionRefusedError_chpl _new_chpl24(string_chpl * details_chpl,
+                                               syserr err_chpl,
+                                               int64_t _ln_chpl,
+                                               int32_t _fn_chpl);
+static void chpl__auto_destroy_ConnectionResetError(chpl____wide_ConnectionResetError this_chpl7);
+static ConnectionResetError_chpl _new_chpl25(string_chpl * details_chpl,
+                                             syserr err_chpl,
+                                             int64_t _ln_chpl,
+                                             int32_t _fn_chpl);
+static void chpl__auto_destroy_FileExistsError(chpl____wide_FileExistsError this_chpl7);
+static FileExistsError_chpl _new_chpl26(string_chpl * details_chpl,
+                                        syserr err_chpl,
+                                        int64_t _ln_chpl,
+                                        int32_t _fn_chpl);
+static void chpl__auto_destroy_FileNotFoundError(chpl____wide_FileNotFoundError this_chpl7);
+static FileNotFoundError_chpl _new_chpl27(string_chpl * details_chpl,
+                                          syserr err_chpl,
+                                          int64_t _ln_chpl,
+                                          int32_t _fn_chpl);
+static void chpl__auto_destroy_InterruptedError(chpl____wide_InterruptedError this_chpl7);
+static InterruptedError_chpl _new_chpl28(string_chpl * details_chpl,
+                                         syserr err_chpl,
+                                         int64_t _ln_chpl,
+                                         int32_t _fn_chpl);
+static void chpl__auto_destroy_IsADirectoryError(chpl____wide_IsADirectoryError this_chpl7);
+static IsADirectoryError_chpl _new_chpl29(string_chpl * details_chpl,
+                                          syserr err_chpl,
+                                          int64_t _ln_chpl,
+                                          int32_t _fn_chpl);
+static void chpl__auto_destroy_NotADirectoryError(chpl____wide_NotADirectoryError this_chpl7);
+static NotADirectoryError_chpl _new_chpl30(string_chpl * details_chpl,
+                                           syserr err_chpl,
+                                           int64_t _ln_chpl,
+                                           int32_t _fn_chpl);
+static void chpl__auto_destroy_PermissionError(chpl____wide_PermissionError this_chpl7);
+static PermissionError_chpl _new_chpl31(string_chpl * details_chpl,
+                                        syserr err_chpl,
+                                        int64_t _ln_chpl,
+                                        int32_t _fn_chpl);
+static void chpl__auto_destroy_ProcessLookupError(chpl____wide_ProcessLookupError this_chpl7);
+static ProcessLookupError_chpl _new_chpl32(string_chpl * details_chpl,
+                                           syserr err_chpl,
+                                           int64_t _ln_chpl,
+                                           int32_t _fn_chpl);
+static void chpl__auto_destroy_TimeoutError(chpl____wide_TimeoutError this_chpl7);
+static TimeoutError_chpl _new_chpl33(string_chpl * details_chpl,
+                                     syserr err_chpl,
+                                     int64_t _ln_chpl,
+                                     int32_t _fn_chpl);
+static void chpl__auto_destroy_IOError(chpl____wide_IOError this_chpl7);
+static IOError_chpl _new_chpl34(syserr err_chpl,
+                                string_chpl * details_chpl,
+                                int64_t _ln_chpl,
+                                int32_t _fn_chpl);
+static void chpl__auto_destroy_EOFError(chpl____wide_EOFError this_chpl7);
+static EOFError_chpl _new_chpl35(string_chpl * details_chpl,
+                                 syserr err_chpl,
+                                 int64_t _ln_chpl,
+                                 int32_t _fn_chpl);
+static void chpl__auto_destroy_UnexpectedEOFError(chpl____wide_UnexpectedEOFError this_chpl7);
+static UnexpectedEOFError_chpl _new_chpl36(string_chpl * details_chpl,
+                                           syserr err_chpl,
+                                           int64_t _ln_chpl,
+                                           int32_t _fn_chpl);
+static void chpl__auto_destroy_BadFormatError(chpl____wide_BadFormatError this_chpl7);
+static BadFormatError_chpl _new_chpl37(string_chpl * details_chpl,
+                                       syserr err_chpl,
+                                       int64_t _ln_chpl,
+                                       int32_t _fn_chpl);
+static void quote_string_chpl(string_chpl * s_chpl,
+                              int64_t len_chpl,
+                              string_chpl * _retArg_chpl);
+static void ioerror_chpl(syserr error_chpl,
+                         string_chpl * msg_chpl,
+                         string_chpl * path_chpl2,
+                         int64_t offset_chpl,
+                         chpl____wide_Error * error_out_chpl,
+                         int64_t _ln_chpl,
+                         int32_t _fn_chpl);
+static void ioerror_chpl2(syserr error_chpl,
+                          string_chpl * msg_chpl,
+                          string_chpl * path_chpl2,
+                          chpl____wide_Error * error_out_chpl,
+                          int64_t _ln_chpl,
+                          int32_t _fn_chpl);
+static void ioerror_chpl3(syserr error_chpl,
+                          string_chpl * msg_chpl,
+                          chpl____wide_Error * error_out_chpl,
+                          int64_t _ln_chpl,
+                          int32_t _fn_chpl);
+static void chpl__init_Sys(int64_t _ln_chpl,
+                           int32_t _fn_chpl);
+static void chpl__init_Types(int64_t _ln_chpl,
+                             int32_t _fn_chpl);
+static void checkValue_chpl(int64_t this_chpl7);
+static void checkValue_chpl2(uint64_t this_chpl7);
+static void checkValue_chpl3(void);
+static void checkValue_chpl4(void);
+static void checkValue_chpl5(void);
+static void checkValue_chpl6(void);
+static void chpl__init_put(int64_t _ln_chpl,
+                           int32_t _fn_chpl);
+int64_t chpl_gen_main(chpl_main_argument * _arg);
+static void chpl_user_main(void);
+static void on_fn_chpl94(void);
+static void wrapon_fn_chpl94(_class_localson_fn_chpl94 c_chpl);
+/*** Function Pointer Table ***/
+
+extern const chpl_fn_p chpl_ftable[];
+extern const chpl_fn_info chpl_finfo[];
+/*** Virtual Method Table ***/
+
+extern const chpl_fn_p chpl_vmtable[];
+/*** Global Variables ***/
+
+static uint8_t byteType_chpl;
+static c_ptr_uint8_t_chpl bufferType_chpl;
+static int32_t locIdType_chpl;
+static chpl____wide_heap_AtomicT_int64_t numPrivateObjects_chpl;
+static chpl_bool rootLocaleInitialized_chpl;
+static chpl____wide_heap_ArrayInit chpl_arrayInitMethod;
+static chpl___EndCount_RAtomicT_int64_t_RAtomicT_int64_t _remoteEndCountType_chpl;
+static chpl_ModuleDeinit call_tmp_chpl;
+static chpl____wide_heap_chpl_ModuleDeinit chpl_moduleDeinitFuns;
+static chpl____wide_heap_chpl_bool chpl__testParOn;
+static int32_t chpl_nodeID_t;
+static int32_t chpl_sublocID_t;
+static locale_chpl call_tmp_chpl2;
+static locale_chpl nilLocale_chpl;
+static locale_chpl call_tmp_chpl3;
+static locale_chpl defaultLocale_chpl;
+static chpl____wide_heap_locale dummyLocale_chpl;
+static locale_chpl call_tmp_chpl4;
+static locale_chpl rootLocale_chpl;
+static chpl____wide_heap_locale origRootLocale_chpl;
+static int64_t numLocales_chpl;
+static int64_t tmp_chpl;
+static string_chpl _str_literal_3103_chpl;
+static string_chpl _str_literal_1646_chpl;
+static string_chpl _str_literal_747_chpl;
+static string_chpl _str_literal_748_chpl;
+static string_chpl _str_literal_1362_chpl;
+static string_chpl _str_literal_1363_chpl;
+static string_chpl _str_literal_1346_chpl;
+static string_chpl _str_literal_1274_chpl;
+static string_chpl _str_literal_1673_chpl;
+static string_chpl _str_literal_701_chpl;
+static string_chpl _str_literal_1347_chpl;
+static string_chpl _str_literal_199_chpl;
+static string_chpl _str_literal_3281_chpl;
+static string_chpl _str_literal_2288_chpl;
+static string_chpl _str_literal_2289_chpl;
+static string_chpl _str_literal_2290_chpl;
+static string_chpl _str_literal_202_chpl;
+static string_chpl _str_literal_204_chpl;
+static string_chpl _str_literal_205_chpl;
+static string_chpl _str_literal_1349_chpl;
+static string_chpl _str_literal_702_chpl;
+static string_chpl _str_literal_206_chpl;
+static string_chpl _str_literal_476_chpl;
+static string_chpl _str_literal_1119_chpl;
+static string_chpl _str_literal_387_chpl;
+static string_chpl _str_literal_480_chpl;
+static string_chpl _str_literal_484_chpl;
+static string_chpl _str_literal_759_chpl;
+static string_chpl _str_literal_215_chpl;
+static string_chpl _str_literal_42_chpl;
+static string_chpl _str_literal_217_chpl;
+static string_chpl _str_literal_218_chpl;
+static string_chpl _str_literal_526_chpl;
+static string_chpl _str_literal_1304_chpl;
+static string_chpl _str_literal_286_chpl;
+static string_chpl _str_literal_1309_chpl;
+static string_chpl _str_literal_222_chpl;
+static string_chpl _str_literal_2077_chpl;
+static string_chpl _str_literal_2078_chpl;
+static string_chpl _str_literal_234_chpl;
+static string_chpl _str_literal_235_chpl;
+static string_chpl _str_literal_236_chpl;
+static string_chpl _str_literal_237_chpl;
+static string_chpl _str_literal_238_chpl;
+static string_chpl _str_literal_242_chpl;
+static string_chpl _str_literal_243_chpl;
+static string_chpl _str_literal_244_chpl;
+static string_chpl _str_literal_245_chpl;
+static string_chpl _str_literal_75_chpl;
+static string_chpl _str_literal_737_chpl;
+static string_chpl _str_literal_262_chpl;
+static string_chpl _str_literal_743_chpl;
+static string_chpl _str_literal_1152_chpl;
+static string_chpl _str_literal_3268_chpl;
+static string_chpl _str_literal_3271_chpl;
+static string_chpl _str_literal_1160_chpl;
+static string_chpl _str_literal_1161_chpl;
+static string_chpl _str_literal_311_chpl;
+static string_chpl _str_literal_101_chpl;
+static string_chpl _str_literal_993_chpl;
+static string_chpl _str_literal_994_chpl;
+static string_chpl _str_literal_995_chpl;
+static string_chpl _str_literal_1329_chpl;
+static string_chpl _str_literal_560_chpl;
+static string_chpl _str_literal_562_chpl;
+static string_chpl _str_literal_563_chpl;
+static string_chpl _str_literal_564_chpl;
+static string_chpl _str_literal_1182_chpl;
+static string_chpl _str_literal_3364_chpl;
+static string_chpl _str_literal_1183_chpl;
+static string_chpl _str_literal_3365_chpl;
+static string_chpl _str_literal_579_chpl;
+static string_chpl _str_literal_332_chpl;
+static string_chpl _str_literal_333_chpl;
+static string_chpl _str_literal_336_chpl;
+static string_chpl _str_literal_337_chpl;
+static string_chpl _str_literal_1879_chpl;
+static string_chpl _str_literal_1880_chpl;
+static string_chpl _str_literal_1886_chpl;
+static string_chpl _str_literal_1888_chpl;
+static string_chpl _str_literal_844_chpl;
+static string_chpl _str_literal_845_chpl;
+static string_chpl _str_literal_846_chpl;
+static string_chpl _str_literal_596_chpl;
+static string_chpl _str_literal_342_chpl;
+static string_chpl _str_literal_1904_chpl;
+static string_chpl _str_literal_602_chpl;
+static string_chpl _str_literal_1905_chpl;
+static string_chpl _str_literal_1552_chpl;
+static string_chpl _str_literal_1921_chpl;
+static string_chpl _str_literal_3272_chpl;
+static string_chpl _str_literal_3280_chpl;
+static string_chpl _str_literal_3282_chpl;
+static string_chpl _str_literal_3327_chpl;
+static string_chpl _str_literal_3336_chpl;
+static string_chpl _str_literal_3338_chpl;
+static string_chpl _str_literal_3342_chpl;
+static string_chpl _str_literal_3344_chpl;
+static string_chpl _str_literal_3397_chpl;
+static string_chpl _str_literal_3401_chpl;
+static string_chpl _str_literal_3403_chpl;
+static string_chpl _str_literal_3415_chpl;
+static string_chpl _str_literal_3449_chpl;
+static string_chpl _str_literal_3454_chpl;
+static string_chpl _str_literal_1923_chpl;
+static string_chpl _str_literal_348_chpl;
+static string_chpl _str_literal_1932_chpl;
+static string_chpl _str_literal_1937_chpl;
+static string_chpl _str_literal_1950_chpl;
+static string_chpl _str_literal_1951_chpl;
+static string_chpl _str_literal_3402_chpl;
+static string_chpl _str_literal_1974_chpl;
+static string_chpl _str_literal_1975_chpl;
+static string_chpl _str_literal_1976_chpl;
+static string_chpl _str_literal_1977_chpl;
+static string_chpl _str_literal_1978_chpl;
+static string_chpl _str_literal_1979_chpl;
+static uint64_t chpl_offset_endCount;
+static uint64_t call_tmp_chpl5;
+static uint64_t chpl_offset_serial;
+static uint64_t call_tmp_chpl6;
+static uint64_t chpl_offset_nextCoStmtSerial;
+static uint64_t call_tmp_chpl7;
+static uint64_t chpl_offset_end;
+static int32_t call_tmp_chpl8;
+static int64_t init_coerce_tmp_chpl;
+static int64_t numThreadsPerLocale_chpl;
+static int64_t dataParTasksPerLocale_chpl;
+static int64_t tmp_chpl2;
+static chpl_bool dataParIgnoreRunningTasks_chpl;
+static chpl_bool tmp_chpl3;
+static int64_t dataParMinGranularity_chpl;
+static int64_t tmp_chpl4;
+static DefaultDist_chpl call_tmp_chpl9;
+static _distribution_DefaultDist_chpl call_tmp_chpl10;
+static _distribution_DefaultDist_chpl defaultDist_chpl;
+static _domain_DefaultRectangularDom_1_int64_t_F_chpl call_tmp_chpl11;
+static _domain_DefaultRectangularDom_1_int64_t_F_chpl chpl_emptyLocaleSpace;
+static _domain_DefaultRectangularDom_1_int64_t_F_chpl init_coerce_tmp_chpl2;
+static range_int64_t_bounded_F_chpl call_tmp_chpl12;
+static _array_DefaultRectangularArr_1_int64_t_F_locale_int64_t_chpl chpl_emptyLocales;
+static _domain_DefaultRectangularDom_1_int64_t_F_chpl _runtime_type_tmp__chpl;
+static _ref__domain_DefaultRectangularDom_1_int64_t_F_chpl call_tmp_chpl13;
+static chpl___RuntimeTypeInfo2 call_tmp_chpl14;
+static chpl_localeTreeRecord chpl_localeTree;
+static locale_chpl default_arg_left_chpl;
+static locale_chpl default_arg_right_chpl;
+static _ref__wide_BaseLocale_chpl call_tmp_chpl15;
+static chpl____wide_BaseLocale coerce_tmp_chpl;
+static chpl____wide_BaseLocale coerce_tmp_chpl2;
+static chpl____wide_RootLocale call_tmp_chpl16;
+static chpl____wide_RootLocale call_tmp_chpl17;
+static chpl____wide__ref__wide__array_DefaultRectangularArr_1_int64_t_F_locale_int64_t Locales_chpl;
+static chpl____wide__ref__wide__array_DefaultRectangularArr_1_int64_t_F_locale_int64_t call_tmp_chpl18;
+static _domain_DefaultRectangularDom_1_int64_t_F_chpl LocaleSpace_chpl;
+static _domain_DefaultRectangularDom_1_int64_t_F_chpl call_tmp_chpl19;
+static chpl_bool memTrack_chpl;
+static chpl_bool tmp_chpl5;
+static chpl_bool memStats_chpl;
+static chpl_bool tmp_chpl6;
+static chpl_bool memLeaksByType_chpl;
+static chpl_bool tmp_chpl7;
+static chpl_bool memLeaks_chpl;
+static chpl_bool tmp_chpl8;
+static uint64_t memMax_chpl;
+static uint64_t tmp_chpl9;
+static uint64_t memThreshold_chpl;
+static uint64_t tmp_chpl10;
+static string_chpl memLog_chpl;
+static string_chpl tmp_chpl11;
+static string_chpl memLeaksLog_chpl;
+static string_chpl tmp_chpl12;
+static string_chpl memLeaksByDesc_chpl;
+static string_chpl tmp_chpl13;
+static uint64_t cMemMax_chpl;
+static uint64_t call_tmp_chpl20;
+static uint64_t cMemThreshold_chpl;
+static uint64_t call_tmp_chpl21;
+static chpl_bool printModuleInitOrder_chpl;
+static chpl_bool tmp_chpl14;
+static int32_t moduleInitLevel_chpl;
+static chpl_bool chpl__init_ChapelStringLiterals_p;
+static chpl_bool chpl__init_ChapelSysCTypes_p;
+static chpl_bool chpl__init_DSIUtil_p;
+static chpl_bool chpl__init_put_p;
+static chpl_bool chpl__init_ByteBufferHelpers_p;
+static chpl_bool chpl__init_BytesStringCommon_p;
+static chpl_bool chpl__init_ChapelDistribution_p;
+static chpl_bool chpl__init_ChapelPrivatization_p;
+static chpl_bool chpl__init_LocaleModelHelpFlat_p;
+static chpl_bool chpl__init_MemConsistency_p;
+static chpl_bool chpl__init_StringCasts_p;
+static chpl_bool chpl__init_ExportWrappers_p;
+static chpl_bool chpl__init_NetworkAtomics_p;
+static chpl_bool chpl__init_ChapelDomain_p;
+static chpl_bool chpl__init_ChapelNumLocales_p;
+static chpl_bool chpl__init_ChapelTaskDataHelp_p;
+static chpl_bool chpl__init_ChapelTaskData_p;
+static chpl_bool chpl__init_ChapelTaskTable_p;
+static chpl_bool chpl__init_DefaultRectangular_p;
+static chpl_bool chpl__init_MemTracking_p;
+static chpl_bool chpl__init_Memory_p;
+static chpl_bool chpl__init_ChapelArray_p;
+static chpl_bool chpl__init_ChapelBase_p;
+static chpl_bool chpl__init_ChapelIOStringifyHelper_p;
+static chpl_bool chpl__init_ChapelLocks_p;
+static chpl_bool chpl__init_ChapelStandard_p;
+static chpl_bool chpl__init_ChapelUtil_p;
+static chpl_bool chpl__init_HaltWrappers_p;
+static chpl_bool chpl__init_CString_p;
+static chpl_bool chpl__init_ExternalArray_p;
+static chpl_bool chpl__init_LocaleTree_p;
+static chpl_bool chpl__init_Types_p;
+static chpl_bool chpl__init_ChapelLocale_p;
+static chpl_bool chpl__init_ChapelDebugPrint_p;
+static chpl_bool chpl__init_ChapelHashtable_p;
+static chpl_bool chpl__init_ChapelThreads_p;
+static chpl_bool chpl__init_LocaleModelHelpMem_p;
+static chpl_bool chpl__init_LocaleModelHelpRuntime_p;
+static chpl_bool chpl__init_LocaleModel_p;
+static chpl_bool chpl__init_PrintModuleInitOrder_p;
+static chpl_bool chpl__init_LocaleModelHelpSetup_p;
+static chpl_bool chpl__init_Errors_p;
+static chpl_bool chpl__init_SysError_p;
+static chpl_bool chpl__init_OS_p;
+static chpl_bool chpl__init_Initialization_p;
+static chpl_bool chpl__init_RangeChunk_p;
+static chpl_bool chpl__init_SysBasic_p;
+static chpl_bool chpl__init_CTypes_p;
+static chpl_bool chpl__init_LocalesArray_p;
+static chpl_bool chpl__init_ChapelTuple_p;
+static chpl_bool chpl__init_Sys_p;
+static chpl_bool chpl__init_POSIX_p;
+static chpl_bool chpl__init_List_p;
+static chpl_bool chpl__init_CopyAggregation_p;
+static chpl_bool chpl__init_Bytes_p;
+static chpl_bool chpl__init_Atomics_p;
+static chpl_bool chpl__init_OwnedObject_p;
+static chpl_bool chpl__init_ChapelRange_p;
+static chpl_bool chpl__init_ChapelIO_p;
+static chpl_bool chpl__init_String_p;
+static chpl_bool chpl__init_Sort_p;
+static chpl_bool chpl__init_Regex_p;
+static chpl_bool chpl__init_AggregationPrimitives_p;
+static chpl_bool chpl__init_IO_p;
+static chpl_bool chpl__init_InsertionSort_p;
+static chpl_bool chpl__init_NVStringFactory_p;
+static chpl_bool chpl__init_QuickSort_p;
+static chpl_bool chpl__init_AlignedTSupport_p;
+static chpl_bool chpl__init_ShellSort_p;
+static chpl_bool chpl__init_RadixSortHelp_p;
+static chpl_bool chpl__init_ShallowCopy_p;
+static chpl_bool chpl__init_MSBRadixSort_p;
+static chpl_bool chpl__init_FormattedIO_p;
+static int64_t call_tmp_chpl22;
+static int64_t yieldFrequency_chpl;
+static int64_t call_tmp_chpl23;
+static int64_t dstBuffSize_chpl;
+static int64_t call_tmp_chpl24;
+static int64_t srcBuffSize_chpl;
+static int32_t IOHINT_NONE_chpl;
+static int32_t IOHINT_RANDOM_chpl;
+static int32_t IOHINT_SEQUENTIAL_chpl;
+static int32_t IOHINT_CACHED_chpl;
+static int32_t IOHINT_PARALLEL_chpl;
+static _tuple_6_star__ref_string_chpl call_tmp_chpl25;
+static chpl____wide_heap__tuple_6_star_string _arg_to_proto_names_chpl;
+static channel_F_dynamic_T_chpl stdin_chpl;
+static channel_F_dynamic_T_chpl call_tmp_chpl26;
+static file_chpl call_tmp_chpl27;
+static int32_t default_arg_hints_chpl;
+static int64_t default_arg_end_chpl;
+static int64_t default_arg_start_chpl;
+static channel_T_dynamic_T_chpl stdout_chpl;
+static _cfile call_tmp_chpl28;
+static channel_T_dynamic_T_chpl call_tmp_chpl29;
+static file_chpl call_tmp_chpl30;
+static int32_t default_arg_hints_chpl2;
+static int64_t default_arg_end_chpl2;
+static int64_t default_arg_start_chpl2;
+static channel_T_dynamic_T_chpl stderr_chpl;
+static _cfile call_tmp_chpl31;
+static channel_T_dynamic_T_chpl call_tmp_chpl32;
+static file_chpl call_tmp_chpl33;
+static int32_t default_arg_hints_chpl3;
+static int64_t default_arg_end_chpl3;
+static int64_t default_arg_start_chpl3;
+static int64_t _initialCapacity_chpl;
+static int64_t _initialArrayCapacity_chpl;
+static DefaultComparator_chpl defaultComparator_chpl;
+static DefaultComparator_chpl call_tmp_chpl34;
+static ReverseComparator_DefaultComparator_chpl reverseComparator_chpl;
+static ReverseComparator_DefaultComparator_chpl call_tmp_chpl35;
+static chpl____wide_heap_int64_t x_chpl;
+extern const int chpl_numGlobalsOnHeap;
+
+extern ptr_wide_ptr_t chpl_globals_registry[8];
+
+extern const char* chpl_mem_descs[];
+extern const int chpl_mem_numDescs;
+
+extern void* const chpl_private_broadcast_table[];
+#include "chpl-gen-includes.h"
+typedef chpl____wide_heap_ArrayInit *_ref_chpl____wide_heap_ArrayInit;
+typedef chpl____wide_heap_chpl_ModuleDeinit *_ref_chpl____wide_heap_chpl_ModuleDeinit;
+typedef chpl____wide_heap_locale *_ref_chpl____wide_heap_locale;
+typedef chpl____wide_heap_AtomicT_int64_t *_ref_chpl____wide_heap_AtomicT_int64_t;
+typedef chpl____wide_heap_chpl_bool *_ref_chpl____wide_heap_chpl_bool;
+typedef chpl____wide_heap_int64_t *_ref_chpl____wide_heap_int64_t;
+typedef chpl____wide_heap__tuple_6_star_string *_ref_chpl____wide_heap__tuple_6_star_string;
+typedef ArrayInit_chpl *_ref_ArrayInit_chpl;
+typedef struct chpl_chpl____wide__ref_ArrayInit_chpl_s {
+  chpl_localeID_t locale;
+  _ref_ArrayInit_chpl addr;
+} chpl____wide__ref_ArrayInit_chpl;
+
+typedef struct chpl_chpl____wide__nilType_s {
+  chpl_localeID_t locale;
+  _nilType addr;
+} chpl____wide__nilType;
+
+typedef chpl_ddataResizePolicy *_ref_chpl_ddataResizePolicy;
+typedef struct chpl_chpl____wide__ref_chpl_ddataResizePolicy_s {
+  chpl_localeID_t locale;
+  _ref_chpl_ddataResizePolicy addr;
+} chpl____wide__ref_chpl_ddataResizePolicy;
+
+typedef c_fn_ptr *_ref_c_fn_ptr;
+typedef struct chpl_chpl____wide__ref_c_fn_ptr_s {
+  chpl_localeID_t locale;
+  _ref_c_fn_ptr addr;
+} chpl____wide__ref_c_fn_ptr;
+
+typedef chpl____wide__ref_string *_ref_chpl____wide__ref_string;
+typedef struct chpl_chpl____wide__ref_chpl____wide__ref_string_s {
+  chpl_localeID_t locale;
+  _ref_chpl____wide__ref_string addr;
+} chpl____wide__ref_chpl____wide__ref_string;
+
+typedef chpl____wide__ref_ioNewline *_ref_chpl____wide__ref_ioNewline;
+typedef struct chpl_chpl____wide__ref_chpl____wide__ref_ioNewline_s {
+  chpl_localeID_t locale;
+  _ref_chpl____wide__ref_ioNewline addr;
+} chpl____wide__ref_chpl____wide__ref_ioNewline;
+
+
+#endif /* END CHPL_GEN_HEADER_INCLUDE_GUARD */

@@ -3525,6 +3525,17 @@ void mrUnLocalizeTarget(void* mrAddr, void* addr, size_t size) {
   }
 }
 
+void mrGetKeyExt(int *addr, uint64_t *key);
+
+void
+mrGetKeyExt(int *addr, uint64_t *key) {
+  chpl_bool rv;
+
+  uint64_t offset;
+  rv = mrGetKey(key, &offset, chpl_nodeID, addr, sizeof(*addr));
+  assert(rv == true);
+  assert(offset == 0);
+}
 
 static inline
 chpl_bool mrGetKey(uint64_t* pKey, uint64_t* pOff,
