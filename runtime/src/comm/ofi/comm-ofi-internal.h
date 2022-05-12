@@ -274,7 +274,7 @@ void chpl_comm_ofi_oob_barrier(void);
 void chpl_comm_ofi_oob_allgather(const void*, void*, size_t);
 void chpl_comm_ofi_oob_bcast(void*, size_t);
 int  chpl_comm_ofi_oob_locales_on_node(void);
-
+void chpl_comm_ofi_oob_locales_on_node(void);
 
 //
 // Hugepage interface

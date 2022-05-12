@@ -989,6 +989,9 @@ void chpl_comm_init(int *argc_p, char ***argv_p) {
   DBG_INIT();
   int32_t count = chpl_comm_ofi_oob_locales_on_node();
   chpl_set_num_locales_on_node(count);
+
+  chpl_comm_ofi_oob_closest_nic();
+  
   //
   // Gather run-invariant environment info as early as possible.
   //

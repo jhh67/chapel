@@ -340,3 +340,20 @@ int chpl_comm_ofi_oob_locales_on_node(void) {
   DBG_PRINTF(DBG_OOB, "OOB locales on node: %d", count);
   return count;
 }
+
+void chpl_comm_ofi_oob_closest_nic(void) {
+    DBG_PRINTF(DBG_OOB, "chpl_comm_ofi_oob_closest_nic\n");
+  if (PMI_Get_nic_data != NULL) {
+    pmi_nic_data_t nics[10];
+    int count;
+    PMI_CHK(PMI_Get_nic_data(chpl_nodeID, 10, nics, &count));
+    DBG_PRINTF(DBG_OOB, "PMI_Get_nic_data returned %d\n", count);
+    for (int i = 0; i < count; i++) {
+      DBG_PRINTF(DBG_OOB, "NIC %s NUMA %d type %u\n", nics[i].device_name,
+                 nics[i].numa_node, nics[i].nic_type);
+    }
+  }
+}
+
+
+
