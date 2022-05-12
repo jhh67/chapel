@@ -46,6 +46,14 @@
 #define PMI2_ID_NULL -1
 #define PMI2_MAX_VALLEN 1024
 
+typedef struct {
+    char     address[64];     // MAC or IP address, port, etc
+    char     device_name[16]; // eth0, hsn1, etc
+    int16_t  numa_node;       // Closest NUMA domain, -1 if unknown
+    uint8_t  nic_type;        // PMI_NIC_TYPE_ enum value
+    uint64_t _unused[2];      // For future expansion
+} pmi_nic_data_t;
+
 extern int PMI2_Initialized(void);
 extern int PMI2_Init(int* spawned, int* size, int* rank, int* appnum);
 extern int PMI2_Finalize(void);
@@ -61,6 +69,10 @@ extern int PMI2_KVS_Get(const char* jobid, int src_pmi_id,
 extern int PMI_Get_clique_size(int* size)
     __attribute__((weak));
 
+extern int PMI_Get_nic_data(uint32_t nid, int max_count,
+                            pmi_nic_data_t nicaddrs[],
+                            int *          num_nics)
+    __attribute__((weak));
 #define PMI2_CHK(expr) CHK_EQ_TYPED(expr, PMI2_SUCCESS, int, "d")
 
 
