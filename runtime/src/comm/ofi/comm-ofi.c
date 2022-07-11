@@ -5804,13 +5804,15 @@ static rmaPutFn_t rmaPutFn_selector;
 inline
 void ofi_wait_for_transmits_complete(void) {
   struct perTxCtxInfo_t* tcip;
-  // This only makes sense if the endpoint is bound to the thread.
-  // TODO: figure out what to do in non-bound cases. Seems like
-  // tciFree should ensure progress until all outstanding transmits
-  // have completed.
-  CHK_TRUE((tcip = tciAlloc()) != NULL);
-  while (tcip->numTxnsOut > 0) {
-    (*tcip->ensureProgressFn)(tcip, false);
+  if (chpl_numNodes > 1) {
+    // This only makes sense if the endpoint is bound to the thread.
+    // TODO: figure out what to do in non-bound cases. Seems like
+    // tciFree should ensure progress until all outstanding transmits
+    // have completed.
+    CHK_TRUE((tcip = tciAlloc()) != NULL);
+    while (tcip->numTxnsOut > 0) {
+      (*tcip->ensureProgressFn)(tcip, false);
+    }
   }
 }
 
