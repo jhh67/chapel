@@ -24,6 +24,8 @@
 
 #include "chpltypes.h"
 
+#include "hwloc.h"
+
 #include <stdint.h>
 
 
@@ -42,7 +44,7 @@ void chpl_topo_exit(void);
 //
 // retrieve the hwloc topology (if any) for other packages to use
 //
-void* chpl_topo_getHwlocTopology(void);
+hwloc_topology_t chpl_topo_getHwlocTopology(void);
 
 //
 // How many CPUs are there?
