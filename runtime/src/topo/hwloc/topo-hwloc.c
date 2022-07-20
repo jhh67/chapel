@@ -71,6 +71,46 @@ static void alignAddrSize(void*, size_t, chpl_bool,
 static void chpl_topo_setMemLocalityByPages(unsigned char*, size_t,
                                             hwloc_obj_t);
 
+static void dumpObj(int indent, hwloc_obj_t obj) {
+    char buf[128];
+    char buf2[128];
+    if (1 || ((obj->type == HWLOC_OBJ_OS_DEVICE) && (obj->attr->osdev.type == HWLOC_OBJ_OSDEV_OPENFABRICS)) ||
+        (obj->type == HWLOC_OBJ_PACKAGE)) {
+        for (int i = 0; i < indent; i++) {
+            fputc('.', stderr);
+        }
+        hwloc_obj_type_snprintf(buf, sizeof(buf), obj, 1);
+        hwloc_obj_attr_snprintf(buf2, sizeof(buf2), obj, ",", 1);
+        fprintf(stderr, "XXX PID %d %p name \"%s\" type %s index %d children %d %s\n", getpid(), obj, obj->name, buf, obj->logical_index, obj->arity, buf2);
+    }
+#ifdef NOTDEF
+    for (int i = 0; i < obj->arity; i++) {
+      dumpObj(indent+2, obj->children[i]);
+    }
+#endif
+}
+
+static char *findNic(hwloc_obj_t obj) {
+  static char name[128];
+  char *result = NULL;
+  dumpObj(0, obj);
+  if ((obj->type == HWLOC_OBJ_OS_DEVICE) &&
+        (obj->attr->osdev.type == HWLOC_OBJ_OSDEV_NETWORK) &&
+        (strncmp(obj->name, "hsn", 3) == 0)) {
+    snprintf(name, sizeof(name), "cxi%s", &obj->name[3]);
+    fprintf(stderr, "XXX NIC %s\n", name);
+    result = name;
+  } else {
+    for (hwloc_obj_t child = obj->first_child; child != NULL;
+         child = child->next_sibling) {
+      result = findNic(child);
+      if (result != NULL) {
+        break;
+      }
+    }
+  }
+  return result;
+}
 
 //
 // Error reporting.
@@ -121,6 +161,11 @@ void chpl_topo_init(void) {
   // Allocate and initialize topology object.
   //
   CHK_ERR_ERRNO(hwloc_topology_init(&topology) == 0);
+
+  // Make sure we get everything including I/O devices.
+  int flags = HWLOC_TOPOLOGY_FLAG_WHOLE_SYSTEM | HWLOC_TOPOLOGY_FLAG_WHOLE_IO |
+    HWLOC_TOPOLOGY_FLAG_IO_BRIDGES | HWLOC_TOPOLOGY_FLAG_IO_DEVICES;
+  CHK_ERR_ERRNO(hwloc_topology_set_flags(topology, flags) == 0);
 
   //
   // Perform the topology detection.
@@ -189,6 +234,25 @@ void chpl_topo_init(void) {
     const hwloc_cpuset_t cpusetAll = hwloc_get_root_obj(topology)->cpuset;
     numNumaDomains =
       hwloc_get_nbobjs_inside_cpuset_by_depth(topology, cpusetAll, numaLevel);
+  }
+
+  // If we are bound to a particular socket/package then find the NIC that is
+  // closest to us.
+
+  int socket = -1;
+  if ((socket = chpl_env_rt_get_int("SOCKET", -1)) >= 0) {
+    char *nic = NULL;
+    for (hwloc_obj_t sobj = hwloc_get_next_obj_by_type(topology,
+                                 HWLOC_OBJ_PACKAGE, NULL);
+        sobj != NULL;
+        sobj = hwloc_get_next_obj_by_type(topology, HWLOC_OBJ_PACKAGE, sobj)) {
+      if (sobj->logical_index == socket) {
+        fprintf(stderr, "XXX socket %s\n", sobj->name);
+        nic = findNic(sobj);
+        break;
+      }
+    }
+    fprintf(stderr, "XXX nic %s\n", nic);
   }
 }
 
