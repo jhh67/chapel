@@ -266,7 +266,7 @@ void chpl_topo_exit(void) {
 }
 
 
-void* chpl_topo_getHwlocTopology(void) {
+hwloc_topology_t chpl_topo_getHwlocTopology(void) {
   return (haveTopology) ? topology : NULL;
 }
 

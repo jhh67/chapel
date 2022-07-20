@@ -45,6 +45,8 @@
 #include "chpltypes.h"
 #include "error.h"
 
+#include "hwloc.h"
+
 #include "comm-ofi-internal.h"
 
 // Don't get warning macros for chpl_comm_get etc
@@ -973,6 +975,60 @@ static void init_bar(void);
 
 static void init_broadcast_private(void);
 
+static void dumpObj(int indent, hwloc_obj_t obj) {
+    char buf[128];
+    char buf2[128];
+    if (1 || ((obj->type == HWLOC_OBJ_OS_DEVICE) && (obj->attr->osdev.type == HWLOC_OBJ_OSDEV_OPENFABRICS)) ||
+        (obj->type == HWLOC_OBJ_PACKAGE)) {
+        for (int i = 0; i < indent; i++) {
+            fputc('.', stderr);
+        }
+        hwloc_obj_type_snprintf(buf, sizeof(buf), obj, 1);
+        hwloc_obj_attr_snprintf(buf2, sizeof(buf2), obj, ",", 1);
+        fprintf(stderr, "XXX PID %d %p name \"%s\" type %s index %d children %d %s\n", getpid(), obj, obj->name, buf, obj->logical_index, obj->arity, buf2);
+    }
+#ifdef NOTDEF
+    for (int i = 0; i < obj->arity; i++) {
+      dumpObj(indent+2, obj->children[i]);
+    }
+#endif
+}
+
+static char *findNic(hwloc_obj_t obj) {
+  static char name[128];
+  char *result = NULL;
+  dumpObj(0, obj);
+  if ((obj->type == HWLOC_OBJ_OS_DEVICE) &&
+        (obj->attr->osdev.type == HWLOC_OBJ_OSDEV_NETWORK) &&
+        (strncmp(obj->name, "hsn", 3) == 0)) {
+    snprintf(name, sizeof(name), "cxi%s", &obj->name[3]);
+    fprintf(stderr, "XXX NIC %s\n", name);
+    result = name;
+  } else {
+    for (hwloc_obj_t child = obj->first_child; child != NULL;
+         child = child->next_sibling) {
+      result = findNic(child);
+      if (result != NULL) {
+        break;
+      }
+    }
+  }
+  return result;
+}
+
+static int findCores(hwloc_obj_t obj, char *buffer, int size, int offset) {
+  if (obj->type == HWLOC_OBJ_CORE) {
+    offset += snprintf(buffer + offset, size - offset, "%d:", 
+                       obj->logical_index);
+  } else {
+    for (hwloc_obj_t child = obj->first_child; child != NULL;
+         child = child->next_sibling) {
+      offset += findCores(child, buffer, size, offset);
+    }
+  }
+  return offset;
+}
+
 
 //
 // forward decls
@@ -1027,6 +1083,32 @@ void chpl_comm_init(int *argc_p, char ***argv_p) {
     }
   }
 
+  int socket = -1;
+  if ((socket = chpl_env_rt_get_int("USE_SOCKET", -1)) >= 0) {
+    // we should only use the specified socket
+    hwloc_topology_t topology = chpl_topo_getHwlocTopology();
+    if (topology != NULL) {
+      // find the socket's NIC and cores
+      char *nic = NULL;
+      char cores[4096];
+      for (hwloc_obj_t sobj = hwloc_get_next_obj_by_type(topology,
+                                 HWLOC_OBJ_PACKAGE, NULL);
+          sobj != NULL;
+          sobj = hwloc_get_next_obj_by_type(topology, HWLOC_OBJ_PACKAGE, 
+                                            sobj)) {
+        if (sobj->logical_index == socket) {
+          fprintf(stderr, "XXX socket %s\n", sobj->name);
+          nic = findNic(sobj);
+          fprintf(stderr, "XXX nic %s\n", nic);
+          (void) findCores(sobj, cores, sizeof(cores), 0);
+          fprintf(stderr, "XXX cores %s\n", cores);
+          break;
+        }
+      }
+    } else {
+      chpl_warning("CHPL_RT_USE_SOCKET ignored, no topology", 0, 0);
+    }
+  }
   pthread_that_inited = pthread_self();
 }
 
