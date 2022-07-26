@@ -64,6 +64,8 @@ static int topoDepth;
 static int numaLevel;
 static int numNumaDomains;
 
+static hwloc_obj_t socket = NULL;
+
 
 static hwloc_obj_t getNumaObj(c_sublocid_t);
 static void alignAddrSize(void*, size_t, chpl_bool,
@@ -236,23 +238,25 @@ void chpl_topo_init(void) {
       hwloc_get_nbobjs_inside_cpuset_by_depth(topology, cpusetAll, numaLevel);
   }
 
-  // If we are bound to a particular socket/package then find the NIC that is
-  // closest to us.
+  // If we are bound to a particular socket/package then find the
+  // corresponding socket object.
 
-  int socket = -1;
-  if ((socket = chpl_env_rt_get_int("SOCKET", -1)) >= 0) {
-    char *nic = NULL;
+  int useSocket = -1;
+  if ((useSocket = chpl_env_rt_get_int("SOCKET", -1)) >= 0) {
     for (hwloc_obj_t sobj = hwloc_get_next_obj_by_type(topology,
                                  HWLOC_OBJ_PACKAGE, NULL);
         sobj != NULL;
         sobj = hwloc_get_next_obj_by_type(topology, HWLOC_OBJ_PACKAGE, sobj)) {
-      if (sobj->logical_index == socket) {
-        fprintf(stderr, "XXX socket %s\n", sobj->name);
-        nic = findNic(sobj);
+      if (sobj->logical_index == useSocket) {
+        socket = sobj;
         break;
       }
     }
-    fprintf(stderr, "XXX nic %s\n", nic);
+    if (socket == NULL) {
+      char msg[1024];
+      snprintf(msg, sizeof(msg), "socket %d does not exist", useSocket);
+      chpl_error(msg, 0, 0);
+    }
   }
 }
 
@@ -295,17 +299,29 @@ int chpl_topo_getNumCPUsLogical(chpl_bool accessible_only) {
   return (accessible_only) ? numCPUsLogAcc : numCPUsLogAll;
 }
 
+static chpl_bool setCPUSet(hwloc_obj_t obj, void *ptr) {
+  hwloc_cpuset_t cpuset = (hwloc_cpuset_t) ptr;
+  hwloc_bitmap_set(cpuset, obj->logical_index);
+  return false;
+}
 
-static void findObjectsByType(hwloc_obj_t obj, hwloc_obj_type_t type,
-                             hwloc_cpuset_t cpuset) {
+static chpl_bool findObjectsByType(hwloc_obj_t obj, hwloc_obj_type_t type,
+                              chpl_bool (*callback)(hwloc_obj_t, void*),
+                              void *ptr) {
+  chpl_bool stop = false;
   if (obj->type == type) {
-    hwloc_bitmap_set(cpuset, obj->logical_index);
+    stop = (*callback)(obj, ptr);
   } else {
     for (hwloc_obj_t child = obj->first_child; child != NULL;
          child = child->next_sibling) {
-      findObjectsByType(child, type, cpuset);
+      chpl_bool tmp = findObjectsByType(child, type, callback, ptr);
+      if (tmp) {
+        stop = true;
+        break;
+      }
     }
   }
+  return stop;
 }
 
 static
@@ -316,30 +332,10 @@ void getNumCPUs(void) {
   CHK_ERR_ERRNO((logAccSet = hwloc_bitmap_alloc()) != NULL);
   CHK_ERR_ERRNO((physAccSet = hwloc_bitmap_alloc()) != NULL);
 
-  int useSocket = chpl_env_rt_get_int("USE_SOCKET", -1);
-  fprintf(stderr, "XXX Using socket %d\n", useSocket);
-  int found = 0;
-  if (useSocket >= 0) {
-    // If CHPL_RT_USE_SOCKET is set then we are confined to the cores and
-    // PUs in that socket. Walk the object tree starting at the socket
-    // and find the cores and PUs.
-    for (hwloc_obj_t sobj = hwloc_get_next_obj_by_type(topology,
-                               HWLOC_OBJ_PACKAGE, NULL);
-        sobj != NULL;
-        sobj = hwloc_get_next_obj_by_type(topology, HWLOC_OBJ_PACKAGE,
-                                          sobj)) {
-      if (sobj->logical_index == useSocket) {
-        findObjectsByType(sobj, HWLOC_OBJ_PU, logAccSet);
-        findObjectsByType(sobj, HWLOC_OBJ_CORE, physAccSet);
-        found = 1;
-        break;
-      }
-    }
-    if (!found) {
-      char msg[1024];
-      snprintf(msg, sizeof(msg), "socket %d does not exist", useSocket);
-      chpl_error(msg, 0, 0);
-    }
+  if (socket) {
+    // Look for cores and PUs under our socket.
+    (void) findObjectsByType(socket, HWLOC_OBJ_PU, setCPUSet, logAccSet);
+    (void) findObjectsByType(socket, HWLOC_OBJ_CORE, setCPUSet, physAccSet);
   } else {
     //
     // Hwloc can't tell us the number of accessible cores directly, so get
@@ -418,6 +414,47 @@ hwloc_cpuset_t chpl_topo_getCPUsPhysical(void) {
 
 int chpl_topo_getNumNumaDomains(void) {
   return numNumaDomains;
+}
+
+static hwloc_obj_t nic = NULL;
+
+static chpl_bool setNic(hwloc_obj_t obj, void *ptr) {
+  chpl_bool stop = false;
+  hwloc_obj_osdev_type_t ostype = *((hwloc_obj_osdev_type_t *) ptr);
+  if (obj->attr->osdev.type == ostype) {
+    nic = obj;
+    stop = true;
+  }
+  return stop;
+}
+
+char *chpl_topo_getNIC(char *buffer, int size) {
+  char *name = NULL;
+  // If we are bound to a particular socket/package then find the NIC that is
+  // closest to us.
+  if (socket) {
+    if (nic == NULL) {
+      hwloc_obj_osdev_type_t ostype = HWLOC_OBJ_OSDEV_OPENFABRICS;
+      (void) findObjectsByType(socket, HWLOC_OBJ_OS_DEVICE, setNic, &ostype);
+      if (nic == NULL) {
+        ostype = HWLOC_OBJ_OSDEV_NETWORK;
+        (void) findObjectsByType(socket, HWLOC_OBJ_OS_DEVICE, setNic, &ostype); 
+      }
+    }
+    if ((nic != NULL) && (name == NULL)) {
+      // hack to change hsnX to cxiX
+      // TODO: do this correctly
+      if (!strncmp(nic->name, "hsn", 3)) {
+        snprintf(buffer, size, "cxi%s", &nic->name[3]);
+        name = buffer;
+      } else {
+        strncpy(buffer, nic->name, size);
+        name = buffer;
+      }
+    }
+  }
+  fprintf(stderr, "XXX nic %s\n", name);
+  return name;
 }
 
 void chpl_topo_setThreadLocality(c_sublocid_t subloc) {
