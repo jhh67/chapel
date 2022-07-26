@@ -280,6 +280,9 @@ static int numCPUsPhysAcc = -1;
 static int numCPUsPhysAll = -1;
 static int numCPUsLogAcc  = -1;
 static int numCPUsLogAll  = -1;
+static hwloc_cpuset_t physAccSet;
+static hwloc_cpuset_t logAccSet;
+
 
 int chpl_topo_getNumCPUsPhysical(chpl_bool accessible_only) {
   CHK_ERR(pthread_once(&numCPUs_ctrl, getNumCPUs) == 0);
@@ -293,60 +296,98 @@ int chpl_topo_getNumCPUsLogical(chpl_bool accessible_only) {
 }
 
 
+static void findObjectsByType(hwloc_obj_t obj, hwloc_obj_type_t type,
+                             hwloc_cpuset_t cpuset) {
+  if (obj->type == type) {
+    hwloc_bitmap_set(cpuset, obj->logical_index);
+  } else {
+    for (hwloc_obj_t child = obj->first_child; child != NULL;
+         child = child->next_sibling) {
+      findObjectsByType(child, type, cpuset);
+    }
+  }
+}
+
 static
 void getNumCPUs(void) {
   //
-  // accessible cores
+  // accessible cores and PUs
   //
-
-  //
-  // Hwloc can't tell us the number of accessible cores directly, so
-  // get that by counting the parent cores of the accessible PUs.
-  //
-
-  //
-  // We could seemingly use hwloc_topology_get_allowed_cpuset() to get
-  // the set of accessible PUs here.  But that seems not to reflect the
-  // schedaffinity settings, so use hwloc_get_proc_cpubind() instead.
-  //
-  hwloc_cpuset_t logAccSet;
   CHK_ERR_ERRNO((logAccSet = hwloc_bitmap_alloc()) != NULL);
-  if (hwloc_get_proc_cpubind(topology, getpid(), logAccSet, 0) != 0) {
-#ifdef __APPLE__
-    const int errRecoverable = (errno == ENOSYS); // no cpubind on macOS
-#else
-    const int errRecoverable = 0;
-#endif
-    if (errRecoverable) {
-      hwloc_bitmap_fill(logAccSet);
-    } else {
-      REPORT_ERR_ERRNO(hwloc_get_proc_cpubind(topology, getpid(), logAccSet, 0)
-                       == 0);
-    }
-  }
-  hwloc_bitmap_and(logAccSet, logAccSet,
-                   hwloc_topology_get_online_cpuset(topology));
-
-  hwloc_cpuset_t physAccSet;
   CHK_ERR_ERRNO((physAccSet = hwloc_bitmap_alloc()) != NULL);
+
+  int useSocket = chpl_env_rt_get_int("USE_SOCKET", -1);
+  fprintf(stderr, "XXX Using socket %d\n", useSocket);
+  int found = 0;
+  if (useSocket >= 0) {
+    // If CHPL_RT_USE_SOCKET is set then we are confined to the cores and
+    // PUs in that socket. Walk the object tree starting at the socket
+    // and find the cores and PUs.
+    for (hwloc_obj_t sobj = hwloc_get_next_obj_by_type(topology,
+                               HWLOC_OBJ_PACKAGE, NULL);
+        sobj != NULL;
+        sobj = hwloc_get_next_obj_by_type(topology, HWLOC_OBJ_PACKAGE,
+                                          sobj)) {
+      if (sobj->logical_index == useSocket) {
+        findObjectsByType(sobj, HWLOC_OBJ_PU, logAccSet);
+        findObjectsByType(sobj, HWLOC_OBJ_CORE, physAccSet);
+        found = 1;
+        break;
+      }
+    }
+    if (!found) {
+      char msg[1024];
+      snprintf(msg, sizeof(msg), "socket %d does not exist", useSocket);
+      chpl_error(msg, 0, 0);
+    }
+  } else {
+    //
+    // Hwloc can't tell us the number of accessible cores directly, so get
+    // that by counting the parent cores of the accessible PUs.
+    //
+
+    //
+    // We could seemingly use hwloc_topology_get_allowed_cpuset() to get
+    // the set of accessible PUs here.  But that seems not to reflect the
+    // schedaffinity settings, so use hwloc_get_proc_cpubind() instead.
+    //
+    hwloc_cpuset_t logAccSet;
+    CHK_ERR_ERRNO((logAccSet = hwloc_bitmap_alloc()) != NULL);
+    if (hwloc_get_proc_cpubind(topology, getpid(), logAccSet, 0) != 0) {
+#ifdef __APPLE__
+      const int errRecoverable = (errno == ENOSYS); // no cpubind on macOS
+#else
+      const int errRecoverable = 0;
+#endif
+      if (errRecoverable) {
+        hwloc_bitmap_fill(logAccSet);
+      } else {
+        REPORT_ERR_ERRNO(hwloc_get_proc_cpubind(topology, getpid(), logAccSet, 0)
+                         == 0);
+      }
+    }
+    hwloc_bitmap_and(logAccSet, logAccSet,
+                     hwloc_topology_get_online_cpuset(topology));
+
+    CHK_ERR_ERRNO((physAccSet = hwloc_bitmap_alloc()) != NULL);
 
 #define NEXT_PU(pu)                                                     \
   hwloc_get_next_obj_inside_cpuset_by_type(topology, logAccSet,         \
-                                           HWLOC_OBJ_PU, pu)
+                                             HWLOC_OBJ_PU, pu)
 
-  for (hwloc_obj_t pu = NEXT_PU(NULL); pu != NULL; pu = NEXT_PU(pu)) {
-    hwloc_obj_t core;
-    CHK_ERR_ERRNO((core = hwloc_get_ancestor_obj_by_type(topology,
-                                                         HWLOC_OBJ_CORE,
-                                                         pu))
-                  != NULL);
-    hwloc_bitmap_set(physAccSet, core->logical_index);
+    for (hwloc_obj_t pu = NEXT_PU(NULL); pu != NULL; pu = NEXT_PU(pu)) {
+      hwloc_obj_t core;
+      CHK_ERR_ERRNO((core = hwloc_get_ancestor_obj_by_type(topology,
+                                                           HWLOC_OBJ_CORE,
+                                                           pu))
+                    != NULL);
+      hwloc_bitmap_set(physAccSet, core->logical_index);
+    }
+
+  #undef NEXT_PU
   }
 
-#undef NEXT_PU
-
   numCPUsPhysAcc = hwloc_bitmap_weight(physAccSet);
-  hwloc_bitmap_free(physAccSet);
 
   CHK_ERR(numCPUsPhysAcc > 0);
 
@@ -371,11 +412,13 @@ void getNumCPUs(void) {
   CHK_ERR(numCPUsLogAll > 0);
 }
 
+hwloc_cpuset_t chpl_topo_getCPUsPhysical(void) {
+  return physAccSet;
+}
 
 int chpl_topo_getNumNumaDomains(void) {
   return numNumaDomains;
 }
-
 
 void chpl_topo_setThreadLocality(c_sublocid_t subloc) {
   hwloc_cpuset_t cpuset;
