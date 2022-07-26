@@ -1003,40 +1003,6 @@ static void dumpObj(int indent, hwloc_obj_t obj) {
 #endif
 }
 
-static char *findNic(hwloc_obj_t obj) {
-  static char name[128];
-  char *result = NULL;
-  dumpObj(0, obj);
-  if ((obj->type == HWLOC_OBJ_OS_DEVICE) &&
-        (obj->attr->osdev.type == HWLOC_OBJ_OSDEV_NETWORK) &&
-        (strncmp(obj->name, "hsn", 3) == 0)) {
-    snprintf(name, sizeof(name), "cxi%s", &obj->name[3]);
-    fprintf(stderr, "XXX NIC %s\n", name);
-    result = name;
-  } else {
-    for (hwloc_obj_t child = obj->first_child; child != NULL;
-         child = child->next_sibling) {
-      result = findNic(child);
-      if (result != NULL) {
-        break;
-      }
-    }
-  }
-  return result;
-}
-
-static int findCores(hwloc_obj_t obj, char *buffer, int size, int offset) {
-  if (obj->type == HWLOC_OBJ_CORE) {
-    offset += snprintf(buffer + offset, size - offset, "%d:", 
-                       obj->logical_index);
-  } else {
-    for (hwloc_obj_t child = obj->first_child; child != NULL;
-         child = child->next_sibling) {
-      offset = findCores(child, buffer, size, offset);
-    }
-  }
-  return offset;
-}
 
 
 //
@@ -1089,43 +1055,6 @@ void chpl_comm_init(int *argc_p, char ***argv_p) {
     const char* s = chpl_env_rt_get("COMM_OFI_PROVIDER", NULL);
     if (s != NULL) {
       chpl_env_set(ofi_provNameEnv, s, 1 /*overwrite*/);
-    }
-  }
-
-  int socket = chpl_env_rt_get_int("USE_SOCKET", -1);
-  fprintf(stderr, "XXX Using socket %d\n", socket);
-  if (socket >= 0) {
-    // we should only use the specified socket
-    fprintf(stderr, "XXX Binding to socket %d\n", socket);
-    hwloc_topology_t topology = chpl_topo_getHwlocTopology();
-    if (topology != NULL) {
-      // find the socket's NIC and cores
-      char *nic = NULL;
-      char cores[4096];
-      for (hwloc_obj_t sobj = hwloc_get_next_obj_by_type(topology,
-                                 HWLOC_OBJ_PACKAGE, NULL);
-          sobj != NULL;
-          sobj = hwloc_get_next_obj_by_type(topology, HWLOC_OBJ_PACKAGE, 
-                                            sobj)) {
-        if (sobj->logical_index == socket) {
-          fprintf(stderr, "XXX socket %s\n", sobj->name);
-          nic = findNic(sobj);
-          fprintf(stderr, "XXX nic %s\n", nic);
-          int offset = findCores(sobj, cores, sizeof(cores), 0);
-          if (offset > 0) {
-            cores[offset-1] = '\0';
-          }
-          char *last = strrchr(cores, ':');
-          if (last != NULL) {
-            *last = '\0';
-          }
-          fprintf(stderr, "XXX cores %s\n", cores);
-          chpl_env_set("QT_CPUBIND", cores, 1);
-          break;
-        }
-      }
-    } else {
-      chpl_warning("CHPL_RT_USE_SOCKET ignored, no topology", 0, 0);
     }
   }
   pthread_that_inited = pthread_self();
