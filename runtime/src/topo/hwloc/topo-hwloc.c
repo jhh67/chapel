@@ -220,7 +220,7 @@ void chpl_topo_init(void) {
   // corresponding socket object.
 
   int useSocket = -1;
-  if ((useSocket = chpl_env_rt_get_int("SOCKET", -1)) >= 0) {
+  if ((useSocket = chpl_env_rt_get_int("USE_SOCKET", -1)) >= 0) {
     for (hwloc_obj_t sobj = hwloc_get_next_obj_by_type(topology,
                                  HWLOC_OBJ_PACKAGE, NULL);
         sobj != NULL;
