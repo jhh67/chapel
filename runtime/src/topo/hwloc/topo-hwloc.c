@@ -227,6 +227,7 @@ void chpl_topo_init(void) {
         sobj = hwloc_get_next_obj_by_type(topology, HWLOC_OBJ_PACKAGE, sobj)) {
       if (sobj->logical_index == useSocket) {
         socket = sobj;
+        fprintf(stderr, "XXX using socket %d\n", useSocket);
         break;
       }
     }
@@ -395,9 +396,11 @@ int chpl_topo_getNumNumaDomains(void) {
 static hwloc_obj_t nic = NULL;
 
 static chpl_bool setNic(hwloc_obj_t obj, void *ptr) {
+  fprintf(stderr, "XXX setNic\n");
   chpl_bool stop = false;
   hwloc_obj_osdev_type_t ostype = *((hwloc_obj_osdev_type_t *) ptr);
   if (obj->attr->osdev.type == ostype) {
+    fprintf(stderr, "XXX found nic\n");
     nic = obj;
     stop = true;
   }
@@ -409,12 +412,13 @@ char *chpl_topo_getNIC(char *buffer, int size) {
   // If we are bound to a particular socket/package then find the NIC that is
   // closest to us.
   if (socket) {
+    fprintf(stderr, "looking for NIC under socket %d\n", socket->logical_index);
     if (nic == NULL) {
       hwloc_obj_osdev_type_t ostype = HWLOC_OBJ_OSDEV_OPENFABRICS;
       (void) findObjectsByType(socket, HWLOC_OBJ_OS_DEVICE, setNic, &ostype);
       if (nic == NULL) {
         ostype = HWLOC_OBJ_OSDEV_NETWORK;
-        (void) findObjectsByType(socket, HWLOC_OBJ_OS_DEVICE, setNic, &ostype); 
+        (void) findObjectsByType(socket, HWLOC_OBJ_OS_DEVICE, setNic, &ostype);
       }
     }
     if ((nic != NULL) && (name == NULL)) {
