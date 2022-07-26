@@ -1420,6 +1420,8 @@ struct fi_info* findProvInList(struct fi_info* info,
                                chpl_bool accept_RxM_provs,
                                chpl_bool accept_sockets_provs) {
 
+  char name[128];
+  char *nic = chpl_topo_getNIC(name, sizeof(name));
   for (; info != NULL; info = info->next) {
     // break out of the loop when we find one that meets all of our criteria
     if (!accept_ungood_provs && !isGoodCoreProvider(info)) {
@@ -1435,6 +1437,9 @@ struct fi_info* findProvInList(struct fi_info* info,
       continue;
     }
     if (!isUseableProvider(info)) {
+      continue;
+    }
+    if ((nic != NULL) && (strcmp(nic, info->nic->device_attr->name))) {
       continue;
     }
     // got one
