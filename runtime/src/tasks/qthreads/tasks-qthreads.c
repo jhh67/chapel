@@ -682,6 +682,34 @@ void chpl_task_init(void)
 
     if (verbosity >= 2) { chpl_qt_setenv("INFO", "1", 0); }
 
+    int useSocket = chpl_env_rt_get_int("USE_SOCKET", -1);
+
+    if (useSocket >= 0) {
+        char* topo = getenv("CHPL_QTHREAD_TOPOLOGY");
+        if (topo != NULL && strcmp(topo, "binders") != 0) {
+            char msg[1024];
+            snprintf(msg, sizeof(msg), "CHPL_QTHREAD_TOPOLOGY is \"%s\"", topo);
+            chpl_error(msg, 0, 0);
+        }
+        // we should only use cores in the specified socket
+        hwloc_cpuset_t cpuset = chpl_topo_getCPUsPhysical();
+        char cores[4096];
+        int offset = 0;
+        cores[0] = '\0';
+        for (int i = hwloc_bitmap_first(cpuset); i < hwloc_bitmap_last(cpuset); i++) {
+            if (hwloc_bitmap_isset (cpuset, i)) {
+                offset += snprintf(cores + offset, sizeof(cores) - offset,
+                                   "%d:", i);
+            }
+        }
+        // remove trailing ':'
+        if (offset > 0) {
+            cores[offset-1] = '\0';
+        }
+        // tell binders which cores to use
+        fprintf(stderr, "XXX cores %s\n", cores);
+        chpl_qt_setenv("CPUBIND", cores, 1);
+    }
     // Initialize qthreads
     pthread_create(&initer, NULL, initializer, NULL);
     while (chpl_qthread_done_initializing == 0)

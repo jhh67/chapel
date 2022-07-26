@@ -22,6 +22,14 @@
 // OFI-based implementation of Chapel communication interface.
 //
 
+
+// XXX for sched_getcpu
+#ifdef __linux__
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+#endif
+
 #include "chplrt.h"
 #include "chpl-env-gen.h"
 
@@ -46,6 +54,7 @@
 #include "error.h"
 
 #include "hwloc.h"
+#include "sched.h"
 
 #include "comm-ofi-internal.h"
 
@@ -1023,7 +1032,7 @@ static int findCores(hwloc_obj_t obj, char *buffer, int size, int offset) {
   } else {
     for (hwloc_obj_t child = obj->first_child; child != NULL;
          child = child->next_sibling) {
-      offset += findCores(child, buffer, size, offset);
+      offset = findCores(child, buffer, size, offset);
     }
   }
   return offset;
@@ -1083,9 +1092,11 @@ void chpl_comm_init(int *argc_p, char ***argv_p) {
     }
   }
 
-  int socket = -1;
-  if ((socket = chpl_env_rt_get_int("USE_SOCKET", -1)) >= 0) {
+  int socket = chpl_env_rt_get_int("USE_SOCKET", -1);
+  fprintf(stderr, "XXX Using socket %d\n", socket);
+  if (socket >= 0) {
     // we should only use the specified socket
+    fprintf(stderr, "XXX Binding to socket %d\n", socket);
     hwloc_topology_t topology = chpl_topo_getHwlocTopology();
     if (topology != NULL) {
       // find the socket's NIC and cores
@@ -1100,8 +1111,16 @@ void chpl_comm_init(int *argc_p, char ***argv_p) {
           fprintf(stderr, "XXX socket %s\n", sobj->name);
           nic = findNic(sobj);
           fprintf(stderr, "XXX nic %s\n", nic);
-          (void) findCores(sobj, cores, sizeof(cores), 0);
+          int offset = findCores(sobj, cores, sizeof(cores), 0);
+          if (offset > 0) {
+            cores[offset-1] = '\0';
+          }
+          char *last = strrchr(cores, ':');
+          if (last != NULL) {
+            *last = '\0';
+          }
           fprintf(stderr, "XXX cores %s\n", cores);
+          chpl_env_set("QT_CPUBIND", cores, 1);
           break;
         }
       }
@@ -4768,6 +4787,14 @@ void amHandler(void* argNil) {
     chpl_bool hadRxEvent, hadTxEvent;
     amCheckRxTxCmpls(&hadRxEvent, &hadTxEvent, tcip);
     if (hadRxEvent) {
+#ifdef __linux__
+  static int cpu = -1;
+  int tmp = sched_getcpu();
+  if (tmp != cpu) {
+    cpu = tmp;
+    DBG_PRINTF(DBG_AM, "XXX AM handler CPU %d", cpu);
+  }
+#endif
       processRxAmReq();
     } else if (!hadTxEvent) {
       //
