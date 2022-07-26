@@ -92,28 +92,6 @@ static void dumpObj(int indent, hwloc_obj_t obj) {
 #endif
 }
 
-static char *findNic(hwloc_obj_t obj) {
-  static char name[128];
-  char *result = NULL;
-  dumpObj(0, obj);
-  if ((obj->type == HWLOC_OBJ_OS_DEVICE) &&
-        (obj->attr->osdev.type == HWLOC_OBJ_OSDEV_NETWORK) &&
-        (strncmp(obj->name, "hsn", 3) == 0)) {
-    snprintf(name, sizeof(name), "cxi%s", &obj->name[3]);
-    fprintf(stderr, "XXX NIC %s\n", name);
-    result = name;
-  } else {
-    for (hwloc_obj_t child = obj->first_child; child != NULL;
-         child = child->next_sibling) {
-      result = findNic(child);
-      if (result != NULL) {
-        break;
-      }
-    }
-  }
-  return result;
-}
-
 //
 // Error reporting.
 //
@@ -347,8 +325,6 @@ void getNumCPUs(void) {
     // the set of accessible PUs here.  But that seems not to reflect the
     // schedaffinity settings, so use hwloc_get_proc_cpubind() instead.
     //
-    hwloc_cpuset_t logAccSet;
-    CHK_ERR_ERRNO((logAccSet = hwloc_bitmap_alloc()) != NULL);
     if (hwloc_get_proc_cpubind(topology, getpid(), logAccSet, 0) != 0) {
 #ifdef __APPLE__
       const int errRecoverable = (errno == ENOSYS); // no cpubind on macOS
@@ -453,7 +429,7 @@ char *chpl_topo_getNIC(char *buffer, int size) {
       }
     }
   }
-  fprintf(stderr, "XXX nic %s\n", name);
+  fprintf(stderr, "XXX chpl_topo_getNIC %s\n", name);
   return name;
 }
 
