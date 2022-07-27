@@ -468,8 +468,8 @@ void chpl_topo_setThreadLocality(c_sublocid_t subloc) {
   flags = HWLOC_CPUBIND_THREAD | HWLOC_CPUBIND_STRICT;
   char buf[1024];
   hwloc_bitmap_list_snprintf(buf, sizeof(buf), cpuset);
-  fprintf(stderr, "XXX chpl_topo_setThreadLocality subloc %d: %s\n",
-          (int) subloc, buf);
+  fprintf(stderr, "XXX %d chpl_topo_setThreadLocality subloc %d: %s\n",
+          getpid(), (int) subloc, buf);
   CHK_ERR_ERRNO(hwloc_set_cpubind(topology, cpuset, flags) == 0);
 
   hwloc_bitmap_free(cpuset);
@@ -622,7 +622,7 @@ hwloc_obj_t getNumaObj(c_sublocid_t subloc) {
   // could easily imagine this being a bit slow, but it's okay for now
   return
     hwloc_get_obj_inside_cpuset_by_depth(topology,
-                                         hwloc_get_root_obj(topology)->cpuset,
+                                         root->cpuset,
                                          numaLevel,
                                          subloc);
 }
@@ -668,9 +668,7 @@ void chpl_topo_interleaveMemLocality(void* p, size_t size) {
   }
 
   hwloc_bitmap_t set;
-  hwloc_obj_t obj;
-  obj = hwloc_get_root_obj(topology);
-  set = hwloc_bitmap_dup(obj->cpuset);
+  set = hwloc_bitmap_dup(root->cpuset);
 
   flags = 0;
   CHK_ERR_ERRNO(hwloc_set_area_membind(topology, p, size, set, HWLOC_MEMBIND_INTERLEAVE, flags) == 0);
