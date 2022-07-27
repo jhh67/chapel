@@ -456,6 +456,10 @@ void chpl_topo_setThreadLocality(c_sublocid_t subloc) {
                             getNumaObj(subloc)->allowed_nodeset);
 
   flags = HWLOC_CPUBIND_THREAD | HWLOC_CPUBIND_STRICT;
+  char buf[1024];
+  hwloc_bitmap_snprintf(buf, sizeof(buf), cpuset);
+  fprintf(stderr, "XXX chpl_topo_setThreadLocality subloc %d: %s\n",
+          (int) subloc, buf);
   CHK_ERR_ERRNO(hwloc_set_cpubind(topology, cpuset, flags) == 0);
 
   hwloc_bitmap_free(cpuset);

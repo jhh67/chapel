@@ -1439,6 +1439,7 @@ struct fi_info* findProvInList(struct fi_info* info,
     if (!isUseableProvider(info)) {
       continue;
     }
+    // chose the proper NIC if one was specified
     if ((nic != NULL) && (strcmp(nic, info->nic->device_attr->name))) {
       continue;
     }
