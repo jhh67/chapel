@@ -64,7 +64,8 @@ static int topoDepth;
 static int numaLevel;
 static int numNumaDomains;
 
-static hwloc_obj_t socket = NULL;
+// root object for this locale
+static hwloc_obj_t root = NULL;
 
 
 static hwloc_obj_t getNumaObj(c_sublocid_t);
@@ -196,6 +197,35 @@ void chpl_topo_init(void) {
     }
   }
 
+  // If we  bound to a particular socket/package then find the
+  // corresponding socket object.
+
+  int useSocket = chpl_env_rt_get_int("USE_SOCKET", -1);
+  if (useSocket >= 0) {
+    hwloc_obj_t socket = NULL;
+    for (hwloc_obj_t sobj = hwloc_get_next_obj_by_type(topology,
+                                 HWLOC_OBJ_PACKAGE, NULL);
+        sobj != NULL;
+        sobj = hwloc_get_next_obj_by_type(topology, HWLOC_OBJ_PACKAGE, sobj)) {
+      if (sobj->logical_index == useSocket) {
+        socket = sobj;
+        fprintf(stderr, "XXX using socket %d\n", useSocket);
+        break;
+      }
+    }
+    if (socket == NULL) {
+      char msg[1024];
+      snprintf(msg, sizeof(msg), "socket %d does not exist", useSocket);
+      chpl_error(msg, 0, 0);
+    } else {
+      root = socket;
+    }
+  }
+
+  if (root == NULL) {
+    root = hwloc_get_root_obj(topology);
+  }
+
   //
   // Find the NUMA nodes, that is, the objects at numaLevel that also
   // have CPUs.  This is as opposed to things like Xeon Phi HBM, which
@@ -211,31 +241,9 @@ void chpl_topo_init(void) {
   }
 
   if (numNumaDomains == 0) {
-    const hwloc_cpuset_t cpusetAll = hwloc_get_root_obj(topology)->cpuset;
+    const hwloc_cpuset_t cpusetAll = root->cpuset;
     numNumaDomains =
       hwloc_get_nbobjs_inside_cpuset_by_depth(topology, cpusetAll, numaLevel);
-  }
-
-  // If we are bound to a particular socket/package then find the
-  // corresponding socket object.
-
-  int useSocket = -1;
-  if ((useSocket = chpl_env_rt_get_int("USE_SOCKET", -1)) >= 0) {
-    for (hwloc_obj_t sobj = hwloc_get_next_obj_by_type(topology,
-                                 HWLOC_OBJ_PACKAGE, NULL);
-        sobj != NULL;
-        sobj = hwloc_get_next_obj_by_type(topology, HWLOC_OBJ_PACKAGE, sobj)) {
-      if (sobj->logical_index == useSocket) {
-        socket = sobj;
-        fprintf(stderr, "XXX using socket %d\n", useSocket);
-        break;
-      }
-    }
-    if (socket == NULL) {
-      char msg[1024];
-      snprintf(msg, sizeof(msg), "socket %d does not exist", useSocket);
-      chpl_error(msg, 0, 0);
-    }
   }
 }
 
@@ -311,10 +319,11 @@ void getNumCPUs(void) {
   CHK_ERR_ERRNO((logAccSet = hwloc_bitmap_alloc()) != NULL);
   CHK_ERR_ERRNO((physAccSet = hwloc_bitmap_alloc()) != NULL);
 
-  if (socket) {
-    // Look for cores and PUs under our socket.
-    (void) findObjectsByType(socket, HWLOC_OBJ_PU, setCPUSet, logAccSet);
-    (void) findObjectsByType(socket, HWLOC_OBJ_CORE, setCPUSet, physAccSet);
+  if (root != hwloc_get_root_obj(topology)) {
+    // Look for cores and PUs under our relative root.
+    (void) findObjectsByType(root, HWLOC_OBJ_PU, setCPUSet, logAccSet);
+    (void) findObjectsByType(root
+                             , HWLOC_OBJ_CORE, setCPUSet, physAccSet);
   } else {
     //
     // Hwloc can't tell us the number of accessible cores directly, so get
@@ -390,6 +399,7 @@ hwloc_cpuset_t chpl_topo_getCPUsPhysical(void) {
 }
 
 int chpl_topo_getNumNumaDomains(void) {
+  fprintf(stderr, "XXX %d numNumaDomains %d\n", getpid(), numNumaDomains);
   return numNumaDomains;
 }
 
@@ -411,14 +421,14 @@ char *chpl_topo_getNIC(char *buffer, int size) {
   char *name = NULL;
   // If we are bound to a particular socket/package then find the NIC that is
   // closest to us.
-  if (socket) {
-    fprintf(stderr, "looking for NIC under socket %d\n", socket->logical_index);
+  if (root != hwloc_get_root_obj(topology)) {
+    fprintf(stderr, "looking for NIC under socket %d\n", root->logical_index);
     if (nic == NULL) {
       hwloc_obj_osdev_type_t ostype = HWLOC_OBJ_OSDEV_OPENFABRICS;
-      (void) findObjectsByType(socket, HWLOC_OBJ_OS_DEVICE, setNic, &ostype);
+      (void) findObjectsByType(root, HWLOC_OBJ_OS_DEVICE, setNic, &ostype);
       if (nic == NULL) {
         ostype = HWLOC_OBJ_OSDEV_NETWORK;
-        (void) findObjectsByType(socket, HWLOC_OBJ_OS_DEVICE, setNic, &ostype);
+        (void) findObjectsByType(root, HWLOC_OBJ_OS_DEVICE, setNic, &ostype);
       }
     }
     if ((nic != NULL) && (name == NULL)) {
