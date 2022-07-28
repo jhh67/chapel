@@ -1423,6 +1423,7 @@ struct fi_info* findProvInList(struct fi_info* info,
   char name[128];
   char *nic = chpl_topo_getNIC(name, sizeof(name));
   for (; info != NULL; info = info->next) {
+    fprintf(stderr, "XXX findProvInList %s\n", info->nic->device_attr->name);
     // break out of the loop when we find one that meets all of our criteria
     if (!accept_ungood_provs && !isGoodCoreProvider(info)) {
       continue;

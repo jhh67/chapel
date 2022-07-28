@@ -438,8 +438,10 @@ char *chpl_topo_getNIC(char *buffer, int size) {
         snprintf(buffer, size, "cxi%s", &nic->name[3]);
         name = buffer;
       } else {
+#ifdef NOTDEF
         strncpy(buffer, nic->name, size);
         name = buffer;
+#endif
       }
     }
   }
