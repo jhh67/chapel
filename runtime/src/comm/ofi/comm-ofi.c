@@ -1420,8 +1420,9 @@ struct fi_info* findProvInList(struct fi_info* info,
                                chpl_bool accept_RxM_provs,
                                chpl_bool accept_sockets_provs) {
 
-  char name[128];
-  char *nic = chpl_topo_getNIC(name, sizeof(name));
+#define MAX_NICS 16
+  char nics[128][MAX_NICS];
+  int numNics = chpl_topo_getNICs((char **) nics, sizeof(*nics), MAX_NICS);
   for (; info != NULL; info = info->next) {
     fprintf(stderr, "XXX findProvInList %s\n", info->nic->device_attr->name);
     // break out of the loop when we find one that meets all of our criteria
@@ -1440,10 +1441,18 @@ struct fi_info* findProvInList(struct fi_info* info,
     if (!isUseableProvider(info)) {
       continue;
     }
-    fprintf(stderr, "XXX nic %s name %s\n", nic, info->nic->device_attr->name);
-    // chose the proper NIC if one was specified
-    if ((nic != NULL) && (strcmp(nic, info->nic->device_attr->name))) {
-      continue;
+    // ignore NICs that aren't in our topology
+    if (numNics > 0) {
+      chpl_bool found = false;
+      for (int i = 0; i < numNics; i++) {
+        if (!strcmp(nics[i], info->nic->device_attr->name)) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        continue;
+      }
     }
     // got one
     break;
