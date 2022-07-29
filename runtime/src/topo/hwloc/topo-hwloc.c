@@ -209,7 +209,7 @@ void chpl_topo_init(void) {
         sobj = hwloc_get_next_obj_by_type(topology, HWLOC_OBJ_PACKAGE, sobj)) {
       if (sobj->logical_index == useSocket) {
         socket = sobj;
-        fprintf(stderr, "XXX using socket %d\n", useSocket);
+        fprintf(stderr, "XXX %d using socket %d\n", getpid(), useSocket);
         break;
       }
     }
