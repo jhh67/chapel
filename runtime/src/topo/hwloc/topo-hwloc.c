@@ -421,7 +421,7 @@ static chpl_bool setNic(hwloc_obj_t obj, void *ptr) {
   return false;
 }
 
-int chpl_topo_getNICs(char **buffers, int size, int count) {
+int chpl_topo_getNICs(char buffers[][128], int count) {
   int result = 0;
   // If we are bound to a particular socket/package then find the NICs that are
   // under us.
@@ -439,9 +439,9 @@ int chpl_topo_getNICs(char **buffers, int size, int count) {
       // hack to change hsnX to cxiX
       // TODO: do this correctly
       if (!strncmp(nics[i]->name, "hsn", 3)) {
-        snprintf(buffers[i], size, "cxi%s", &(nics[i]->name[3]));
+        snprintf(buffers[i], sizeof(buffers[i]), "cxi%s", &(nics[i]->name[3]));
       } else {
-        strncpy(buffers[i], nics[i]->name, size);
+        strncpy(buffers[i], nics[i]->name, sizeof(buffers[i]));
       }
       result++;
     }
