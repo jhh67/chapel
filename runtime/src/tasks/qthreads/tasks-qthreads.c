@@ -696,7 +696,7 @@ void chpl_task_init(void)
         char cores[4096];
         int offset = 0;
         cores[0] = '\0';
-        for (int i = hwloc_bitmap_first(cpuset); i < hwloc_bitmap_last(cpuset); i++) {
+        for (int i = hwloc_bitmap_first(cpuset); i <= hwloc_bitmap_last(cpuset); i++) {
             if (hwloc_bitmap_isset (cpuset, i)) {
                 offset += snprintf(cores + offset, sizeof(cores) - offset,
                                    "%d:", i);
@@ -707,7 +707,7 @@ void chpl_task_init(void)
             cores[offset-1] = '\0';
         }
         // tell binders which cores to use
-        fprintf(stderr, "XXX cores %s\n", cores);
+        fprintf(stderr, "XXX %d cores %s\n", getpid(), cores);
         chpl_qt_setenv("CPUBIND", cores, 1);
     }
     // Initialize qthreads
