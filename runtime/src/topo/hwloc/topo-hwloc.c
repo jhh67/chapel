@@ -403,50 +403,50 @@ int chpl_topo_getNumNumaDomains(void) {
   return numNumaDomains;
 }
 
-static hwloc_obj_t nic = NULL;
+#define MAX_NICS 16
+
+static int numNics = 0;
+static hwloc_obj_t nics[MAX_NICS];
 
 static chpl_bool setNic(hwloc_obj_t obj, void *ptr) {
   fprintf(stderr, "XXX setNic\n");
-  chpl_bool stop = false;
   hwloc_obj_osdev_type_t ostype = *((hwloc_obj_osdev_type_t *) ptr);
   if (obj->attr->osdev.type == ostype) {
-    fprintf(stderr, "XXX found nic\n");
-    nic = obj;
-    stop = true;
+    fprintf(stderr, "XXX found nic %s\n", obj->name);
+    if (numNics >= MAX_NICS) {
+      chpl_error("too many NICS", 0, 0);
+    }
+    nics[numNics++] = obj;
   }
-  return stop;
+  return false;
 }
 
-char *chpl_topo_getNIC(char *buffer, int size) {
-  char *name = NULL;
-  // If we are bound to a particular socket/package then find the NIC that is
-  // closest to us.
+int chpl_topo_getNICs(char **buffers, int size, int count) {
+  int result = 0;
+  // If we are bound to a particular socket/package then find the NICs that are
+  // under us.
   if (root != hwloc_get_root_obj(topology)) {
     fprintf(stderr, "looking for NIC under socket %d\n", root->logical_index);
-    if (nic == NULL) {
+    if (numNics == 0) {
       hwloc_obj_osdev_type_t ostype = HWLOC_OBJ_OSDEV_OPENFABRICS;
       (void) findObjectsByType(root, HWLOC_OBJ_OS_DEVICE, setNic, &ostype);
-      if (nic == NULL) {
+      if (numNics == 0) {
         ostype = HWLOC_OBJ_OSDEV_NETWORK;
         (void) findObjectsByType(root, HWLOC_OBJ_OS_DEVICE, setNic, &ostype);
       }
     }
-    if ((nic != NULL) && (name == NULL)) {
+    for (int i = 0; i < numNics && i < count; i++) {
       // hack to change hsnX to cxiX
       // TODO: do this correctly
-      if (!strncmp(nic->name, "hsn", 3)) {
-        snprintf(buffer, size, "cxi%s", &nic->name[3]);
-        name = buffer;
+      if (!strncmp(nics[i]->name, "hsn", 3)) {
+        snprintf(buffers[i], size, "cxi%s", &(nics[i]->name[3]));
       } else {
-#ifdef NOTDEF
-        strncpy(buffer, nic->name, size);
-        name = buffer;
-#endif
+        strncpy(buffers[i], nics[i]->name, size);
       }
+      result++;
     }
   }
-  fprintf(stderr, "XXX chpl_topo_getNIC %s\n", name);
-  return name;
+  return result;
 }
 
 void chpl_topo_setThreadLocality(c_sublocid_t subloc) {

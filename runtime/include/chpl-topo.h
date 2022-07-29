@@ -57,8 +57,8 @@ int chpl_topo_getNumCPUsLogical(chpl_bool /*accessible_only*/);
 
 hwloc_cpuset_t chpl_topo_getCPUsPhysical(void);
 
-// What NIC should we use?
-char *chpl_topo_getNIC(char *buffer, int size);
+// What NICs should we use?
+int chpl_topo_getNICs(char **names, int size, int count);
 
 //
 // how many NUMA domains are there?
