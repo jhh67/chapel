@@ -1107,12 +1107,12 @@ void chpl_comm_post_task_init(void) {
 static
 void init_ofi(void) {
   if (verbosity >= 2) {
-    if (chpl_nodeID == 0) {
+    if (chpl_nodeID >= 0) {
       void* start;
       size_t size;
       chpl_comm_regMemHeapInfo(&start, &size);
       char buf[10];
-      printf("COMM=ofi: %s MCM mode, \"%s\" provider, \"%s\" device, %s fixed heap\n",
+      printf("COMM=ofi: %d pid %s MCM mode, \"%s\" provider, \"%s\" device, %s fixed heap\n", getpid(),
              mcmModeNames[mcmMode], ofi_info->fabric_attr->prov_name,
              ofi_info->domain_attr->name,
              ((size == 0)
