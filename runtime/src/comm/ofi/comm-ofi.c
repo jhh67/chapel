@@ -1421,7 +1421,7 @@ struct fi_info* findProvInList(struct fi_info* info,
                                chpl_bool accept_sockets_provs) {
 
 #define MAX_NICS 16
-  char nics[128][MAX_NICS];
+  char nics[MAX_NICS][128];
   int numNics = chpl_topo_getNICs((char **) nics, sizeof(*nics), MAX_NICS);
   for (; info != NULL; info = info->next) {
     fprintf(stderr, "XXX findProvInList %s\n", info->nic->device_attr->name);
