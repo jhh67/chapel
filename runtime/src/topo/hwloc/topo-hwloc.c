@@ -626,11 +626,13 @@ void chpl_topo_touchMemFromSubloc(void* p, size_t size, chpl_bool onlyInside,
 static inline
 hwloc_obj_t getNumaObj(c_sublocid_t subloc) {
   // could easily imagine this being a bit slow, but it's okay for now
-  return
-    hwloc_get_obj_inside_cpuset_by_depth(topology,
-                                         root->cpuset,
-                                         numaLevel,
-                                         subloc);
+  hwloc_obj_t numa = hwloc_get_obj_inside_cpuset_by_depth(topology,
+                                                            root->cpuset,
+                                                            numaLevel,
+                                                            subloc);
+  fprintf(stderr, "XXX %d getNumaObj %d name %s\n", getpid(),
+          (int) subloc, numa->name);
+  return numa;
 }
 
 
