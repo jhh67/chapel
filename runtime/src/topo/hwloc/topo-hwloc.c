@@ -324,6 +324,11 @@ void getNumCPUs(void) {
     (void) findObjectsByType(root, HWLOC_OBJ_PU, setCPUSet, logAccSet);
     (void) findObjectsByType(root
                              , HWLOC_OBJ_CORE, setCPUSet, physAccSet);
+    hwloc_cpuset_t tmp = hwloc_topology_get_allowed_cpuset(topology);
+    char buf[1024];
+    hwloc_bitmap_list_snprintf(buf, sizeof(buf), tmp);
+    fprintf(stderr, "XXX %d hwloc_topology_get_allowed_cpuset %s\n",
+            getpid(), buf); 
   } else {
     //
     // Hwloc can't tell us the number of accessible cores directly, so get
