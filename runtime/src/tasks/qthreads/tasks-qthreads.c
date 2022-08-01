@@ -691,24 +691,36 @@ void chpl_task_init(void)
             snprintf(msg, sizeof(msg), "CHPL_QTHREAD_TOPOLOGY is \"%s\"", topo);
             chpl_error(msg, 0, 0);
         }
-        // we should only use cores in the specified socket
-        hwloc_cpuset_t cpuset = chpl_topo_getCPUsPhysical();
-        char cores[4096];
+        // we should only use PUs in the specified socket
+
+        int pusPerCpu = chpl_topo_getNumCPUsLogical(true) / chpl_topo_getNumCPUsPhysical(true);
+        hwloc_cpuset_t cpuset = chpl_topo_getCPUsLogical();
+        char buf[4096];
         int offset = 0;
-        cores[0] = '\0';
-        for (int i = hwloc_bitmap_first(cpuset); i <= hwloc_bitmap_last(cpuset); i++) {
-            if (hwloc_bitmap_isset (cpuset, i)) {
-                offset += snprintf(cores + offset, sizeof(cores) - offset,
-                                   "%d:", i);
+        buf[0] = '\0';
+        for (int i = hwloc_bitmap_first(cpuset); i <= hwloc_bitmap_last(cpuset); i += pusPerCpu) {
+            int start = offset;
+            for (int j = i; j < i + pusPerCpu; j++) {
+                if (hwloc_bitmap_isset (cpuset, j)) {
+                    offset += snprintf(buf + offset, sizeof(buf) - offset,
+                                       "%d,", j);
+                }
             }
+            if (start != offset) {
+                // remove trailing ','
+                if (offset > 0) {
+                    buf[offset-1] = '\0';
+                }
+            }
+            offset += snprintf(buf+offset, sizeof(buf) - offset, ":");
         }
-        // remove trailing ':'
         if (offset > 0) {
-            cores[offset-1] = '\0';
+            // remove trailing ':'
+            buf[offset-1] = '\0';
         }
         // tell binders which cores to use
-        fprintf(stderr, "XXX %d cores %s\n", getpid(), cores);
-        chpl_qt_setenv("CPUBIND", cores, 1);
+        fprintf(stderr, "XXX %d cores %s\n", getpid(), buf);
+        chpl_qt_setenv("CPUBIND", buf, 1);
     }
     // Initialize qthreads
     pthread_create(&initer, NULL, initializer, NULL);
