@@ -390,7 +390,6 @@ void getNumCPUs(void) {
   numCPUsLogAcc = hwloc_bitmap_weight(logAccSet);
   CHK_ERR(numCPUsLogAcc > 0);
 
-  hwloc_bitmap_free(logAccSet);
 
   //
   // all PUs
@@ -402,6 +401,11 @@ void getNumCPUs(void) {
 hwloc_cpuset_t chpl_topo_getCPUsPhysical(void) {
   return physAccSet;
 }
+
+hwloc_cpuset_t chpl_topo_getCPUsLogical(void) {
+  return logAccSet;
+}
+
 
 int chpl_topo_getNumNumaDomains(void) {
   fprintf(stderr, "XXX %d numNumaDomains %d\n", getpid(), numNumaDomains);
