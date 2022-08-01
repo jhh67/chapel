@@ -56,6 +56,7 @@ int chpl_topo_getNumCPUsLogical(chpl_bool /*accessible_only*/);
 // What CPUs (cores) can we use?
 
 hwloc_cpuset_t chpl_topo_getCPUsPhysical(void);
+hwloc_cpuset_t chpl_topo_getCPUsLogical(void);
 
 // What NIC should we use?
 char *chpl_topo_getNIC(char *buffer, int size);
