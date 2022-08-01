@@ -635,8 +635,8 @@ hwloc_obj_t getNumaObj(c_sublocid_t subloc) {
                                                             root->cpuset,
                                                             numaLevel,
                                                             subloc);
-  fprintf(stderr, "XXX %d getNumaObj %d name %s\n", getpid(),
-          (int) subloc, numa->name);
+  fprintf(stderr, "XXX %d getNumaObj %d logical index %d\n", getpid(),
+          (int) subloc, numa->logical_index);
   return numa;
 }
 
