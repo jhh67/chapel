@@ -715,7 +715,7 @@ void chpl_task_init(void)
             }
             offset += snprintf(buf+offset, sizeof(buf) - offset, ":");
 #endif
-            sprintf(buf+offset, sizeof(buf) - offset, "%d:", i);
+            offset += snprintf(buf+offset, sizeof(buf) - offset, "%d:", i);
         }
         if (offset > 0) {
             // remove trailing ':'
