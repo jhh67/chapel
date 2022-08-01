@@ -724,7 +724,7 @@ void chpl_task_init(void)
         int offset = 0;
         buf[0] = '\0';
         for (int i = hwloc_bitmap_first(cpuset); i <= hwloc_bitmap_last(cpuset); i++) {
-            offset += snprintf(buf+offset, sizeof(buf) - offset, ":");
+            offset += snprintf(buf+offset, sizeof(buf) - offset, "%d:", i);
         }
         if (offset > 0) {
             // remove trailing ':'
