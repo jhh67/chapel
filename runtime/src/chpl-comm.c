@@ -205,6 +205,7 @@ static void *touch_thread(void *mem_region) {
 // domains.
 void chpl_comm_regMemHeapTouch(void* start, uintptr_t size) {
   int nthreads = chpl_topo_getNumCPUsPhysical(true);
+  nthreads = 1;
   pthread_t thread_id[nthreads];
   memory_region mem_regions[nthreads];
 
