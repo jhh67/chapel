@@ -66,9 +66,11 @@ static int numNumaDomains;
 
 // root object for this locale
 static hwloc_obj_t root = NULL;
+static hwloc_obj_t root2 = NULL;
 
 
 static hwloc_obj_t getNumaObj(c_sublocid_t);
+static hwloc_obj_t getNumaObj2(c_sublocid_t);
 static void alignAddrSize(void*, size_t, chpl_bool,
                           size_t*, unsigned char**, size_t*);
 static void chpl_topo_setMemLocalityByPages(unsigned char*, size_t,
@@ -211,6 +213,8 @@ void chpl_topo_init(void) {
         socket = sobj;
         fprintf(stderr, "XXX %d using socket %d\n", getpid(), useSocket);
         break;
+      } else {
+        root2 = sobj;
       }
     }
     if (socket == NULL) {
@@ -474,7 +478,7 @@ void chpl_topo_setThreadLocality(c_sublocid_t subloc) {
   CHK_ERR_ERRNO((cpuset = hwloc_bitmap_alloc()) != NULL);
 
   hwloc_cpuset_from_nodeset(topology, cpuset,
-                            getNumaObj(subloc)->allowed_nodeset);
+                            getNumaObj2(subloc)->allowed_nodeset);
 
   flags = HWLOC_CPUBIND_THREAD | HWLOC_CPUBIND_STRICT;
   char buf[1024];
@@ -640,6 +644,18 @@ hwloc_obj_t getNumaObj(c_sublocid_t subloc) {
   return numa;
 }
 
+
+static inline
+hwloc_obj_t getNumaObj2(c_sublocid_t subloc) {
+  // could easily imagine this being a bit slow, but it's okay for now
+  hwloc_obj_t numa = hwloc_get_obj_inside_cpuset_by_depth(topology,
+                                                            root2->cpuset,
+                                                            numaLevel,
+                                                            subloc);
+  fprintf(stderr, "XXX %d getNumaObj %d logical index %d\n", getpid(),
+          (int) subloc, numa->logical_index);
+  return numa;
+}
 
 static inline
 void alignAddrSize(void* p, size_t size, chpl_bool onlyInside,
