@@ -654,7 +654,7 @@ static void setupSpinWaiting(void) {
 
 static void setupAffinity(void) {
   if (chpl_get_oversubscribed()) {
-    chpl_qt_setenv("AFFINITY", "no", 0);
+    //chpl_qt_setenv("AFFINITY", "no", 0);
   }
 
   // For the binders topo spread threads across sockets instead of packing.

@@ -54,6 +54,11 @@
 #include "error.h"
 
 #include "hwloc.h"
+#ifdef __linux__
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+#endif
 #include "sched.h"
 
 #include "comm-ofi-internal.h"
