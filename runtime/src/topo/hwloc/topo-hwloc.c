@@ -212,7 +212,6 @@ void chpl_topo_init(void) {
       if (sobj->logical_index == useSocket) {
         socket = sobj;
         fprintf(stderr, "XXX %d using socket %d\n", getpid(), useSocket);
-        break;
       } else {
         root2 = sobj;
       }
@@ -478,7 +477,7 @@ void chpl_topo_setThreadLocality(c_sublocid_t subloc) {
   CHK_ERR_ERRNO((cpuset = hwloc_bitmap_alloc()) != NULL);
 
   hwloc_cpuset_from_nodeset(topology, cpuset,
-                            getNumaObj2(subloc)->allowed_nodeset);
+                            getNumaObj(subloc)->allowed_nodeset);
 
   flags = HWLOC_CPUBIND_THREAD | HWLOC_CPUBIND_STRICT;
   char buf[1024];
