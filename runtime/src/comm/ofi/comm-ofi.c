@@ -2041,21 +2041,22 @@ void init_ofiFabricDomain(void) {
 }
 
 /*
- * Reserve CPUs for the AM handler(s), if necessary.
+ * Reserve CPUs for the AM handler(s), if necessary. Start at the highest
+ * numbered accessible physical CPU.
  */
 static
 void init_ofiReserveCPUs() {
 
   if (envUseDedicatedAmhCores &&
       (chpl_topo_getNumCPUsPhysical(true, true) > numAmHandlers)) {
-    cpuset = chpl_topo_getCPUsPhysical(true);
-    if (cpuset != NULL) {
-      cpuset = hwloc_bitmap_dup(cpuset);
+    hwloc_bitmap_t tmpset = chpl_topo_getCPUsPhysical(true);
+    if (tmpset != NULL) {
+      cpuset = hwloc_bitmap_alloc();
       int count = 0;
-      for (uint i = hwloc_bitmap_last(cpuset);
-           i >= hwloc_bitmap_first(cpuset); i--) {
-        if (hwloc_bitmap_isset(cpuset, i)) {
-            hwloc_bitmap_clr(cpuset, i);
+      for (uint i = hwloc_bitmap_last(tmpset);
+           i >= hwloc_bitmap_first(tmpset); i--) {
+        if (hwloc_bitmap_isset(tmpset, i)) {
+            hwloc_bitmap_set(cpuset, i);
             chpl_topo_reserveCPUPhysical(i);
             if (++count == numAmHandlers) {
               break;
