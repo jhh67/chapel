@@ -42,14 +42,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#ifdef __linux__
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-#endif
-
-#include <sched.h>
-
 int32_t          chpl_nodeID = -1;
 int32_t          chpl_numNodes = -1;
 static int32_t   numLocalesOnNode = -1;
@@ -193,7 +185,6 @@ static void *touch_thread(void *mem_region) {
   uintptr_t aligned_size = round_down_to_mask(mr->size - aligned_offset, touch_size-1);
 
   chpl_topo_setThreadLocality(mr->tid % chpl_topo_getNumNumaDomains());
-  fprintf(stderr, "XXX %d cpu %d\n", getpid(), sched_getcpu());
   // Iterate through all the touch regions cyclically
   for (uintptr_t tr=mr->tid*touch_size; tr<aligned_size; tr+=mr->nthreads*touch_size) {
     // Iterate through all the page regions in the current region we're touching
@@ -212,7 +203,7 @@ static void *touch_thread(void *mem_region) {
 // poor NUMA affinity with memory split evenly in massive chunks across NUMA
 // domains.
 void chpl_comm_regMemHeapTouch(void* start, uintptr_t size) {
-  int nthreads = chpl_topo_getNumCPUsPhysical(true);
+  int nthreads = chpl_topo_getNumCPUsPhysical(true, false);
   //nthreads = 1;
   pthread_t thread_id[nthreads];
   memory_region mem_regions[nthreads];

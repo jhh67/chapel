@@ -49,14 +49,17 @@ hwloc_topology_t chpl_topo_getHwlocTopology(void);
 //
 // How many CPUs are there?
 //
-int chpl_topo_getNumCPUsPhysical(chpl_bool /*accessible_only*/);
-int chpl_topo_getNumCPUsLogical(chpl_bool /*accessible_only*/);
+int chpl_topo_getNumCPUsPhysical(chpl_bool accessible, chpl_bool available);
+int chpl_topo_getNumCPUsLogical(chpl_bool accessible, chpl_bool available);
 
 
 // What CPUs (cores) can we use?
 
-hwloc_cpuset_t chpl_topo_getCPUsPhysical(void);
-hwloc_cpuset_t chpl_topo_getCPUsLogical(void);
+hwloc_cpuset_t chpl_topo_getCPUsPhysical(chpl_bool available);
+hwloc_cpuset_t chpl_topo_getCPUsLogical(chpl_bool available);
+
+void chpl_topo_reserveCPUPhysical(int id);
+void chpl_topo_reserveCPULogical(int id);
 
 // What NICs should we use?
 int chpl_topo_getNICs(char names[][128], int count);
@@ -75,6 +78,12 @@ void chpl_topo_setThreadLocality(c_sublocid_t);
 // get the sublocale where the current thread is running
 //
 c_sublocid_t chpl_topo_getThreadLocality(void);
+
+//
+// bind the current thread to the specified cpuset
+//
+
+void chpl_topo_bindThread(hwloc_cpuset_t cpuset);
 
 //
 // Set the locality of a block of memory to interleave (round-robin) between

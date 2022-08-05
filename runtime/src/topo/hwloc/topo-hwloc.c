@@ -267,26 +267,52 @@ hwloc_topology_t chpl_topo_getHwlocTopology(void) {
 
 //
 // How many CPUs (cores or PUs) are there?
-//
 static pthread_once_t numCPUs_ctrl = PTHREAD_ONCE_INIT;
 static void getNumCPUs(void);
+// TODO: put these into an array
 static int numCPUsPhysAcc = -1;
 static int numCPUsPhysAll = -1;
+static int numCPUsPhysAccAvail = -1;
 static int numCPUsLogAcc  = -1;
 static int numCPUsLogAll  = -1;
+static int numCPUsLogAccAvail = -1;
 static hwloc_cpuset_t physAccSet;
+static hwloc_cpuset_t physAccAvailSet;
 static hwloc_cpuset_t logAccSet;
+static hwloc_cpuset_t logAccAvailSet;
 
 
-int chpl_topo_getNumCPUsPhysical(chpl_bool accessible_only) {
+int chpl_topo_getNumCPUsPhysical(chpl_bool accessible_only, 
+                                 chpl_bool available_only) {
   CHK_ERR(pthread_once(&numCPUs_ctrl, getNumCPUs) == 0);
-  return (accessible_only) ? numCPUsPhysAcc : numCPUsPhysAll;
+  int result = 0;
+  if (accessible_only) {
+    if (available_only) {
+      result = numCPUsPhysAccAvail;
+    } else {
+      result = numCPUsPhysAcc;
+    }
+  } else {
+    result = numCPUsPhysAll;
+  }
+  return result;
 }
 
 
-int chpl_topo_getNumCPUsLogical(chpl_bool accessible_only) {
+int chpl_topo_getNumCPUsLogical(chpl_bool accessible_only,
+                                chpl_bool available_only) {
   CHK_ERR(pthread_once(&numCPUs_ctrl, getNumCPUs) == 0);
-  return (accessible_only) ? numCPUsLogAcc : numCPUsLogAll;
+  int result = 0;
+  if (accessible_only) {
+    if (available_only) {
+      result = numCPUsLogAccAvail;
+    } else {
+      result = numCPUsLogAcc;
+    }
+  } else {
+    result = numCPUsLogAll;
+  }
+  return result;
 }
 
 static chpl_bool setCPUSet(hwloc_obj_t obj, void *ptr) {
@@ -324,14 +350,18 @@ void getNumCPUs(void) {
 
   if (root != hwloc_get_root_obj(topology)) {
     // Look for cores and PUs under our relative root.
+    // TODO: can hwloc do this for us?
     (void) findObjectsByType(root, HWLOC_OBJ_PU, setCPUSet, logAccSet);
     (void) findObjectsByType(root
                              , HWLOC_OBJ_CORE, setCPUSet, physAccSet);
-    hwloc_cpuset_t tmp = hwloc_topology_get_allowed_cpuset(topology);
+    CHK_ERR_ERRNO((logAccAvailSet = hwloc_bitmap_dup(logAccSet)) != NULL);
+    CHK_ERR_ERRNO((physAccAvailSet = hwloc_bitmap_dup(physAccSet)) != NULL);
+    // XXX debug
+    hwloc_const_cpuset_t tmp = hwloc_topology_get_allowed_cpuset(topology);
     char buf[1024];
     hwloc_bitmap_list_snprintf(buf, sizeof(buf), tmp);
     fprintf(stderr, "XXX %d hwloc_topology_get_allowed_cpuset %s\n",
-            getpid(), buf); 
+            getpid(), buf);
   } else {
     //
     // Hwloc can't tell us the number of accessible cores directly, so get
@@ -359,6 +389,7 @@ void getNumCPUs(void) {
     hwloc_bitmap_and(logAccSet, logAccSet,
                      hwloc_topology_get_online_cpuset(topology));
 
+    CHK_ERR_ERRNO((logAccAvailSet = hwloc_bitmap_dup(logAccSet)) != NULL);
     CHK_ERR_ERRNO((physAccSet = hwloc_bitmap_alloc()) != NULL);
 
 #define NEXT_PU(pu)                                                     \
@@ -373,13 +404,16 @@ void getNumCPUs(void) {
                     != NULL);
       hwloc_bitmap_set(physAccSet, core->logical_index);
     }
+    CHK_ERR_ERRNO((physAccAvailSet = hwloc_bitmap_dup(physAccSet)) != NULL);
 
   #undef NEXT_PU
   }
 
   numCPUsPhysAcc = hwloc_bitmap_weight(physAccSet);
+  numCPUsPhysAccAvail = hwloc_bitmap_weight(physAccAvailSet);
 
   CHK_ERR(numCPUsPhysAcc > 0);
+  CHK_ERR(numCPUsPhysAccAvail > 0);
 
   //
   // all cores
@@ -391,7 +425,10 @@ void getNumCPUs(void) {
   // accessible PUs
   //
   numCPUsLogAcc = hwloc_bitmap_weight(logAccSet);
+  numCPUsLogAccAvail = hwloc_bitmap_weight(logAccAvailSet);
+
   CHK_ERR(numCPUsLogAcc > 0);
+  CHK_ERR(numCPUsLogAccAvail > 0);
 
 
   //
@@ -401,12 +438,21 @@ void getNumCPUs(void) {
   CHK_ERR(numCPUsLogAll > 0);
 }
 
-hwloc_cpuset_t chpl_topo_getCPUsPhysical(void) {
-  return physAccSet;
+hwloc_cpuset_t chpl_topo_getCPUsPhysical(chpl_bool avail) {
+  return (avail) ? physAccAvailSet : physAccSet;
 }
 
-hwloc_cpuset_t chpl_topo_getCPUsLogical(void) {
-  return logAccSet;
+hwloc_cpuset_t chpl_topo_getCPUsLogical(chpl_bool avail) {
+  return (avail) ? logAccAvailSet : logAccSet;
+}
+
+// TODO: error checking
+void chpl_topo_reserveCPUPhysical(int id) {
+  hwloc_bitmap_clr(physAccAvailSet, id);
+}
+
+void chpl_topo_reserveCPULogical(int id) {
+  hwloc_bitmap_clr(logAccAvailSet, id);
 }
 
 
@@ -520,6 +566,15 @@ c_sublocid_t chpl_topo_getThreadLocality(void) {
   return node;
 }
 
+// bind the current thread to the specified cpuset
+void chpl_topo_bindThread(hwloc_cpuset_t cpuset) {
+  int flags = HWLOC_CPUBIND_THREAD | HWLOC_CPUBIND_STRICT;
+  char buf[1024];
+  hwloc_bitmap_list_snprintf(buf, sizeof(buf), cpuset);
+  fprintf(stderr, "XXX %d chpl_topo_bindThread %s\n",
+          getpid(), buf);
+  CHK_ERR_ERRNO(hwloc_set_cpubind(topology, cpuset, flags) == 0);
+}
 
 void chpl_topo_setMemLocality(void* p, size_t size, chpl_bool onlyInside,
                               c_sublocid_t subloc) {
