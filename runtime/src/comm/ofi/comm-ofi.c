@@ -1056,7 +1056,7 @@ void chpl_comm_init(int *argc_p, char ***argv_p) {
   envInjectAM = chpl_env_rt_get_bool("COMM_OFI_INJECT_AM", true);
 
   envUseDedicatedAmhCores = chpl_env_rt_get_bool(
-                                  "COMM_OFI_DEDICATED_AMH_CORES", true);
+                                  "COMM_OFI_DEDICATED_AMH_CORES", false);
 
   //
   // The user can specify the provider by setting either the Chapel
@@ -4772,14 +4772,6 @@ void amHandler(void* argNil) {
   if (cpuset != NULL) {
     chpl_topo_bindThread(cpuset);
   }
-
-  //
-  // Process AM requests and watch transmit responses arrive.
-  //
-  while (!atomic_load_bool(&amHandlersExit)) {
-    chpl_bool hadRxEvent, hadTxEvent;
-    amCheckRxTxCmpls(&hadRxEvent, &hadTxEvent, tcip);
-    if (hadRxEvent) {
 #ifdef __linux__
   static int cpu = -1;
   int tmp = sched_getcpu();
@@ -4788,6 +4780,14 @@ void amHandler(void* argNil) {
     DBG_PRINTF(DBG_AM, "XXX AM handler CPU %d", cpu);
   }
 #endif
+
+  //
+  // Process AM requests and watch transmit responses arrive.
+  //
+  while (!atomic_load_bool(&amHandlersExit)) {
+    chpl_bool hadRxEvent, hadTxEvent;
+    amCheckRxTxCmpls(&hadRxEvent, &hadTxEvent, tcip);
+    if (hadRxEvent) {
       processRxAmReq();
     } else if (!hadTxEvent) {
       //
