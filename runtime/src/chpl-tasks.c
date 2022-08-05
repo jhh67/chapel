@@ -57,12 +57,12 @@ int32_t chpl_task_getenvNumThreadsPerLocale(void)
     int32_t lim = chpl_comm_getMaxThreads();
 
     if (strcmp(p, "MAX_PHYSICAL") == 0) {
-      num = chpl_topo_getNumCPUsPhysical(true);
+      num = chpl_topo_getNumCPUsPhysical(true, true);
       if (lim > 0 && lim < num)
         num = lim;
     }
     else if (strcmp(p, "MAX_LOGICAL") == 0) {
-      num = chpl_topo_getNumCPUsLogical(true);
+      num = chpl_topo_getNumCPUsLogical(true, true);
       if (lim > 0 && lim < num)
         num = lim;
     }

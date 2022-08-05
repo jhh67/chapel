@@ -445,7 +445,7 @@ static void setupAvailableParallelism(int32_t maxThreads) {
 
         hwpar = numThreadsPerLocale;
 
-        numPUsPerLocale = chpl_topo_getNumCPUsLogical(true);
+        numPUsPerLocale = chpl_topo_getNumCPUsLogical(true, true);
         if (0 < numPUsPerLocale && numPUsPerLocale < hwpar) {
             char msg[256];
             sprintf(msg,
@@ -465,7 +465,7 @@ static void setupAvailableParallelism(int32_t maxThreads) {
     }
     // User did not set chapel or qthreads vars -- our default
     else {
-        hwpar = chpl_topo_getNumCPUsPhysical(true);
+        hwpar = chpl_topo_getNumCPUsPhysical(true, true);
     }
 
     // hwpar will only be <= 0 if the user set QT_NUM_SHEPHERDS and/or
@@ -497,7 +497,7 @@ static void setupAvailableParallelism(int32_t maxThreads) {
 
         // If there is more parallelism requested than the number of cores, set the
         // worker unit to pu, otherwise core.
-        if (hwpar > chpl_topo_getNumCPUsPhysical(true)) {
+        if (hwpar > chpl_topo_getNumCPUsPhysical(true, true)) {
           chpl_qt_setenv("WORKER_UNIT", "pu", 0);
         } else {
           chpl_qt_setenv("WORKER_UNIT", "core", 0);
@@ -719,20 +719,26 @@ void chpl_task_init(void)
             offset += snprintf(buf+offset, sizeof(buf) - offset, "%d:", i);
         }
 #endif
-        hwloc_cpuset_t cpuset = chpl_topo_getCPUsPhysical();
-        char buf[4096];
-        int offset = 0;
-        buf[0] = '\0';
-        for (int i = hwloc_bitmap_first(cpuset); i <= hwloc_bitmap_last(cpuset); i++) {
-            offset += snprintf(buf+offset, sizeof(buf) - offset, "%d:", i);
+
+        chpl_bool useDedicatedAMHCore = chpl_env_rt_get_bool("COMM_OFI_DEDICATED_AMH_CORE", true);
+
+        hwloc_const_cpuset_t cpuset = chpl_topo_getCPUsPhysical(true);
+        if (cpuset) {
+            char buf[4096];
+            int offset = 0;
+            buf[0] = '\0';
+            int i;
+            hwloc_bitmap_foreach_begin(i, cpuset)
+                offset += snprintf(buf+offset, sizeof(buf) - offset, "%d:", i);
+            hwloc_bitmap_foreach_end();
+            if (offset > 0) {
+                // remove trailing ':'
+                buf[offset-1] = '\0';
+            }
+            // tell binders which cores to use
+            fprintf(stderr, "XXX %d cores %s\n", getpid(), buf);
+            chpl_qt_setenv("CPUBIND", buf, 1);
         }
-        if (offset > 0) {
-            // remove trailing ':'
-            buf[offset-1] = '\0';
-        }
-        // tell binders which cores to use
-        fprintf(stderr, "XXX %d cores %s\n", getpid(), buf);
-        chpl_qt_setenv("CPUBIND", buf, 1);
     }
     // Initialize qthreads
     pthread_create(&initer, NULL, initializer, NULL);

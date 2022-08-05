@@ -193,6 +193,7 @@ static chpl_bool envUseAmRxCntr;        // env: AMH uses receive counters
 static chpl_bool envInjectRMA;          // env: inject RMA messages
 static chpl_bool envInjectAMO;          // env: inject AMO messages
 static chpl_bool envInjectAM;           // env: inject AM messages
+static chpl_bool envUseDedicatedAmhCores; // env: use dedicated AM handler cores
 
 static int numTxCtxs;
 static int numRxCtxs;
@@ -265,6 +266,8 @@ struct amRequest_execOnLrg_t {
 };
 
 static int numAmHandlers = 1;
+
+static hwloc_cpuset_t cpuset = NULL;
 
 //
 // AM request landing zones.
@@ -975,6 +978,7 @@ pthread_t pthread_that_inited;
 
 static void init_ofi(void);
 static void init_ofiFabricDomain(void);
+static void init_ofiReserveCPUs(void);
 static void init_ofiDoProviderChecks(void);
 static void init_ofiEp(void);
 static void init_ofiEpTxCtx(int, chpl_bool, struct fi_av_attr*,
@@ -1050,6 +1054,10 @@ void chpl_comm_init(int *argc_p, char ***argv_p) {
   envInjectRMA = chpl_env_rt_get_bool("COMM_OFI_INJECT_RMA", true);
   envInjectAMO = chpl_env_rt_get_bool("COMM_OFI_INJECT_AMO", true);
   envInjectAM = chpl_env_rt_get_bool("COMM_OFI_INJECT_AM", true);
+
+  envUseDedicatedAmhCores = chpl_env_rt_get_bool(
+                                  "COMM_OFI_DEDICATED_AMH_CORES", true);
+
   //
   // The user can specify the provider by setting either the Chapel
   // CHPL_RT_COMM_OFI_PROVIDER environment variable or the libfabric
@@ -1081,6 +1089,8 @@ void chpl_comm_post_mem_init(void) {
     created, avoiding the issue.
   */
   init_ofiFabricDomain();
+
+  init_ofiReserveCPUs();
 }
 
 
@@ -2030,6 +2040,31 @@ void init_ofiFabricDomain(void) {
   OFI_CHK(fi_domain(ofi_fabric, ofi_info, &ofi_domain, NULL));
 }
 
+/*
+ * Reserve CPUs for the AM handler(s), if necessary.
+ */
+static
+void init_ofiReserveCPUs() {
+
+  if (envUseDedicatedAmhCores &&
+      (chpl_topo_getNumCPUsPhysical(true, true) > numAmHandlers)) {
+    cpuset = chpl_topo_getCPUsPhysical(true);
+    if (cpuset != NULL) {
+      cpuset = hwloc_bitmap_dup(cpuset);
+      int count = 0;
+      for (uint i = hwloc_bitmap_last(cpuset);
+           i >= hwloc_bitmap_first(cpuset); i--) {
+        if (hwloc_bitmap_isset(cpuset, i)) {
+            hwloc_bitmap_clr(cpuset, i);
+            chpl_topo_reserveCPUPhysical(i);
+            if (++count == numAmHandlers) {
+              break;
+            }
+        }
+      }
+    }
+  }
+}
 
 static
 struct fi_info* getBaseProviderHints(chpl_bool* pTxAttrsForced) {
@@ -4681,7 +4716,6 @@ void init_amHandling(void) {
   PTHREAD_CHK(pthread_mutex_unlock(&amStartStopMutex));
 }
 
-
 static
 void fini_amHandling(void) {
   if (chpl_numNodes <= 1)
@@ -4729,6 +4763,14 @@ void amHandler(void* argNil) {
   if (++numAmHandlersActive == 1)
     PTHREAD_CHK(pthread_cond_signal(&amStartStopCond));
   PTHREAD_CHK(pthread_mutex_unlock(&amStartStopMutex));
+
+  /*
+   * If we are using dedicated cores for the AM handlers then bind
+   * this thread to them.
+   */
+  if (cpuset != NULL) {
+    chpl_topo_bindThread(cpuset);
+  }
 
   //
   // Process AM requests and watch transmit responses arrive.
