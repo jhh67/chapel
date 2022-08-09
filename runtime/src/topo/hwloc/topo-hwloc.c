@@ -218,7 +218,7 @@ void chpl_topo_post_comm_init(void) {
         socket = sobj;
       }
     }
-    if ((socket != NULL) && (numLocalesOnNode < numSockets)) {
+    if ((socket != NULL) && (numLocalesOnNode <= numSockets)) {
       // we get our own socket
       fprintf(stderr, "XXX %d using socket %d\n", getpid(), rank);
       root = socket;
@@ -439,19 +439,23 @@ void getNumCPUs(void) {
 }
 
 hwloc_cpuset_t chpl_topo_getCPUsPhysical(chpl_bool avail) {
+  CHK_ERR(pthread_once(&numCPUs_ctrl, getNumCPUs) == 0);
   return (avail) ? physAccAvailSet : physAccSet;
 }
 
 hwloc_cpuset_t chpl_topo_getCPUsLogical(chpl_bool avail) {
+  CHK_ERR(pthread_once(&numCPUs_ctrl, getNumCPUs) == 0);
   return (avail) ? logAccAvailSet : logAccSet;
 }
 
 // TODO: error checking
 void chpl_topo_reserveCPUPhysical(int id) {
+  CHK_ERR(pthread_once(&numCPUs_ctrl, getNumCPUs) == 0);
   hwloc_bitmap_clr(physAccAvailSet, id);
 }
 
 void chpl_topo_reserveCPULogical(int id) {
+  CHK_ERR(pthread_once(&numCPUs_ctrl, getNumCPUs) == 0);
   hwloc_bitmap_clr(logAccAvailSet, id);
 }
 
