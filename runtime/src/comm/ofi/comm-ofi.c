@@ -1443,7 +1443,6 @@ struct fi_info* findProvInList(struct fi_info* info,
   char nics[MAX_NICS][128];
   int numNics = chpl_topo_getNICs(nics, MAX_NICS);
   for (; info != NULL; info = info->next) {
-    fprintf(stderr, "XXX findProvInList %s\n", info->nic->device_attr->name);
     // break out of the loop when we find one that meets all of our criteria
     if (!accept_ungood_provs && !isGoodCoreProvider(info)) {
       continue;
@@ -1464,7 +1463,8 @@ struct fi_info* findProvInList(struct fi_info* info,
     if (numNics > 0) {
       chpl_bool found = false;
       for (int i = 0; i < numNics; i++) {
-        if (!strcmp(nics[i], info->nic->device_attr->name)) {
+        if ((info->nic != NULL) && (info->nic->device_attr != NULL) &&
+            (!strcmp(nics[i], info->nic->device_attr->name))) {
           found = true;
           break;
         }

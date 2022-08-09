@@ -275,7 +275,10 @@ static char* chpl_launch_create_command(int argc, char* argv[],
     // suppress informational messages, will still display errors
     fprintf(slurmFile, "#SBATCH --quiet\n");
 
-    int32_t numNodes = (numLocales+1) / localesPerNode;
+    int32_t numNodes = numLocales;
+    if (localesPerNode != 1) {
+      numNodes = (numLocales+1) / localesPerNode;
+    }
     // request the number of locales, with 1 task per node, and number of cores
     // cpus-per-task. We probably don't need --nodes and --ntasks specified
     // since 1 task-per-node with n --tasks implies -n nodes
