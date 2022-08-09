@@ -331,8 +331,9 @@ int chpl_comm_ofi_oob_locales_on_node(int *localRank) {
 
     locale_info_t info;
     info.hash = hash;
+    DBG_PRINTF(DBG_OOB, "PMI2 OOB chpl_nodeID %d", chpl_nodeID);
     info.nodeID = chpl_nodeID;
-    uint64_t *infos = NULL;
+    locale_info_t *infos = NULL;
     CHK_SYS_CALLOC(infos, chpl_numNodes);
     chpl_comm_ofi_oob_allgather(&info, infos, sizeof(*infos));
 
@@ -340,8 +341,8 @@ int chpl_comm_ofi_oob_locales_on_node(int *localRank) {
 
     for (int i = 0; i < chpl_numNodes; i++) {
       if (infos[i].hash == hash) {
-        if (localRank != NULL) {
-          // record our rank within the locales on the same node
+        if ((localRank != NULL) && (infos[i].nodeID == chpl_nodeID)) {
+          // record our rank among the locales on the same node
           *localRank = count;
         }
         count++;
@@ -350,7 +351,7 @@ int chpl_comm_ofi_oob_locales_on_node(int *localRank) {
     CHK_SYS_FREE(infos);
   }
   DBG_PRINTF(DBG_OOB, "PMI2 OOB locales on node: %d", count);
-  if (rank != NULL) {
+  if (localRank != NULL) {
     DBG_PRINTF(DBG_OOB, "PMI2 OOB local rank: %d", *localRank);
   }
   return count;
