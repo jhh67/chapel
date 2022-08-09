@@ -682,63 +682,30 @@ void chpl_task_init(void)
 
     if (verbosity >= 2) { chpl_qt_setenv("INFO", "1", 0); }
 
-    int useSocket = chpl_env_rt_get_int("USE_SOCKET", -1);
+    char* topo = getenv("CHPL_QTHREAD_TOPOLOGY");
+    if (topo != NULL && strcmp(topo, "binders") != 0) {
+        char msg[1024];
+        snprintf(msg, sizeof(msg), "CHPL_QTHREAD_TOPOLOGY is \"%s\"", topo);
+        chpl_error(msg, 0, 0);
+    }
+    // we should only use PUs in the specified socket
 
-    if (useSocket >= 0) {
-        char* topo = getenv("CHPL_QTHREAD_TOPOLOGY");
-        if (topo != NULL && strcmp(topo, "binders") != 0) {
-            char msg[1024];
-            snprintf(msg, sizeof(msg), "CHPL_QTHREAD_TOPOLOGY is \"%s\"", topo);
-            chpl_error(msg, 0, 0);
-        }
-        // we should only use PUs in the specified socket
-
-#ifdef NOTDEF
-        int pusPerCpu = chpl_topo_getNumCPUsLogical(true) / chpl_topo_getNumCPUsPhysical(true);
-        hwloc_cpuset_t cpuset = chpl_topo_getCPUsLogical();
+    hwloc_const_cpuset_t cpuset = chpl_topo_getCPUsPhysical(true);
+    if (cpuset) {
         char buf[4096];
         int offset = 0;
         buf[0] = '\0';
-        for (int i = hwloc_bitmap_first(cpuset); i <= hwloc_bitmap_last(cpuset); i += pusPerCpu) {
-            int start = offset;
-            for (int j = i; j < i + pusPerCpu; j++) {
-                if (hwloc_bitmap_isset (cpuset, j)) {
-                    offset += snprintf(buf + offset, sizeof(buf) - offset,
-                                       "%d,", j);
-                }
-            }
-            if (start != offset) {
-                // remove trailing ','
-                if (offset > 0) {
-                    buf[offset-1] = '\0';
-                }
-            }
-            offset += snprintf(buf+offset, sizeof(buf) - offset, ":");
-
-
+        int i;
+        hwloc_bitmap_foreach_begin(i, cpuset)
             offset += snprintf(buf+offset, sizeof(buf) - offset, "%d:", i);
+        hwloc_bitmap_foreach_end();
+        if (offset > 0) {
+            // remove trailing ':'
+            buf[offset-1] = '\0';
         }
-#endif
-
-        chpl_bool useDedicatedAMHCore = chpl_env_rt_get_bool("COMM_OFI_DEDICATED_AMH_CORE", true);
-
-        hwloc_const_cpuset_t cpuset = chpl_topo_getCPUsPhysical(true);
-        if (cpuset) {
-            char buf[4096];
-            int offset = 0;
-            buf[0] = '\0';
-            int i;
-            hwloc_bitmap_foreach_begin(i, cpuset)
-                offset += snprintf(buf+offset, sizeof(buf) - offset, "%d:", i);
-            hwloc_bitmap_foreach_end();
-            if (offset > 0) {
-                // remove trailing ':'
-                buf[offset-1] = '\0';
-            }
-            // tell binders which cores to use
-            fprintf(stderr, "XXX %d cores %s\n", getpid(), buf);
-            chpl_qt_setenv("CPUBIND", buf, 1);
-        }
+        // tell binders which cores to use
+        fprintf(stderr, "XXX %d cores %s\n", getpid(), buf);
+        chpl_qt_setenv("CPUBIND", buf, 1);
     }
     // Initialize qthreads
     pthread_create(&initer, NULL, initializer, NULL);
