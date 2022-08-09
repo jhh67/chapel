@@ -747,13 +747,15 @@ static void makePYXSetupFunctions(std::vector<FnSymbol*> moduleInits) {
     // numLocales is a C default-sized int.
     std::string numLocalesType = getPythonTypeName(dtInt[INT_SIZE_32],
                                                    C_PYX);
-    fprintf(outfile, "def chpl_setup(%s numLocales):\n",
-            numLocalesType.c_str());
+    std::string localesPerNodeType = getPythonTypeName(dtInt[INT_SIZE_32],
+                                                   C_PYX);
+    fprintf(outfile, "def chpl_setup(%s numLocales %s localesPerNode):\n",
+            numLocalesType.c_str(), localesPerNodeType.c_str());
     fprintf(outfile,
-            "\tcdef char** args = ['%s', '-nl', str(numLocales).encode()]\n",
+            "\tcdef char** args = ['%s', '-nl', str(numLocales).encode(), '-lpn', str(localesPerNode).encode()]\n",
             libmodeHeadername);
     // TODO: is there a way to get the number of indices from args?
-    fprintf(outfile, "\tchpl_library_init(3, args)\n");
+    fprintf(outfile, "\tchpl_library_init(5, args)\n");
 
   } else {
     // Define `chpl_setup` for single locale Python modules.

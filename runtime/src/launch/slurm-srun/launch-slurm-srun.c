@@ -47,8 +47,6 @@ static char* exclude = NULL;
 
 char slurmFilename[FILENAME_MAX];
 
-/* copies of binary to run per node */
-#define procsPerNode 1
 
 typedef enum {
   slurmpro,
@@ -100,7 +98,7 @@ static int nomultithread(int batch) {
 
 // Get the number of locales from the environment variable or if that is not
 // set just use sinfo to get the number of cpus.
-static int getCoresPerLocale(int nomultithread) {
+static int getCoresPerLocale(int nomultithread, int32_t localesPerNode) {
   int numCores = -1;
   int threadsPerCore = -1;
   const int buflen = 1024;
@@ -146,13 +144,14 @@ static int getCoresPerLocale(int nomultithread) {
   if (nomultithread)
     numCores /= threadsPerCore;
 
-  return numCores;
+  return numCores / localesPerNode;
 }
 #define MAX_COM_LEN (FILENAME_MAX + 128)
 // create the command that will actually launch the program and
 // create any files needed for the launch like the batch script
 static char* chpl_launch_create_command(int argc, char* argv[],
-                                        int32_t numLocales) {
+                                        int32_t numLocales,
+                                        int32_t localesPerNode) {
   int i;
   int size;
   char baseCommand[MAX_COM_LEN];
@@ -276,12 +275,13 @@ static char* chpl_launch_create_command(int argc, char* argv[],
     // suppress informational messages, will still display errors
     fprintf(slurmFile, "#SBATCH --quiet\n");
 
+    int32_t numNodes = (numLocales+1) / localesPerNode;
     // request the number of locales, with 1 task per node, and number of cores
     // cpus-per-task. We probably don't need --nodes and --ntasks specified
     // since 1 task-per-node with n --tasks implies -n nodes
-    fprintf(slurmFile, "#SBATCH --nodes=%d\n", numLocales);
+    fprintf(slurmFile, "#SBATCH --nodes=%d\n", numNodes);
     fprintf(slurmFile, "#SBATCH --ntasks=%d\n", numLocales);
-    fprintf(slurmFile, "#SBATCH --ntasks-per-node=%d\n", procsPerNode);
+    fprintf(slurmFile, "#SBATCH --ntasks-per-node=%d\n", localesPerNode);
     fprintf(slurmFile, "#SBATCH --cpus-per-task=%d\n", getCoresPerLocale(nomultithread(true)));
 
     // request specified node access
@@ -400,7 +400,7 @@ static char* chpl_launch_create_command(int argc, char* argv[],
     len += sprintf(iCom+len, "--nodes=%d ",numLocales);
     len += sprintf(iCom+len, "--ntasks=%d ", numLocales);
     len += sprintf(iCom+len, "--ntasks-per-node=%d ", procsPerNode);
-    len += sprintf(iCom+len, "--cpus-per-task=%d ", getCoresPerLocale(nomultithread(false)));
+    len += sprintf(iCom+len, "--cpus-per-task=%d ", getCoresPerLocale(nomultithread(false), localesPerNode));
 
     // request specified node access
     if (nodeAccessStr != NULL)
@@ -490,7 +490,8 @@ static void chpl_launch_cleanup(void) {
 }
 
 
-int chpl_launch(int argc, char* argv[], int32_t numLocales) {
+int chpl_launch(int argc, char* argv[], int32_t numLocales, 
+                int32_t localesPerNode) {
   int retcode;
 
   // check the slurm version before continuing
@@ -510,8 +511,9 @@ int chpl_launch(int argc, char* argv[], int32_t numLocales) {
   }
   // otherwise generate the batch file or srun command and execute it
   else {
-    retcode = chpl_launch_using_system(chpl_launch_create_command(argc, argv,
-          numLocales), argv[0]);
+    char *cmd = chpl_launch_create_command(argc, argv, numLocales,
+                                           localesPerNode)
+    retcode = chpl_launch_using_system(cmd, argv[0]);
 
     chpl_launch_cleanup();
   }

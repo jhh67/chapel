@@ -241,6 +241,7 @@ void printHelpTable(void) {
 
 
 static int32_t _argNumLocales = 0;
+static int32_t _argLocalesPerNode = 1;
 
 void parseNumLocales(const char* numPtr, int32_t lineno, int32_t filename) {
   int invalid;
@@ -256,12 +257,32 @@ void parseNumLocales(const char* numPtr, int32_t lineno, int32_t filename) {
   }
 }
 
+void parseLocalesPerNode(const char* numPtr, int32_t lineno, int32_t filename) {
+  int invalid;
+  char invalidChars[2] = "\0\0";
+  _argLocalesPerNode = c_string_to_int32_t_precise(numPtr, &invalid,
+                                                   invalidChars);
+  if (invalid) {
+    char* message = chpl_glom_strings(3, "\"", numPtr,
+                              "\" is not a valid number of locales per node");
+    chpl_error(message, lineno, filename);
+  }
+  if (_argLocalesPerNode < 1) {
+    chpl_error("Number of locales per node must be greater than 0",
+               lineno, filename);
+  }
+}
+
 int32_t getArgNumLocales(void) {
   int32_t retval = 0;
   if (_argNumLocales) {
     retval = _argNumLocales;
   }
   return retval;
+}
+
+int32_t getArgLocalesPerNode(void) {
+  return _argLocalesPerNode;
 }
 
 

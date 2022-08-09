@@ -751,12 +751,14 @@ void chpl_launcher_get_job_name(char *baseName, char *jobName, int jobLen) {
 }
 
 
-int chpl_launch_prep(int* c_argc, char* argv[], int32_t* c_execNumLocales) {
+int chpl_launch_prep(int* c_argc, char* argv[], int32_t* c_execNumLocales,
+                     int32_t* c_execLocalesPerNode) {
   //
   // This is a user invocation, so parse the arguments to determine
   // the number of locales.
   //
   int32_t execNumLocales;
+  int32_t execLocalesPerNode;
   int argc = *c_argc;
 
   // Set up main argument parsing.
@@ -770,6 +772,7 @@ int chpl_launch_prep(int* c_argc, char* argv[], int32_t* c_execNumLocales) {
   parseArgs(true, parse_normally, &argc, argv);
 
   execNumLocales = getArgNumLocales();
+  execLocalesPerNode = getArgLocalesPerNode();
 
   //
   // If the user did not specify a number of locales let the
@@ -777,6 +780,10 @@ int chpl_launch_prep(int* c_argc, char* argv[], int32_t* c_execNumLocales) {
   //
   if (execNumLocales == 0) {
     execNumLocales = chpl_comm_default_num_locales();
+  }
+
+  if (execLocalesPerNode == 0) {
+    execLocalesPerNode = 1;
   }
   //
   // Before proceeding, allow the comm layer to verify that the
@@ -791,6 +798,7 @@ int chpl_launch_prep(int* c_argc, char* argv[], int32_t* c_execNumLocales) {
   CHPL_COMM_PRELAUNCH(execNumLocales);
 
   *c_execNumLocales = execNumLocales;
+  *c_execLocalesPerNode = execLocalesPerNode;
   *c_argc = argc;
 
   return 0;
@@ -799,13 +807,14 @@ int chpl_launch_prep(int* c_argc, char* argv[], int32_t* c_execNumLocales) {
 
 int chpl_launcher_main(int argc, char* argv[]) {
   int32_t execNumLocales;
+  int32_t execLocalesPerNode;
 
   //
   // The chpl_launch_prep function calls parseArgs, which modifies argc, so
   // so we need to make sure those changes are visible before calling
   // chpl_launch.
   //
-  if (chpl_launch_prep(&argc, argv, &execNumLocales)) {
+  if (chpl_launch_prep(&argc, argv, &execNumLocales, &execLocalesPerNode)) {
     return -1;
   }
 
@@ -813,7 +822,7 @@ int chpl_launcher_main(int argc, char* argv[]) {
   // Launch the program.
   // This may not return (e.g., if calling chpl_launch_using_exec()).
   //
-  int retval = chpl_launch(argc, argv, execNumLocales);
+  int retval = chpl_launch(argc, argv, execNumLocales, execLocalesPerNode);
   chpl_mem_free(chpl_real_binary_name, 0, 0);
   return retval;
 }

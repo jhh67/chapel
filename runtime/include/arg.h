@@ -35,9 +35,11 @@ typedef enum {
 } chpl_parseArgsMode_t;
 
 void parseNumLocales(const char* numPtr, int32_t lineno, int32_t filename);
+void parseLocalesPerNode(const char* numPtr, int32_t lineno, int32_t filename);
 void parseArgs(chpl_bool isLauncher, chpl_parseArgsMode_t mode,
                int* argc, char* argv[]);
 int32_t getArgNumLocales(void);
+int32_t getArgLocalesPerNode(void);
 int32_t chpl_baseUniqueLocaleID(int32_t r);
 int _runInGDB(void);
 int _runInLLDB(void);

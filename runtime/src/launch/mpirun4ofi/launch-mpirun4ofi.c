@@ -27,9 +27,11 @@
 #include "chpl-mem.h"
 #include "error.h"
 
+// TODO: handle localesPerNode correctly
 static char** chpl_launch_create_argv(const char *launch_cmd,
                                       int argc, char* argv[],
-                                      int32_t numLocales) {
+                                      int32_t numLocales,
+                                      int32_t localesPerNode) {
   if (strcmp(CHPL_COMM, "ofi") != 0) {
     chpl_error("mpirun4ofi only supports CHPL_COMM=ofi", 0, 0);
   }
@@ -62,11 +64,13 @@ static char** chpl_launch_create_argv(const char *launch_cmd,
 }
 
 
-int chpl_launch(int argc, char* argv[], int32_t numLocales) {
+int chpl_launch(int argc, char* argv[], int32_t numLocales,
+                int32_t localesPerNode) {
   const char *cmd = "mpirun";
   return chpl_launch_using_exec(cmd,
                                 chpl_launch_create_argv(cmd, argc, argv,
-                                                        numLocales),
+                                                        numLocales,
+                                                        localesPerNode),
                                 argv[0]);
 }
 

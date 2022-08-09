@@ -309,6 +309,9 @@ void initSetValue(const char* varName, const char* value,
   if (strcmp(varName, "numLocales") == 0) {
     parseNumLocales(value, lineno, filename);
   }
+  if (strcmp(varName, "localesPerNode") == 0) {
+    parseLocalesPerNode(value, lineno, filename);
+  }
   configVar->setValue = chpl_glom_strings(1, value);
 }
 
