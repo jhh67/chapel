@@ -586,11 +586,15 @@ void chpl_wait_for_shutdown(void);
 void chpl_set_num_locales_on_node(int32_t count);
 
 // Returns the number of locales on the local node.
-
 int32_t chpl_get_num_locales_on_node(void);
 
-// Returns true if node is oversubscribed, false otherwise.
+// Sets our local rank on the node.
+void chpl_set_local_rank(int32_t rank);
 
+// Returns our local rank on the node, -1 if it is not implemented.
+int32_t chpl_get_local_rank();
+
+// Returns true if node is oversubscribed, false otherwise.
 chpl_bool chpl_get_oversubscribed(void);
 
 #ifdef __cplusplus

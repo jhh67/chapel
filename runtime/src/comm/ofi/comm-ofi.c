@@ -1027,8 +1027,12 @@ void chpl_comm_init(int *argc_p, char ***argv_p) {
   time_init();
   chpl_comm_ofi_oob_init();
   DBG_INIT();
-  int32_t count = chpl_comm_ofi_oob_locales_on_node();
+  int32_t rank;
+  int32_t count = chpl_comm_ofi_oob_locales_on_node(&rank);
   chpl_set_num_locales_on_node(count);
+  if (rank != -1) {
+    chpl_set_local_rank(rank);
+  }
   //
   // Gather run-invariant environment info as early as possible.
   //

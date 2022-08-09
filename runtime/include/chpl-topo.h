@@ -25,6 +25,7 @@
 #include "chpltypes.h"
 
 #include "hwloc.h"
+#include "chpl-comm.h"
 
 #include <stdint.h>
 
@@ -39,6 +40,7 @@ extern "C" {
 // initialize the topology support
 //
 void chpl_topo_init(void);
+void chpl_topo_post_comm_init(void);
 void chpl_topo_exit(void);
 
 //

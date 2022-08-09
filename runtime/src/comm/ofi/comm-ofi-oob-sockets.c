@@ -101,7 +101,10 @@ void chpl_comm_ofi_oob_bcast(void* buf, size_t len) {
   }
 }
 
-int chpl_comm_ofi_oob_locales_on_node(void) {
+int chpl_comm_ofi_oob_locales_on_node(int *localRank) {
   // assume the answer is 1
+  if (localRank != NULL) {
+    *localRank = -1;
+  }
   return 1;
 }

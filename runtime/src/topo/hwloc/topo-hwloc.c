@@ -198,29 +198,29 @@ void chpl_topo_init(void) {
       }
     }
   }
+}
 
-  // If we  bound to a particular socket/package then find the
-  // corresponding socket object.
+void chpl_topo_post_comm_init(void) {
 
-  int useSocket = chpl_env_rt_get_int("USE_SOCKET", -1);
-  if (useSocket >= 0) {
+  // If we are oversubscribed then try to use our own socket.
+
+  int numLocalesOnNode = chpl_get_num_locales_on_node();
+  int rank = chpl_get_local_rank();
+  if ((numLocalesOnNode > 1) && (rank != -1)) {
+    int numSockets = 0;
     hwloc_obj_t socket = NULL;
     for (hwloc_obj_t sobj = hwloc_get_next_obj_by_type(topology,
                                  HWLOC_OBJ_PACKAGE, NULL);
         sobj != NULL;
         sobj = hwloc_get_next_obj_by_type(topology, HWLOC_OBJ_PACKAGE, sobj)) {
-      if (sobj->logical_index == useSocket) {
+      numSockets++;
+      if (sobj->logical_index == rank) {
         socket = sobj;
-        fprintf(stderr, "XXX %d using socket %d\n", getpid(), useSocket);
-      } else {
-        root2 = sobj;
       }
     }
-    if (socket == NULL) {
-      char msg[1024];
-      snprintf(msg, sizeof(msg), "socket %d does not exist", useSocket);
-      chpl_error(msg, 0, 0);
-    } else {
+    if ((socket != NULL) && (numLocalesOnNode < numSockets)) {
+      // we get our own socket
+      fprintf(stderr, "XXX %d using socket %d\n", getpid(), rank);
       root = socket;
     }
   }

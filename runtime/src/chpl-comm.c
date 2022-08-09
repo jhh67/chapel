@@ -46,6 +46,7 @@ int32_t          chpl_nodeID = -1;
 int32_t          chpl_numNodes = -1;
 static int32_t   numLocalesOnNode = -1;
 static chpl_bool oversubscribed = false;
+static int32_t   localRank = -1;
 
 
 //
@@ -262,6 +263,14 @@ int32_t chpl_get_num_locales_on_node(void) {
       chpl_internal_error("chpl_set_num_locales_on_node has not been called");
   }
   return numLocalesOnNode;
+}
+
+void chpl_set_local_rank(int32_t rank) {
+  localRank = rank;
+}
+
+int32_t chpl_get_local_rank(void) {
+  return localRank;
 }
 
 chpl_bool chpl_get_oversubscribed(void) {
