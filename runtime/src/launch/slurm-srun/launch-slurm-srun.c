@@ -476,8 +476,8 @@ static char* chpl_launch_create_command(int argc, char* argv[],
 }
 
 
-static void genSBatchScript(int argc, char *argv[], int numLocales) {
-  chpl_launch_create_command(argc, argv, numLocales);
+static void genSBatchScript(int argc, char *argv[], int numLocales, int localesPerNode) {
+  chpl_launch_create_command(argc, argv, numLocales, localesPerNode);
 }
 
 
@@ -514,13 +514,13 @@ int chpl_launch(int argc, char* argv[], int32_t numLocales,
 
   // generate a batch script and exit if user wanted to
   if (generate_sbatch_script) {
-    genSBatchScript(argc, argv, numLocales);
+    genSBatchScript(argc, argv, numLocales, localesPerNode);
     retcode = 0;
   }
   // otherwise generate the batch file or srun command and execute it
   else {
     char *cmd = chpl_launch_create_command(argc, argv, numLocales,
-                                           localesPerNode)
+                                           localesPerNode);
     retcode = chpl_launch_using_system(cmd, argv[0]);
 
     chpl_launch_cleanup();
