@@ -409,6 +409,9 @@ static char* chpl_launch_create_command(int argc, char* argv[],
     len += sprintf(iCom+len, "--ntasks=%d ", numLocales);
     len += sprintf(iCom+len, "--ntasks-per-node=%d ", localesPerNode);
     len += sprintf(iCom+len, "--cpus-per-task=%d ", getCoresPerLocale(nomultithread(false), localesPerNode));
+    if (localesPerNode > 1) {
+      len += sprintf(iCom+len, "--cpu-bind=none ");
+    }
 
     // request specified node access
     if (nodeAccessStr != NULL)
