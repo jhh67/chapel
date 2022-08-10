@@ -58,6 +58,8 @@ static const flagType flagList[] = {
   { "nl", " <n>", "",
     "run program using n locales\n"
     "(equivalent to setting the numLocales config const)", 'g' },
+  { "lpn", " <n>", "", "run program with n locales per node\n"
+    "(equivalent to setting the localesPerNode config const)", 'g' },
   { "q", "", "quiet", "run program in quiet mode", 'g' },
   { "v", "", "verbose", "run program in verbose mode", 'g' },
   { "", "", "gdb", "run program in gdb", 'g' },
@@ -453,6 +455,26 @@ void parseArgs(chpl_bool isLauncher, chpl_parseArgsMode_t mode,
         } else {
           i += handleNonstandardArg(argc, argv, i, lineno, filename);
         }
+        break;
+
+      case 'l':
+        if ((currentArg[2] == 'p') && (currentArg[3] == 'n')) {
+          const char* numPtr;
+          if (currentArg[4] == '\0') {
+            i++;
+            if (i >= *argc) {
+              chpl_error("-lpn flag is missing <localesPerNode> argument",
+                         lineno, filename);
+            }
+            currentArg = argv[i];
+            numPtr = currentArg;
+          } else {
+            numPtr = &(currentArg[4]);
+          }
+          initSetValue("localesPerNode", numPtr, "Built-in", lineno, filename);
+          break;
+        }
+        i += handleNonstandardArg(argc, argv, i, lineno, filename);
         break;
 
       case 'n':
