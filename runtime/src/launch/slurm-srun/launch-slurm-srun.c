@@ -285,7 +285,7 @@ static char* chpl_launch_create_command(int argc, char* argv[],
     fprintf(slurmFile, "#SBATCH --nodes=%d\n", numNodes);
     fprintf(slurmFile, "#SBATCH --ntasks=%d\n", numLocales);
     fprintf(slurmFile, "#SBATCH --ntasks-per-node=%d\n", localesPerNode);
-    fprintf(slurmFile, "#SBATCH --cpus-per-task=%d\n", getCoresPerLocale(nomultithread(true)));
+    fprintf(slurmFile, "#SBATCH --cpus-per-task=%d\n", getCoresPerLocale(nomultithread(true), localesPerNode));
 
     // request specified node access
     if (nodeAccessStr != NULL)
