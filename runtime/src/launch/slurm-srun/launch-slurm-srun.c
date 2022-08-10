@@ -397,12 +397,17 @@ static char* chpl_launch_create_command(int argc, char* argv[],
     // suppress informational messages, will still display errors
     len += sprintf(iCom+len, "--quiet ");
 
+    int32_t numNodes = numLocales;
+    if (localesPerNode != 1) {
+      numNodes = (numLocales+1) / localesPerNode;
+    }
+
     // request the number of locales, with 1 task per node, and number of cores
     // cpus-per-task. We probably don't need --nodes and --ntasks specified
     // since 1 task-per-node with n --tasks implies -n nodes
-    len += sprintf(iCom+len, "--nodes=%d ",numLocales);
+    len += sprintf(iCom+len, "--nodes=%d ",numNodes);
     len += sprintf(iCom+len, "--ntasks=%d ", numLocales);
-    len += sprintf(iCom+len, "--ntasks-per-node=%d ", procsPerNode);
+    len += sprintf(iCom+len, "--ntasks-per-node=%d ", localesPerNode);
     len += sprintf(iCom+len, "--cpus-per-task=%d ", getCoresPerLocale(nomultithread(false), localesPerNode));
 
     // request specified node access
