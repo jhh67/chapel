@@ -229,6 +229,8 @@ module ChapelIO {
 
       if (isClassType(t)) {
         if _to_borrowed(t) != borrowed object {
+          // XXX TODO figure out what this means wrt default encoder
+
           // only write parent fields for subclasses of object
           // since object has no .super field.
           writeThisFieldsDefaultImpl(writer, x.super, first);
@@ -295,11 +297,8 @@ module ChapelIO {
           start = new ioLiteral("new " + t:string + "(");
         } else {
           // the default 'braces' type
-          if isClassType(t) {
-            start = new ioLiteral("{");
-          } else {
-            start = new ioLiteral("(");
-          }
+          writer.encoder.encode(x);
+          return;
         }
         writer.writeIt(start);
       }
@@ -670,10 +669,7 @@ module ChapelIO {
       comma1tup = new ioLiteral("");
       end = new ioLiteral("]");
     } else {
-      start = new ioLiteral("(");
-      comma = new ioLiteral(", ");
-      comma1tup = new ioLiteral(",");
-      end = new ioLiteral(")");
+      f.encoder.encode(this);
     }
 
     if !binary {
@@ -704,30 +700,7 @@ module ChapelIO {
   pragma "no doc"
   proc range.writeThis(f) throws
   {
-    // a range with a more normalized alignment
-    // a separate variable so 'this' can be const
-    var alignCheckRange = this;
-    if f.writing {
-      alignCheckRange.normalizeAlignment();
-    }
-
-    if hasLowBound() then
-      f <~> lowBound;
-    f <~> new ioLiteral("..");
-    if hasHighBound() {
-      if (chpl__singleValIdxType(this.idxType) && this._low != this._high) {
-        f <~> new ioLiteral("<") <~> lowBound;
-      } else {
-        f <~> highBound;
-      }
-    }
-    if stride != 1 then
-      f <~> new ioLiteral(" by ") <~> stride;
-
-    // Write out the alignment only if it differs from natural alignment.
-    // We take alignment modulo the stride for consistency.
-    if ! alignCheckRange.isNaturallyAligned() && aligned then
-      f <~> new ioLiteral(" align ") <~> chpl_intToIdx(chpl__mod(chpl__idxToInt(alignment), stride));
+    f.encoder.encode(this);
   }
 
   pragma "no doc"

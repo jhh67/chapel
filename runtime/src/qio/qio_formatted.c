@@ -5006,10 +5006,10 @@ qioerr qio_conv_parse(c_string fmt,
         }
       }
     } else if( specifier == 't' ) {
-      style_out->base = 10;
-      style_out->pad_char = ' ';
-      style_out->realfmt = 2;
-      style_out->string_format = QIO_STRING_FORMAT_CHPL;
+      //style_out->base = 10;
+      //style_out->pad_char = ' ';
+      //style_out->realfmt = 2;
+      // XXX style_out->string_format = QIO_STRING_FORMAT_CHPL;
 
       // Handle precision
       if( precision != WIDTH_NOT_SET ) {
