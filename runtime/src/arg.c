@@ -243,7 +243,8 @@ void printHelpTable(void) {
 
 
 static int32_t _argNumLocales = 0;
-static int32_t _argLocalesPerNode = 1;
+static int32_t _argLocalesPerNode = 0;
+static int32_t _argNumNodes = 0;
 
 void parseNumLocales(const char* numPtr, int32_t lineno, int32_t filename) {
   int invalid;
@@ -275,6 +276,22 @@ void parseLocalesPerNode(const char* numPtr, int32_t lineno, int32_t filename) {
   }
 }
 
+void parseNumNodes(const char* numPtr, int32_t lineno, int32_t filename) {
+  int invalid;
+  char invalidChars[2] = "\0\0";
+  _argNumNodes = c_string_to_int32_t_precise(numPtr, &invalid,
+                                                   invalidChars);
+  if (invalid) {
+    char* message = chpl_glom_strings(3, "\"", numPtr,
+                              "\" is not a valid number of nodes");
+    chpl_error(message, lineno, filename);
+  }
+  if (_argNumNodes < 1) {
+    chpl_error("Number nodes must be greater than 0",
+               lineno, filename);
+  }
+}
+
 int32_t getArgNumLocales(void) {
   int32_t retval = 0;
   if (_argNumLocales) {
@@ -287,6 +304,13 @@ int32_t getArgLocalesPerNode(void) {
   return _argLocalesPerNode;
 }
 
+int32_t getArgNumNodes(void) {
+  int32_t retval = 0;
+  if (_argNumNodes) {
+    retval = _argNumNodes;
+  }
+  return retval;
+}
 
 extern void chpl_program_about(void); // The generated code provides this
 void parseArgs(chpl_bool isLauncher, chpl_parseArgsMode_t mode,
@@ -492,6 +516,21 @@ void parseArgs(chpl_bool isLauncher, chpl_parseArgsMode_t mode,
             numPtr = &(currentArg[3]);
           }
           initSetValue("numLocales", numPtr, "Built-in", lineno, filename);
+          break;
+        } else if (currentArg[2] == 'n') {
+          const char* numPtr;
+          if (currentArg[3] == '\0') {
+            i++;
+            if (i >= *argc) {
+              chpl_error("-nn flag is missing <numNodes> argument",
+                         lineno, filename);
+            }
+            currentArg = argv[i];
+            numPtr = currentArg;
+          } else {
+            numPtr = &(currentArg[3]);
+          }
+          initSetValue("numNodes", numPtr, "Built-in", lineno, filename);
           break;
         }
         i += handleNonstandardArg(argc, argv, i, lineno, filename);

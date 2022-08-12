@@ -30,4 +30,5 @@ module ChapelNumLocales {
   //
   config const numLocales = chpl_comm_default_num_locales();
   config const localesPerNode = 1;
+  config const numNodes = numLocales;
 }

@@ -759,6 +759,7 @@ int chpl_launch_prep(int* c_argc, char* argv[], int32_t* c_execNumLocales,
   //
   int32_t execNumLocales;
   int32_t execLocalesPerNode;
+  int32_t execNumNodes;
   int argc = *c_argc;
 
   // Set up main argument parsing.
@@ -773,18 +774,44 @@ int chpl_launch_prep(int* c_argc, char* argv[], int32_t* c_execNumLocales,
 
   execNumLocales = getArgNumLocales();
   execLocalesPerNode = getArgLocalesPerNode();
+  execNumNodes = getArgNumNodes();
 
-  //
+  // TODO: make sure all of this mess is correct
+  if ((execNumLocales != 0) && (execLocalesPerNode != 0) &&
+      (execNumNodes != 0)) {
+    if ((execNumLocales < ((execNumNodes - 1) * execLocalesPerNode)) ||
+        (execNumLocales > (execNumNodes * execLocalesPerNode))) {
+      chpl_error("invalid combo of # locales, # nodes, and locales/node",0,0);
+    }
+  }
+
+  if (execLocalesPerNode == 0) {
+    if ((execNumLocales != 0) && (execNumNodes != 0)) {
+      if (execNumLocales <= execNumNodes) {
+        execLocalesPerNode = 1;
+        execNumNodes = execNumLocales;
+      } else {
+        execLocalesPerNode = (execNumNodes+1) / execNumLocales;
+      }
+    } else {
+      execLocalesPerNode = 1;
+    }
+  }
   // If the user did not specify a number of locales let the
   // comm layer decide how many to use (or flag an error)
   //
   if (execNumLocales == 0) {
-    execNumLocales = chpl_comm_default_num_locales();
+    if (execNumNodes == 0) {
+      execNumLocales = chpl_comm_default_num_locales();
+    } else {
+      execNumLocales = execNumNodes / execLocalesPerNode;
+    }
   }
 
-  if (execLocalesPerNode == 0) {
-    execLocalesPerNode = 1;
+  if (execNumNodes == 0) {
+    execNumNodes = execNumLocales / execLocalesPerNode;
   }
+
   //
   // Before proceeding, allow the comm layer to verify that the
   // number of locales is reasonable
