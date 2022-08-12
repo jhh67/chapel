@@ -812,6 +812,9 @@ int chpl_launch_prep(int* c_argc, char* argv[], int32_t* c_execNumLocales,
     execNumNodes = execNumLocales / execLocalesPerNode;
   }
 
+  fprintf(stderr, "XXX numLocales %d localesPerNode %d numNodes %d\n",
+          execNumLocales, execNumLocales, execNumLocales);
+
   //
   // Before proceeding, allow the comm layer to verify that the
   // number of locales is reasonable
