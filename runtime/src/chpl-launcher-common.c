@@ -36,6 +36,7 @@
 #include "chpltypes.h"
 #include "error.h"
 #include "whereami.c"
+#include "chpl-env.h"
 
 // used in get_enviro_keys
 extern char** environ;
@@ -820,6 +821,12 @@ int chpl_launch_prep(int* c_argc, char* argv[], int32_t* c_execNumLocales,
   // number of locales is reasonable
   //
   chpl_comm_verify_num_locales(execNumLocales);
+
+  //
+  // Put the number of locales in an environment variable in case it
+  // wasn't specified on the command line.
+  //
+  chpl_env_set_uint("NUM_LOCALES", execNumLocales, 1);
 
   //
   // Let the comm layer do any last-minute pre-launch activities it

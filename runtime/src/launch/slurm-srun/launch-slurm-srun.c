@@ -504,7 +504,7 @@ static void chpl_launch_cleanup(void) {
 }
 
 
-int chpl_launch(int argc, char* argv[], int32_t numLocales, 
+int chpl_launch(int argc, char* argv[], int32_t numLocales,
                 int32_t localesPerNode) {
   int retcode;
 
