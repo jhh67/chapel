@@ -805,7 +805,7 @@ int chpl_launch_prep(int* c_argc, char* argv[], int32_t* c_execNumLocales,
     if (execNumNodes == 0) {
       execNumLocales = chpl_comm_default_num_locales();
     } else {
-      execNumLocales = execNumNodes / execLocalesPerNode;
+      execNumLocales = execNumNodes * execLocalesPerNode;
     }
   }
 
