@@ -397,8 +397,11 @@ static char* chpl_launch_create_command(int argc, char* argv[],
     // suppress informational messages, will still display errors
     len += sprintf(iCom+len, "--quiet ");
 
-    int32_t numNodes = numLocales;
-    if (localesPerNode != 1) {
+    int32_t numNodes;
+
+    if (localesPerNode == 1) {
+      numNodes = numLocales;
+    } else {
       numNodes = (numLocales+1) / localesPerNode;
     }
 
