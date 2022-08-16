@@ -653,12 +653,10 @@ static void setupSpinWaiting(void) {
 }
 
 static void setupAffinity(void) {
-  if (chpl_get_oversubscribed()) {
-    //chpl_qt_setenv("AFFINITY", "no", 0);
-  }
 
   // For the binders topo spread threads across sockets instead of packing.
   // Only impacts binders, but it doesn't hurt to set it for other configs.
+  // This only has an effect if CPUBIND is not set.
   chpl_qt_setenv("LAYOUT", "BALANCED", 0);
 }
 
@@ -688,24 +686,33 @@ void chpl_task_init(void)
         snprintf(msg, sizeof(msg), "CHPL_QTHREAD_TOPOLOGY is \"%s\"", topo);
         chpl_error(msg, 0, 0);
     }
-    // we should only use PUs in the specified socket
+    /*
+    If the number of CPUs accessible and available to us is less than
+    the total number of CPUs then we set CPUBIND so that qthreads only
+    uses our CPUs. Otherwise CPUBIND is not set and the binders
+    topology will use its default setting (set in setupAffinity).
+    */
 
-    hwloc_const_cpuset_t cpuset = chpl_topo_getCPUsPhysical(true);
-    if (cpuset) {
-        char buf[4096];
-        int offset = 0;
-        buf[0] = '\0';
-        int i;
-        hwloc_bitmap_foreach_begin(i, cpuset)
-            offset += snprintf(buf+offset, sizeof(buf) - offset, "%d:", i);
-        hwloc_bitmap_foreach_end();
-        if (offset > 0) {
-            // remove trailing ':'
-            buf[offset-1] = '\0';
+    if (chpl_topo_getNumCPUsPhysical(true, true) <
+        chpl_topo_getNumCPUsPhysical(false, false)) {
+
+        hwloc_const_cpuset_t cpuset = chpl_topo_getCPUsPhysical(true);
+        if (cpuset) {
+            char buf[4096];
+            int offset = 0;
+            buf[0] = '\0';
+            int i;
+            hwloc_bitmap_foreach_begin(i, cpuset)
+                offset += snprintf(buf+offset, sizeof(buf) - offset, "%d:", i);
+            hwloc_bitmap_foreach_end();
+            if (offset > 0) {
+                // remove trailing ':'
+                buf[offset-1] = '\0';
+            }
+            // tell binders to only use these cores
+            fprintf(stderr, "XXX %d cores %s\n", getpid(), buf);
+            chpl_qt_setenv("CPUBIND", buf, 1);
         }
-        // tell binders which cores to use
-        fprintf(stderr, "XXX %d cores %s\n", getpid(), buf);
-        chpl_qt_setenv("CPUBIND", buf, 1);
     }
     // Initialize qthreads
     pthread_create(&initer, NULL, initializer, NULL);
