@@ -246,7 +246,10 @@ void chpl_rt_init(int argc, char* argv[]) {
   // If the user specified a number of locales, have the comm layer
   // verify that it is reasonable.
   //
-  execNumLocales = chpl_env_rt_get_int("NUM_LOCALES", getArgNumLocales());
+  execNumLocales = getArgNumLocales();
+  if (execNumLocales == 0) {
+    execNumLocales = chpl_env_rt_get_int("NUM_LOCALES", 0);
+  }
 
   if (execNumLocales != 0) {
     chpl_comm_verify_num_locales(execNumLocales);
