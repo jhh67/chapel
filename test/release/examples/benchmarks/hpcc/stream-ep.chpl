@@ -204,5 +204,6 @@ proc printResults(successful, minTimes) {
     writeln("  max = ", maxGBPerSec);
     writeln("  avg = ", avgGBPerSec);
     writeln("  min = ", minGBPerSec);
+    writeln("  agg = ", avgGBPerSec * numLocales);
   }
 }

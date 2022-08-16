@@ -653,7 +653,6 @@ static void setupSpinWaiting(void) {
 }
 
 static void setupAffinity(void) {
-
     char* topo = getenv("CHPL_QTHREAD_TOPOLOGY");
     if (topo != NULL && strcmp(topo, "binders") == 0) {
         // By default binders should use the balanced layout that

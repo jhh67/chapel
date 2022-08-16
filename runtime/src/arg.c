@@ -286,6 +286,7 @@ void parseNumNodes(const char* numPtr, int32_t lineno, int32_t filename) {
                               "\" is not a valid number of nodes");
     chpl_error(message, lineno, filename);
   }
+  fprintf(stderr, "XXX parseNumNodes %d\n", _argNumNodes);
   if (_argNumNodes < 1) {
     chpl_error("Number nodes must be greater than 0",
                lineno, filename);
@@ -309,6 +310,7 @@ int32_t getArgNumNodes(void) {
   if (_argNumNodes) {
     retval = _argNumNodes;
   }
+  fprintf(stderr, "XXX getArgNumNodes %d\n", retval);
   return retval;
 }
 
@@ -591,6 +593,7 @@ void parseArgs(chpl_bool isLauncher, chpl_parseArgsMode_t mode,
 
 
 int chpl_specify_locales_error(void) {
+  abort();
   chpl_error("Specify number of locales via -nl <#> or --numLocales=<#>", 0, 0);
   return 0;
 }

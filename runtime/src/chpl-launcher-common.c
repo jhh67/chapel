@@ -777,6 +777,9 @@ int chpl_launch_prep(int* c_argc, char* argv[], int32_t* c_execNumLocales,
   execLocalesPerNode = getArgLocalesPerNode();
   execNumNodes = getArgNumNodes();
 
+  fprintf(stderr, "XXX numLocales %d localesPerNode %d numNodes %d\n",
+          execNumLocales, execLocalesPerNode, execNumNodes);
+
   // TODO: make sure all of this mess is correct
   if ((execNumLocales != 0) && (execLocalesPerNode != 0) &&
       (execNumNodes != 0)) {
@@ -803,6 +806,7 @@ int chpl_launch_prep(int* c_argc, char* argv[], int32_t* c_execNumLocales,
   //
   if (execNumLocales == 0) {
     if (execNumNodes == 0) {
+      fprintf(stderr, "XXX calling chpl_comm_default_num_locales\n");
       execNumLocales = chpl_comm_default_num_locales();
     } else {
       execNumLocales = execNumNodes * execLocalesPerNode;
@@ -814,7 +818,7 @@ int chpl_launch_prep(int* c_argc, char* argv[], int32_t* c_execNumLocales,
   }
 
   fprintf(stderr, "XXX numLocales %d localesPerNode %d numNodes %d\n",
-          execNumLocales, execNumLocales, execNumLocales);
+          execNumLocales, execLocalesPerNode, execNumNodes);
 
   //
   // Before proceeding, allow the comm layer to verify that the

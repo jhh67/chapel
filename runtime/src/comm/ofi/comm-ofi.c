@@ -1352,7 +1352,7 @@ void debugOverrideHints(struct fi_info* hints) {
                                   CFG_HINT(FI_MR_RAW),
                                   CFG_HINT(FI_MR_VIRT_ADDR),
                                   CFG_HINT(FI_MR_ALLOCATED),
-                                  CFG_HINT(FI_MR_PROV_KEY),
+                                  //CFG_HINT(FI_MR_PROV_KEY),
                                   CFG_HINT(FI_MR_MMU_NOTIFY),
                                   CFG_HINT(FI_MR_RMA_EVENT),
                                   CFG_HINT(FI_MR_ENDPOINT),
@@ -2115,7 +2115,7 @@ struct fi_info* getBaseProviderHints(chpl_bool* pTxAttrsForced) {
   hints->domain_attr->av_type = FI_AV_TABLE;
   hints->domain_attr->mr_mode = (  FI_MR_LOCAL
                                  | FI_MR_VIRT_ADDR
-                                 | FI_MR_PROV_KEY // TODO: avoid pkey bcast?
+                                 //| FI_MR_PROV_KEY // TODO: avoid pkey bcast?
                                  | FI_MR_ENDPOINT);
 
   // Set FI_MR_ALLOCATED if there is more than one node and the maximum
@@ -2750,7 +2750,8 @@ void init_ofiForMem(void) {
                                     | FI_MR_LOCAL
                                     | FI_MR_VIRT_ADDR
                                     | FI_MR_ALLOCATED
-                                    | FI_MR_PROV_KEY);
+                                    //| FI_MR_PROV_KEY);
+                                    );
   scalableMemReg = ((ofi_info->domain_attr->mr_mode & basicMemRegBits) == 0
                     && fixedHeapSize == 0);
 
@@ -2788,6 +2789,8 @@ void init_ofiForMem(void) {
 
   const chpl_bool prov_key =
     ((ofi_info->domain_attr->mr_mode & FI_MR_PROV_KEY) != 0);
+
+  fprintf(stderr, "XXX prov_key %d\n", prov_key);
 
   uint64_t bufAcc = FI_RECV | FI_REMOTE_READ | FI_REMOTE_WRITE;
 
