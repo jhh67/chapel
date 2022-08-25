@@ -410,6 +410,7 @@ AS_IF([test "x$enable_debugging" = xyes],
            CXXFLAGS="$CXXFLAGS -O0 -g"
            ;;
        esac])
+AC_USE_SYSTEM_EXTENSIONS
 AC_PROG_CC
 AS_IF([test "x$ac_cv_prog_cc_c99" == "xno"],
       [AC_MSG_ERROR([Qthreads requires a C compiler that supports the C99 standard.])])
