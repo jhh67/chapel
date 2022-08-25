@@ -36,7 +36,7 @@ ifneq ($(CHPL_MAKE_HWLOC),none)
   ifeq ($(CHPL_MAKE_HWLOC),bundled)
     CHPL_QTHREAD_CFG_OPTIONS += --with-hwloc=$(HWLOC_INSTALL_DIR)
     ifdef CHPL_HWLOC_PREFIX
-      CHPL_QTHREAD_CFG_OPTIONS += --with-hwloc-symbol-prefix="$(CHPL_HWLOC_PREFIX)hwloc_"
+      CHPL_QTHREAD_CFG_OPTIONS += --with-hwloc-symbol-prefix=$(CHPL_HWLOC_PREFIX)hwloc_
     endif
   endif
 endif
@@ -46,7 +46,7 @@ TOPOLOGY = $(CHPL_QTHREAD_TOPOLOGY)
 endif
 
 ifneq (, $(TOPOLOGY))
-CHPL_QTHREAD_CFG_OPTIONS += --with-topology=$(TOPOLOGY) 
+CHPL_QTHREAD_CFG_OPTIONS += --with-topology=$(TOPOLOGY) --with-hwloc-get-topology-function="chpl_topo_getHwlocTopology()"
 endif
 
 

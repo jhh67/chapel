@@ -5,21 +5,13 @@ dnl At the end, you CAN use __FUNCTION__, which will be "portable".
 AC_DEFUN([QTHREAD_CHECK_FUNCTION],
 		 [AC_CACHE_CHECK([whether $CC supports __FUNCTION__],
 			             [qt_cv_c99_FUNCTION],
-						 [AC_TRY_COMPILE(
-[#include <stdio.h>
-void foo(void) { printf("%s\n", __FUNCTION__); }],
-    [foo(); return 0;],
-    [qt_cv_c99_FUNCTION=yes],
-    [qt_cv_c99_FUNCTION=no])])
+						 [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdio.h>
+void foo(void) { printf("%s\n", __FUNCTION__); }]], [[foo(); return 0;]])],[qt_cv_c99_FUNCTION=yes],[qt_cv_c99_FUNCTION=no])])
 
 	AC_CACHE_CHECK([whether $CC supports __func__],
 	[qt_cv_c99_func],
-	[AC_TRY_COMPILE(
-[#include <stdio.h>
-void foo(void) { printf("%s\n", __func__); }],
-	[foo(); return 0;],
-	[qt_cv_c99_func=yes],
-	[qt_cv_c99_func=no])])
+	[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdio.h>
+void foo(void) { printf("%s\n", __func__); }]], [[foo(); return 0;]])],[qt_cv_c99_func=yes],[qt_cv_c99_func=no])])
 
 	found_fname=no
 	AS_IF([test x$qt_cv_c99_FUNCTION = xyes],

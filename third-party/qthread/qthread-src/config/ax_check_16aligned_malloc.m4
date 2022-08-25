@@ -3,7 +3,7 @@ dnl but different (obviously)
 AC_DEFUN([AX_CHECK_16ALIGNED_MALLOC],
 [AC_CACHE_CHECK([if mallocs guarantee 16-byte alignment],
   [ax_cv_func_malloc_16aligned],
-  [AC_TRY_RUN([
+  [AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <stdio.h>
 #include <stdlib.h>
 #if HAVE_UNISTD_H
@@ -22,10 +22,7 @@ int main()
       exit (1);
   exit (0);
 }
-              ],
-     [ax_cv_func_malloc_16aligned=yes],
-     [ax_cv_func_malloc_16aligned=no],
-     [ax_cv_func_malloc_16aligned=no])
+              ]])],[ax_cv_func_malloc_16aligned=yes],[ax_cv_func_malloc_16aligned=no],[ax_cv_func_malloc_16aligned=no])
   ])
 if test "$ax_cv_func_malloc_16aligned" = yes ; then
   AC_DEFINE([HAVE_16ALIGNED_MALLOC], [1],
@@ -35,7 +32,7 @@ fi
 AC_DEFUN([AX_CHECK_16ALIGNED_CALLOC],
 [AC_CACHE_CHECK([if callocs guarantee 16-byte alignment],
   [ax_cv_func_calloc_16aligned],
-  [AC_TRY_RUN([
+  [AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <stdio.h>
 #include <stdlib.h>
 #if HAVE_UNISTD_H
@@ -54,10 +51,7 @@ int main()
       exit (1);
   exit (0);
 }
-              ],
-     [ax_cv_func_calloc_16aligned=yes],
-     [ax_cv_func_calloc_16aligned=no],
-     [ax_cv_func_calloc_16aligned=no])
+              ]])],[ax_cv_func_calloc_16aligned=yes],[ax_cv_func_calloc_16aligned=no],[ax_cv_func_calloc_16aligned=no])
   ])
 if test "$ax_cv_func_calloc_16aligned" = yes ; then
   AC_DEFINE([HAVE_16ALIGNED_CALLOC], [1],

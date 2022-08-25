@@ -7,8 +7,7 @@ dnl QTHREAD_CHECK_BITFIELDS
 dnl ------------------------------------------------------------------------------
 AC_DEFUN([QTHREAD_CHECK_BITFIELDS], [
 AC_ARG_WITH([forward-bitfields],
-            [AC_HELP_STRING([--with-forward-bitfields],
-                            [Force bitfields to be declared in forward order
+            [AS_HELP_STRING([--with-forward-bitfields],[Force bitfields to be declared in forward order
                              (e.g. for cross-compiles)])])
 AS_IF([test "x$with_forward_bitfields" = x],
       [AC_CACHE_CHECK([bitfield ordering],

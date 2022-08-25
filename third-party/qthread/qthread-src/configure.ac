@@ -6,14 +6,12 @@
 ## --------------------- ##
 ## Autoconf Requirements ##
 ## --------------------- ##
-AC_PREREQ(2.59)
+AC_PREREQ([2.71])
 
 ## ---------------------------------- ##
 ## Autoconf / Automake Initialization ##
 ## ---------------------------------- ##
-AC_INIT([qthread],
-        [m4_esyscmd([config/version-gen])],
-        [wg-qthread@sandia.gov])
+AC_INIT([qthread],[m4_esyscmd([config/version-gen])],[wg-qthread@sandia.gov])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([config])
 AC_CONFIG_SRCDIR([src/qthread.c])
@@ -337,7 +335,7 @@ AC_ARG_ENABLE([third-party-benchmarks],
                                external benchmarks])])
 
 AC_ARG_WITH([scheduler],
-            [AS_HELP_STRING([--with-scheduler=[[type]]],
+            [AS_HELP_STRING([--/=[[type]]],
                             [Specify the scheduler. Options when using
                              single-threaded shepherds are: nemesis (default),
                              lifo, mdlifo, mutexfifo, and mtsfifo. Options 
@@ -413,9 +411,6 @@ AS_IF([test "x$enable_debugging" = xyes],
            ;;
        esac])
 AC_PROG_CC
-dnl We use system extensions.  This includes setting _GNU_SOURCE
-AC_USE_SYSTEM_EXTENSIONS
-AC_PROG_CC_C99
 AS_IF([test "x$ac_cv_prog_cc_c99" == "xno"],
       [AC_MSG_ERROR([Qthreads requires a C compiler that supports the C99 standard.])])
 AC_PROG_CPP
@@ -437,7 +432,7 @@ dnl This is to provide some backward libtool compatibility.
 dnl The weird formatting is to avoid spurious warnings from libtoolize
 m4_ifdef([LT_INIT],[
 LT_INIT],[
-AC_PROG_LIBTOOL])
+LT_INIT])
 AC_SUBST([LIBTOOL_DEPS])
 
 AM_PROG_CC_C_O
@@ -583,9 +578,30 @@ AC_CACHE_SAVE
 ## ----------------------- ##
 ## Checks for header files ##
 ## ----------------------- ##
-AC_HEADER_STDC
+m4_warn([obsolete],
+[The preprocessor macro `STDC_HEADERS' is obsolete.
+  Except in unusual embedded environments, you can safely include all
+  ISO C90 headers unconditionally.])dnl
+# Autoupdate added the next two lines to ensure that your configure
+# script's behavior did not change.  They are probably safe to remove.
+AC_CHECK_INCLUDES_DEFAULT
+AC_PROG_EGREP
+
 AC_HEADER_SYS_WAIT
-AC_HEADER_TIME
+m4_warn([obsolete],
+[Update your code to rely only on HAVE_SYS_TIME_H,
+then remove this warning and the obsolete code below it.
+All current systems provide time.h; it need not be checked for.
+Not all systems provide sys/time.h, but those that do, all allow
+you to include it and time.h simultaneously.])dnl
+AC_CHECK_HEADERS_ONCE([sys/time.h])
+# Obsolete code to be removed.
+if test $ac_cv_header_sys_time_h = yes; then
+  AC_DEFINE([TIME_WITH_SYS_TIME],[1],[Define to 1 if you can safely include both <sys/time.h>
+	     and <time.h>.  This macro is obsolete.])
+fi
+# End of obsolete code.
+
 AC_CHECK_HEADERS([stdlib.h fcntl.h ucontext.h sys/time.h sys/resource.h mach/mach_time.h malloc.h math.h sys/types.h sys/sysctl.h unistd.h sys/syscall.h])
 AX_CREATE_STDINT_H([include/qthread/qthread-int.h])
 AC_SYS_LARGEFILE

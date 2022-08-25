@@ -10,11 +10,17 @@ AC_DEFUN([QTHREAD_CHECK_HWLOC], [
   AC_ARG_WITH([hwloc],
               [AS_HELP_STRING([--with-hwloc=[[PATH]]],
 			                  [specify the path to the hwloc library; used for both the library and the include files])])
-  AC_ARG_WITH([hwloc-symbol-prefix], 
+  AC_ARG_WITH([hwloc-symbol-prefix],
               [AS_HELP_STRING([--with-hwloc-symbol-prefix=[[prefix]]],
-                        [specify prefix for hwloc symbols @<:@default=hwloc_@:>@.])], [], 
+                        [specify prefix for hwloc symbols @<:@default=hwloc_@:>@.])], [],
                         [with_hwloc_symbol_prefix="hwloc_"])
 
+  AC_ARG_WITH([hwloc-get-topology-function],
+              [AS_HELP_STRING([--with-hwloc-get-topology-function=[[name]]],
+                        [specify function to get hwloc topology (default uses hwloc_topology_init and hwloc_topology_load)])])
+
+  AS_IF([test "x$with_hwloc_get_topology_function" != x],
+    AC_DEFINE_UNQUOTED([HWLOC_GET_TOPOLOGY_FUNCTION],[$with_hwloc_get_topology_function], [foo]))
   hwloc_saved_CPPFLAGS="$CPPFLAGS"
   hwloc_saved_LDFLAGS="$LDFLAGS"
   AS_IF([test "x$with_hwloc" != x],
@@ -22,6 +28,10 @@ AC_DEFUN([QTHREAD_CHECK_HWLOC], [
 		 LDFLAGS="-L$with_hwloc/lib $LDFLAGS"])
   AC_CHECK_HEADERS([hwloc.h],[],
   				   [qt_allgoodsofar=no])
+  AS_IF([test "x$enable_teams_profiling" = xyes],
+      [AC_DEFINE([TEAM_PROFILE], [1], [Support dynamic profile of teams infomation])],
+      [enable_teams_profiling="no"])
+
   AS_IF([test "x$qt_allgoodsofar" = xyes],
 	    [AC_SEARCH_LIBS([${with_hwloc_symbol_prefix}topology_init], [hwloc "hwloc -lnuma"], [],
 		                [qt_allgoodsofar=no])])

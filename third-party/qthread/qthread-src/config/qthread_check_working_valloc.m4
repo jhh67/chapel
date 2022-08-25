@@ -10,7 +10,7 @@ dnl we'll need to avoid freeing it.
 AC_DEFUN([QTHREAD_CHECK_WORKING_VALLOC],
 [AC_CACHE_CHECK([if valloc()'d memory can be free()'d],
   [qthread_cv_working_valloc],
-  [AC_TRY_RUN([
+  [AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <stdio.h>
 #include <stdlib.h>
 #if HAVE_UNISTD_H
@@ -30,10 +30,7 @@ int main()
 
   exit (0);
 }
-              ],
-     [qthread_cv_working_valloc=yes],
-     [qthread_cv_working_valloc=no],
-     [qthread_cv_working_valloc=no])
+              ]])],[qthread_cv_working_valloc=yes],[qthread_cv_working_valloc=no],[qthread_cv_working_valloc=no])
   ])
 AS_IF([test "x$qthread_cv_working_valloc" = xyes],
   [AC_DEFINE([HAVE_WORKING_VALLOC], [1],

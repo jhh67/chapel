@@ -19,14 +19,11 @@ AS_IF([test "x$libnuma_happy" = "xyes"],
 AS_IF([test "x$libnuma_happy" = "xyes"],
   [AC_MSG_CHECKING(if NUMA is available)
    LIBS="$LIBS -lnuma"
-   AC_TRY_RUN([
+   AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <numa.h>
 int main() { return ( numa_available() != -1 ) ? 0 : 1; }
-  ],
-  [libnuma_happy=yes],
-  [libnuma_happy=no
-   LIBS="$QT_OLDLIBS"],
-  [libnuma_happy=no
+  ]])],[libnuma_happy=yes],[libnuma_happy=no
+   LIBS="$QT_OLDLIBS"],[libnuma_happy=no
    LIBS="$QT_OLDLIBS"])
   AC_MSG_RESULT($libnuma_happy)
   ])
@@ -39,13 +36,10 @@ AS_IF([test "x$libnuma_happy" = "xyes"],
     [AC_DEFINE([QTHREAD_LIBNUMA_V2],[1],[if libnuma provides numa_allocate_nodemask])])
   AC_CHECK_FUNCS([numa_num_configured_cpus numa_num_thread_cpus numa_bitmask_nbytes numa_distance])
   AS_IF([test "x$ac_cv_func_numa_distance" = "xyes"],
-        [AC_TRY_RUN([
+        [AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <numa.h>
 int main() { return (numa_distance(0,0) >= 0); }
-         ],
-		 [numa_distance_happy=yes],
-		 [numa_distance_happy=no],
-		 [numa_distance_happy=yes])])
+         ]])],[numa_distance_happy=yes],[numa_distance_happy=no],[numa_distance_happy=yes])])
   AS_IF([test "x$numa_distance_happy" = "xyes"],
       [AC_DEFINE([QTHREAD_NUMA_DISTANCE_WORKING],[1],[if libnuma's numa_distance() function works])])
   ])

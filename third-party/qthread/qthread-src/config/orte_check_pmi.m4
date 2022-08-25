@@ -24,11 +24,9 @@
 # --------------------------------------------------------
 AC_DEFUN([ORTE_CHECK_PMI],[
     AC_ARG_WITH([pmi],
-                [AC_HELP_STRING([--with-pmi@<:@=DIR@:>@],
-                                [Build PMI support, if found])])
+                [AS_HELP_STRING([--with-pmi@<:@=DIR@:>@],[Build PMI support, if found])])
     AC_ARG_WITH([pmi-libdir],
-        [AC_HELP_STRING([--with-pmi-libdir=DIR],
-             [Search for PMI libraries in DIR])])
+        [AS_HELP_STRING([--with-pmi-libdir=DIR],[Search for PMI libraries in DIR])])
     OMPI_CHECK_WITHDIR([pmi-libdir], [$with_pmi_libdir], [libpmi.*])
 
     AS_IF([test "$with_pmi" != "no"],

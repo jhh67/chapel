@@ -247,9 +247,15 @@ dnl with extended modes being tried first.
 [[-std=gnu99 -c99 -qlanglvl=extc99]], [$1], [$2])[]dnl
 ])# _AC_PROG_CC_C99
 
-# AC_PROG_CC_C99
+# m4_warn([obsolete],
+[AC_PROG_CC_C99 is obsolete; use AC_PROG_CC
+])dnl
+AC_REQUIRE(AC_PROG_CC)
 # --------------
-AC_DEFUN([AC_PROG_CC_C99],
+AC_DEFUN([m4_warn([obsolete],
+[AC_PROG_CC_C99 is obsolete; use AC_PROG_CC
+])dnl
+AC_REQUIRE(AC_PROG_CC)],
 [ AC_REQUIRE([AC_PROG_CC])dnl
   _AC_PROG_CC_C99
 ])

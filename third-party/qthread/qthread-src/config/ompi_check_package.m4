@@ -34,7 +34,7 @@ AC_DEFUN([_OMPI_CHECK_PACKAGE_HEADER], [
     ompi_check_package_header_happy="no"
     AS_IF([test "$3" = "/usr" -o "$3" = "/usr/local"],
            [ # try as is...
-            AC_VERBOSE([looking for header without includes])
+            AC_MSG_RESULT([looking for header without includes])
             AC_CHECK_HEADER([$2], [ompi_check_package_header_happy="yes"],
                             [ompi_check_package_header_happy="no"])
             AS_IF([test "$ompi_check_package_header_happy" = "no"],
@@ -83,7 +83,7 @@ AC_DEFUN([_OMPI_CHECK_PACKAGE_LIB], [
            ompi_check_package_libdir="$5"
            AS_IF([test "$ompi_check_package_libdir" = "" -o "$ompi_check_package_libdir" = "/usr" -o "$ompi_check_package_libdir" = "/usr/local"],
                [ # try as is...
-                AC_VERBOSE([looking for library without search path])
+                AC_MSG_RESULT([looking for library without search path])
                 AC_CHECK_LIB([$2], [$3], 
                         [ompi_check_package_lib_happy="yes"], 
                         [ompi_check_package_lib_happy="no"], [$4])
@@ -97,7 +97,7 @@ AC_DEFUN([_OMPI_CHECK_PACKAGE_LIB], [
                [AS_IF([test "$ompi_check_package_libdir" != ""],
                     [$1_LDFLAGS="$$1_LDFLAGS -L$ompi_check_package_libdir/lib"
                      LDFLAGS="$LDFLAGS -L$ompi_check_package_libdir/lib"
-                     AC_VERBOSE([looking for library in lib])
+                     AC_MSG_RESULT([looking for library in lib])
                      AC_CHECK_LIB([$2], [$3], 
                                [ompi_check_package_lib_happy="yes"], 
                                [ompi_check_package_lib_happy="no"], [$4])
@@ -111,7 +111,7 @@ AC_DEFUN([_OMPI_CHECK_PACKAGE_LIB], [
                [AS_IF([test "$ompi_check_package_libdir" != ""],
                     [$1_LDFLAGS="$$1_LDFLAGS -L$ompi_check_package_libdir/lib64"
                      LDFLAGS="$LDFLAGS -L$ompi_check_package_libdir/lib64"
-                     AC_VERBOSE([looking for library in lib64])
+                     AC_MSG_RESULT([looking for library in lib64])
                      AC_CHECK_LIB([$2], [$3], 
                                [ompi_check_package_lib_happy="yes"], 
                                [ompi_check_package_lib_happy="no"], [$4])
