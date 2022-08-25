@@ -531,6 +531,10 @@ void chpl_topo_setThreadLocality(c_sublocid_t subloc) {
 
   flags = HWLOC_CPUBIND_THREAD | HWLOC_CPUBIND_STRICT;
   char buf[1024];
+  hwloc_bitmap_list_snprintf(buf, sizeof(buf), getNumaObj(subloc)->allowed_cpuset);
+  fprintf(stderr, "XXX %d allowed_cpuset subloc %d: %s\n",
+          getpid(), (int) subloc, buf);
+
   hwloc_bitmap_list_snprintf(buf, sizeof(buf), cpuset);
   fprintf(stderr, "XXX %d chpl_topo_setThreadLocality subloc %d: %s\n",
           getpid(), (int) subloc, buf);
