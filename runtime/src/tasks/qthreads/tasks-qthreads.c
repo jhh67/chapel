@@ -663,6 +663,9 @@ static void setupAffinity(void) {
         // than the total number of CPUs then we set CPUBIND so that
         // qthreads only uses our CPUs.
 
+        int avail = chpl_topo_getNumCPUsPhysical(true, true);
+        int total = chpl_topo_getNumCPUsPhysical(false, false);
+        fprintf(stderr, "XXX affinity total %d avail %d\n", total, avail);
         if (chpl_topo_getNumCPUsPhysical(true, true) <
             chpl_topo_getNumCPUsPhysical(false, false)) {
 
