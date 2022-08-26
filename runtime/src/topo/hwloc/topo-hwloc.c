@@ -527,14 +527,15 @@ void chpl_topo_setThreadLocality(c_sublocid_t subloc) {
 
   flags = HWLOC_CPUBIND_THREAD | HWLOC_CPUBIND_STRICT;
   char buf[1024];
+  hwloc_cpuset_t tmp;
 
-  cpuset = chpl_topo_getCPUsPhysical(false);
-  hwloc_bitmap_list_snprintf(buf, sizeof(buf), cpuset);
+  tmp = chpl_topo_getCPUsPhysical(false);
+  hwloc_bitmap_list_snprintf(buf, sizeof(buf), tmp);
   fprintf(stderr, "XXX %d getCPUsPhysical subloc %d: %s\n",
           getpid(), (int) subloc, buf);
 
-  cpuset = chpl_topo_getCPUsLogical(false);
-  hwloc_bitmap_list_snprintf(buf, sizeof(buf), cpuset);
+  tmp = chpl_topo_getCPUsLogical(false);
+  hwloc_bitmap_list_snprintf(buf, sizeof(buf), tmp);
   fprintf(stderr, "XXX %d getCPUsLogical subloc %d: %s\n",
           getpid(), (int) subloc, buf);
 
