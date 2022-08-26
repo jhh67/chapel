@@ -272,10 +272,8 @@ static void getNumCPUs(void);
 // TODO: put these into an array
 static int numCPUsPhysAcc = -1;
 static int numCPUsPhysAll = -1;
-static int numCPUsPhysAccAvail = -1;
 static int numCPUsLogAcc  = -1;
 static int numCPUsLogAll  = -1;
-static int numCPUsLogAccAvail = -1;
 static hwloc_cpuset_t physAccSet;
 static hwloc_cpuset_t physAccAvailSet;
 static hwloc_cpuset_t logAccSet;
@@ -288,7 +286,7 @@ int chpl_topo_getNumCPUsPhysical(chpl_bool accessible_only,
   int result = 0;
   if (accessible_only) {
     if (available_only) {
-      result = numCPUsPhysAccAvail;
+      result = hwloc_bitmap_weight(physAccAvailSet);
     } else {
       result = numCPUsPhysAcc;
     }
@@ -305,7 +303,7 @@ int chpl_topo_getNumCPUsLogical(chpl_bool accessible_only,
   int result = 0;
   if (accessible_only) {
     if (available_only) {
-      result = numCPUsLogAccAvail;
+      result = hwloc_bitmap_weight(logAccAvailSet);
     } else {
       result = numCPUsLogAcc;
     }
@@ -406,10 +404,8 @@ hwloc_get_next_obj_inside_cpuset_by_type(topology, logAccSet,         \
 #undef NEXT_PU
 
   numCPUsPhysAcc = hwloc_bitmap_weight(physAccSet);
-  numCPUsPhysAccAvail = hwloc_bitmap_weight(physAccAvailSet);
 
   CHK_ERR(numCPUsPhysAcc > 0);
-  CHK_ERR(numCPUsPhysAccAvail > 0);
 
   //
   // all cores
@@ -421,10 +417,8 @@ hwloc_get_next_obj_inside_cpuset_by_type(topology, logAccSet,         \
   // accessible PUs
   //
   numCPUsLogAcc = hwloc_bitmap_weight(logAccSet);
-  numCPUsLogAccAvail = hwloc_bitmap_weight(logAccAvailSet);
 
   CHK_ERR(numCPUsLogAcc > 0);
-  CHK_ERR(numCPUsLogAccAvail > 0);
 
 
   //
