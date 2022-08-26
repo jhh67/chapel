@@ -348,66 +348,62 @@ void getNumCPUs(void) {
   CHK_ERR_ERRNO((logAccSet = hwloc_bitmap_alloc()) != NULL);
   CHK_ERR_ERRNO((physAccSet = hwloc_bitmap_alloc()) != NULL);
 
+  //
+  // Hwloc can't tell us the number of accessible cores directly, so get
+  // that by counting the parent cores of the accessible PUs.
+  //
+
+  //
+  // We could seemingly use hwloc_topology_get_allowed_cpuset() to get
+  // the set of accessible PUs here.  But that seems not to reflect the
+  // schedaffinity settings, so use hwloc_get_proc_cpubind() instead.
+  //
+  if (hwloc_get_proc_cpubind(topology, getpid(), logAccSet, 0) != 0) {
+#ifdef __APPLE__
+    const int errRecoverable = (errno == ENOSYS); // no cpubind on macOS
+#else
+    const int errRecoverable = 0;
+#endif
+    if (errRecoverable) {
+      hwloc_bitmap_fill(logAccSet);
+    } else {
+      REPORT_ERR_ERRNO(hwloc_get_proc_cpubind(topology, getpid(), logAccSet, 0)
+                       == 0);
+    }
+  }
+  hwloc_bitmap_and(logAccSet, logAccSet,
+                   hwloc_topology_get_online_cpuset(topology));
+
+  // Limit us to cores under our root.
+
   if (root != hwloc_get_root_obj(topology)) {
-    // Look for cores and PUs under our relative root.
-    // TODO: can hwloc do this for us?
-    (void) findObjectsByType(root, HWLOC_OBJ_PU, setCPUSet, logAccSet);
-    (void) findObjectsByType(root
-                             , HWLOC_OBJ_CORE, setCPUSet, physAccSet);
-    CHK_ERR_ERRNO((logAccAvailSet = hwloc_bitmap_dup(logAccSet)) != NULL);
-    CHK_ERR_ERRNO((physAccAvailSet = hwloc_bitmap_dup(physAccSet)) != NULL);
-    // XXX debug
-    hwloc_const_cpuset_t tmp = hwloc_topology_get_allowed_cpuset(topology);
+    hwloc_cpuset_t tmp = root->cpuset;
     char buf[1024];
     hwloc_bitmap_list_snprintf(buf, sizeof(buf), tmp);
-    fprintf(stderr, "XXX %d hwloc_topology_get_allowed_cpuset %s\n",
-            getpid(), buf);
-  } else {
-    //
-    // Hwloc can't tell us the number of accessible cores directly, so get
-    // that by counting the parent cores of the accessible PUs.
-    //
+    fprintf(stderr, "XXX %d root cpuset %s\n", getpid(), buf);
+    hwloc_bitmap_and(logAccSet, logAccSet, tmp);
+  }
 
-    //
-    // We could seemingly use hwloc_topology_get_allowed_cpuset() to get
-    // the set of accessible PUs here.  But that seems not to reflect the
-    // schedaffinity settings, so use hwloc_get_proc_cpubind() instead.
-    //
-    if (hwloc_get_proc_cpubind(topology, getpid(), logAccSet, 0) != 0) {
-#ifdef __APPLE__
-      const int errRecoverable = (errno == ENOSYS); // no cpubind on macOS
-#else
-      const int errRecoverable = 0;
-#endif
-      if (errRecoverable) {
-        hwloc_bitmap_fill(logAccSet);
-      } else {
-        REPORT_ERR_ERRNO(hwloc_get_proc_cpubind(topology, getpid(), logAccSet, 0)
-                         == 0);
-      }
-    }
-    hwloc_bitmap_and(logAccSet, logAccSet,
-                     hwloc_topology_get_online_cpuset(topology));
 
-    CHK_ERR_ERRNO((logAccAvailSet = hwloc_bitmap_dup(logAccSet)) != NULL);
-    CHK_ERR_ERRNO((physAccSet = hwloc_bitmap_alloc()) != NULL);
+
+  CHK_ERR_ERRNO((logAccAvailSet = hwloc_bitmap_dup(logAccSet)) != NULL);
+  CHK_ERR_ERRNO((physAccSet = hwloc_bitmap_alloc()) != NULL);
 
 #define NEXT_PU(pu)                                                     \
-  hwloc_get_next_obj_inside_cpuset_by_type(topology, logAccSet,         \
-                                             HWLOC_OBJ_PU, pu)
+hwloc_get_next_obj_inside_cpuset_by_type(topology, logAccSet,         \
+                                           HWLOC_OBJ_PU, pu)
 
-    for (hwloc_obj_t pu = NEXT_PU(NULL); pu != NULL; pu = NEXT_PU(pu)) {
-      hwloc_obj_t core;
-      CHK_ERR_ERRNO((core = hwloc_get_ancestor_obj_by_type(topology,
-                                                           HWLOC_OBJ_CORE,
-                                                           pu))
-                    != NULL);
-      hwloc_bitmap_set(physAccSet, core->logical_index);
-    }
-    CHK_ERR_ERRNO((physAccAvailSet = hwloc_bitmap_dup(physAccSet)) != NULL);
-
-  #undef NEXT_PU
+  for (hwloc_obj_t pu = NEXT_PU(NULL); pu != NULL; pu = NEXT_PU(pu)) {
+    hwloc_obj_t core;
+    CHK_ERR_ERRNO((core = hwloc_get_ancestor_obj_by_type(topology,
+                                                         HWLOC_OBJ_CORE,
+                                                         pu))
+                  != NULL);
+    hwloc_bitmap_set(physAccSet, core->logical_index);
   }
+  CHK_ERR_ERRNO((physAccAvailSet = hwloc_bitmap_dup(physAccSet)) != NULL);
+
+#undef NEXT_PU
 
   numCPUsPhysAcc = hwloc_bitmap_weight(physAccSet);
   numCPUsPhysAccAvail = hwloc_bitmap_weight(physAccAvailSet);
