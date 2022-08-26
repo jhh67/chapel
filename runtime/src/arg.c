@@ -60,6 +60,8 @@ static const flagType flagList[] = {
     "(equivalent to setting the numLocales config const)", 'g' },
   { "lpn", " <n>", "", "run program with n locales per node\n"
     "(equivalent to setting the localesPerNode config const)", 'g' },
+  { "nn", " <n>", "", "run program with n nodes\n"
+    "(equivalent to setting the numNodes config const)", 'g' },
   { "q", "", "quiet", "run program in quiet mode", 'g' },
   { "v", "", "verbose", "run program in verbose mode", 'g' },
   { "", "", "gdb", "run program in gdb", 'g' },
