@@ -1062,6 +1062,8 @@ void chpl_comm_init(int *argc_p, char ***argv_p) {
   envUseDedicatedAmhCores = chpl_env_rt_get_bool(
                                   "COMM_OFI_DEDICATED_AMH_CORES", true);
 
+  fprintf(stderr, "XXX envUseDedicatedAmhCores %d\n", envUseDedicatedAmhCores);
+
   //
   // The user can specify the provider by setting either the Chapel
   // CHPL_RT_COMM_OFI_PROVIDER environment variable or the libfabric

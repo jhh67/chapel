@@ -260,6 +260,7 @@ void chpl_topo_exit(void) {
 
 
 hwloc_topology_t chpl_topo_getHwlocTopology(void) {
+  fprintf(stderr, "XXX chpl_topo_getHwlocTopology\n");
   return (haveTopology) ? topology : NULL;
 }
 
@@ -460,6 +461,7 @@ hwloc_cpuset_t chpl_topo_getCPUsLogical(chpl_bool avail) {
 // TODO: error checking
 void chpl_topo_reserveCPUPhysical(int id) {
   CHK_ERR(pthread_once(&numCPUs_ctrl, getNumCPUs) == 0);
+  fprintf(stderr, "XXX chpl_topo_reserveCPUPhysical %d\n", id);
   hwloc_bitmap_clr(physAccAvailSet, id);
 }
 
