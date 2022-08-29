@@ -390,7 +390,7 @@ void getNumCPUs(void) {
   CHK_ERR(numCPUsLogAll > 0);
   numCPUsLogAcc = hwloc_bitmap_weight(logAccSet);
 
-  if (numCPUsLogAcc < numCPUsLogAll) {
+  if (numCPUsLogAcc == numCPUsLogAll) {
     if (root != hwloc_get_root_obj(topology)) {
       // Limit ourself to cores under our root
       hwloc_cpuset_t tmp = root->cpuset;
