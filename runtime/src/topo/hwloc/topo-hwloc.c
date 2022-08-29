@@ -55,6 +55,7 @@
 static chpl_bool haveTopology = false;
 
 static hwloc_topology_t topology;
+static hwloc_topology_t topologyExternal;
 
 static const struct hwloc_topology_support* topoSupport;
 static chpl_bool do_set_area_membind;
@@ -144,8 +145,7 @@ void chpl_topo_init(void) {
   CHK_ERR_ERRNO(hwloc_topology_init(&topology) == 0);
 
   // Make sure we get everything including I/O devices.
-  int flags = HWLOC_TOPOLOGY_FLAG_WHOLE_SYSTEM | HWLOC_TOPOLOGY_FLAG_WHOLE_IO |
-    HWLOC_TOPOLOGY_FLAG_IO_BRIDGES | HWLOC_TOPOLOGY_FLAG_IO_DEVICES;
+  int flags = HWLOC_TOPOLOGY_FLAG_WHOLE_IO | HWLOC_TOPOLOGY_FLAG_IO_BRIDGES | HWLOC_TOPOLOGY_FLAG_IO_DEVICES;
   CHK_ERR_ERRNO(hwloc_topology_set_flags(topology, flags) == 0);
 
   //
@@ -157,6 +157,13 @@ void chpl_topo_init(void) {
   // What is supported?
   //
   topoSupport = hwloc_topology_get_support(topology);
+
+  //
+  // External modules that call chpl_topo_getHwlocTopology, such as qthreads,
+  // don't expect it to contain I/O devices and qthreads seg faults if it
+  // does. Create another topology w/out I/O devices for its use.
+  CHK_ERR_ERRNO(hwloc_topology_init(&topologyExternal) == 0);
+  CHK_ERR_ERRNO(hwloc_topology_load(topologyExternal) == 0);
 
   //
   // TODO: update comment
@@ -256,12 +263,14 @@ void chpl_topo_exit(void) {
   }
 
   hwloc_topology_destroy(topology);
+  hwloc_topology_destroy(topologyExternal);
+
 }
 
 
 hwloc_topology_t chpl_topo_getHwlocTopology(void) {
   fprintf(stderr, "XXX chpl_topo_getHwlocTopology\n");
-  return (haveTopology) ? topology : NULL;
+  return (haveTopology) ? topologyExternal : NULL;
 }
 
 

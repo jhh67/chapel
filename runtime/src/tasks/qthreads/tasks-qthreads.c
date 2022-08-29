@@ -655,9 +655,7 @@ static void setupSpinWaiting(void) {
 static void setupAffinity(void) {
     char* topo = getenv("CHPL_QTHREAD_TOPOLOGY");
     if (topo != NULL && strcmp(topo, "binders") == 0) {
-        // By default binders should use the balanced layout that
-        // spreads threads across sockets instead of packing.
-        chpl_qt_setenv("LAYOUT", "BALANCED", 0);
+        chpl_qt_setenv("LAYOUT", "COMPACT", 0);
 
         // If the number of CPUs accessible and available to us is less
         // than the total number of CPUs then we set CPUBIND so that
