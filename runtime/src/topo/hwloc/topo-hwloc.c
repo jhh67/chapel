@@ -66,11 +66,9 @@ static int numNumaDomains;
 
 // root object for this locale
 static hwloc_obj_t root = NULL;
-static hwloc_obj_t root2 = NULL;
 
 
 static hwloc_obj_t getNumaObj(c_sublocid_t);
-static hwloc_obj_t getNumaObj2(c_sublocid_t);
 static void alignAddrSize(void*, size_t, chpl_bool,
                           size_t*, unsigned char**, size_t*);
 static void chpl_topo_setMemLocalityByPages(unsigned char*, size_t,
@@ -202,7 +200,8 @@ void chpl_topo_init(void) {
 
 void chpl_topo_post_comm_init(void) {
 
-  // If we are oversubscribed then try to use our own socket.
+  // If the number of locales on this node equals the number of sockets
+  // then give each its own socket.
 
   int numLocalesOnNode = chpl_get_num_locales_on_node();
   int rank = chpl_get_local_rank();
@@ -218,14 +217,14 @@ void chpl_topo_post_comm_init(void) {
         socket = sobj;
       }
     }
-    if ((socket != NULL) && (numLocalesOnNode <= numSockets)) {
+    if ((socket != NULL) && (numLocalesOnNode == numSockets)) {
       // we get our own socket
       fprintf(stderr, "XXX %d using socket %d\n", getpid(), rank);
       root = socket;
     }
   }
-
   if (root == NULL) {
+    // we didn't get our own socket
     root = hwloc_get_root_obj(topology);
   }
 
@@ -372,18 +371,44 @@ void getNumCPUs(void) {
   hwloc_bitmap_and(logAccSet, logAccSet,
                    hwloc_topology_get_online_cpuset(topology));
 
-  // Limit us to cores under our root.
+  //
+  // If some PUs are inaccessible then use all that are accessible to us.
+  // Otherwise, if we are oversubscribed then we have to share the PUs
+  // with the other locales.
+  //
+  numCPUsLogAll = hwloc_get_nbobjs_by_type(topology, HWLOC_OBJ_PU);
+  CHK_ERR(numCPUsLogAll > 0);
+  numCPUsLogAcc = hwloc_bitmap_weight(logAccSet);
 
-  if (root != hwloc_get_root_obj(topology)) {
-    hwloc_cpuset_t tmp = root->cpuset;
-    char buf[1024];
-    hwloc_bitmap_list_snprintf(buf, sizeof(buf), tmp);
-    fprintf(stderr, "XXX %d root cpuset %s\n", getpid(), buf);
-    hwloc_bitmap_and(logAccSet, logAccSet, tmp);
+  if (numCPUsLogAcc < numCPUsLogAll) {
+    if (root != hwloc_get_root_obj(topology)) {
+      // Limit ourself to cores under our root
+      hwloc_cpuset_t tmp = root->cpuset;
+      char buf[1024];
+      hwloc_bitmap_list_snprintf(buf, sizeof(buf), tmp);
+      fprintf(stderr, "XXX %d root cpuset %s\n", getpid(), buf);
+      hwloc_bitmap_and(logAccSet, logAccSet, tmp);
+    } else {
+      int numLocales = chpl_get_num_locales_on_node();
+      if (numLocales > 1) {
+        // Determine which PUs we should use.
+        int rank = chpl_get_local_rank();
+        uint numPerLocale = numCPUsLogAcc / numLocales;
+        uint first = rank * numPerLocale;
+        uint last = (rank == (numLocales-1)) ? numCPUsLogAcc-1 :
+                   (((rank+1) * numPerLocale) - 1);
+        hwloc_cpuset_t ours = NULL;
+        CHK_ERR_ERRNO((ours = hwloc_bitmap_alloc()) != NULL);
+        for (uint i = first; i <= last; i++) {
+          hwloc_bitmap_set(ours, i);
+        }
+        hwloc_bitmap_and(logAccSet, logAccSet, ours);
+        if (ours != NULL) {
+          hwloc_bitmap_free(ours);
+        }
+      }
+    }
   }
-
-
-
   CHK_ERR_ERRNO((logAccAvailSet = hwloc_bitmap_dup(logAccSet)) != NULL);
   CHK_ERR_ERRNO((physAccSet = hwloc_bitmap_alloc()) != NULL);
 
@@ -414,18 +439,12 @@ hwloc_get_next_obj_inside_cpuset_by_type(topology, logAccSet,         \
   CHK_ERR(numCPUsPhysAll > 0);
 
   //
-  // accessible PUs
+  // Update the number of accessible PUs
   //
   numCPUsLogAcc = hwloc_bitmap_weight(logAccSet);
 
   CHK_ERR(numCPUsLogAcc > 0);
 
-
-  //
-  // all PUs
-  //
-  numCPUsLogAll = hwloc_get_nbobjs_by_type(topology, HWLOC_OBJ_PU);
-  CHK_ERR(numCPUsLogAll > 0);
 }
 
 hwloc_cpuset_t chpl_topo_getCPUsPhysical(chpl_bool avail) {
@@ -701,19 +720,6 @@ hwloc_obj_t getNumaObj(c_sublocid_t subloc) {
   // could easily imagine this being a bit slow, but it's okay for now
   hwloc_obj_t numa = hwloc_get_obj_inside_cpuset_by_depth(topology,
                                                             root->cpuset,
-                                                            numaLevel,
-                                                            subloc);
-  fprintf(stderr, "XXX %d getNumaObj %d logical index %d\n", getpid(),
-          (int) subloc, numa->logical_index);
-  return numa;
-}
-
-
-static inline
-hwloc_obj_t getNumaObj2(c_sublocid_t subloc) {
-  // could easily imagine this being a bit slow, but it's okay for now
-  hwloc_obj_t numa = hwloc_get_obj_inside_cpuset_by_depth(topology,
-                                                            root2->cpuset,
                                                             numaLevel,
                                                             subloc);
   fprintf(stderr, "XXX %d getNumaObj %d logical index %d\n", getpid(),

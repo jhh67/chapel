@@ -2055,12 +2055,10 @@ void init_ofiReserveCPUs() {
       (chpl_topo_getNumCPUsPhysical(true, true) > numAmHandlers)) {
     hwloc_bitmap_t tmpset = chpl_topo_getCPUsPhysical(true);
     if (tmpset != NULL) {
-      cpuset = hwloc_bitmap_alloc();
       int count = 0;
       for (uint i = hwloc_bitmap_last(tmpset);
            i >= hwloc_bitmap_first(tmpset); i--) {
         if (hwloc_bitmap_isset(tmpset, i)) {
-            hwloc_bitmap_set(cpuset, i);
             chpl_topo_reserveCPUPhysical(i);
             if (++count == numAmHandlers) {
               break;
