@@ -24,10 +24,16 @@
 
 #include "chpltypes.h"
 
-#include "hwloc.h"
 #include "chpl-comm.h"
 
 #include <stdint.h>
+
+#ifdef CHPL_USE_HWLOC
+#include "hwloc.h"
+#else
+#define hwloc_topology_t void *
+#define hwloc_cpuset_t void *
+#endif
 
 
 #ifdef __cplusplus

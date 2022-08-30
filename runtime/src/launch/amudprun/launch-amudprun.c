@@ -98,7 +98,12 @@ static char** chpl_launch_create_argv(const char *launch_cmd,
   return chpl_bundle_exec_args(argc, argv, largc, largv);
 }
 
-int chpl_launch(int argc, char* argv[], int32_t numLocales) {
+int chpl_launch(int argc, char* argv[], int32_t numLocales,
+                int32_t localesPerNode) {
+  int rc = chpl_launcher_check_locales_per_node(localesPerNode);
+  if (rc) {
+    return rc;
+  }
   int len = strlen(CHPL_THIRD_PARTY) + strlen(WRAP_TO_STR(LAUNCH_PATH)) + strlen("amudprun") + 2;
   char *cmd = chpl_mem_allocMany(len, sizeof(char), CHPL_RT_MD_COMMAND_BUFFER, -1, 0);
   snprintf(cmd, len, "%s/%samudprun", CHPL_THIRD_PARTY, WRAP_TO_STR(LAUNCH_PATH));

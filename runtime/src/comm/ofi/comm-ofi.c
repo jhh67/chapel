@@ -53,7 +53,6 @@
 #include "chpltypes.h"
 #include "error.h"
 
-#include "hwloc.h"
 #ifdef __linux__
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
@@ -993,6 +992,7 @@ static void init_bar(void);
 
 static void init_broadcast_private(void);
 
+#ifdef CHPL_USE_HWLOC
 static void dumpObj(int indent, hwloc_obj_t obj) {
     char buf[128];
     char buf2[128];
@@ -1011,6 +1011,7 @@ static void dumpObj(int indent, hwloc_obj_t obj) {
     }
 #endif
 }
+#endif
 
 
 
@@ -2053,6 +2054,8 @@ void init_ofiFabricDomain(void) {
 static
 void init_ofiReserveCPUs() {
 
+// We can't do it without hwloc
+#ifdef CHPL_USE_HWLOC
   if (envUseDedicatedAmhCores &&
       (chpl_topo_getNumCPUsPhysical(true, true) > numAmHandlers)) {
     hwloc_bitmap_t cpuset = chpl_topo_getCPUsPhysical(true);
@@ -2069,6 +2072,7 @@ void init_ofiReserveCPUs() {
       }
     }
   }
+#endif
 }
 
 static

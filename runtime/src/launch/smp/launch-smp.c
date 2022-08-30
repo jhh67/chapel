@@ -26,9 +26,13 @@
 
 // Simple launcher that just sets GASNET_PSHM_NODES and launchers the _real
 
-int chpl_launch(int argc, char* argv[], int32_t numLocales) {
+int chpl_launch(int argc, char* argv[], int32_t numLocales,
+                int32_t localesPerNode) {
   char baseCommand[4096];
-
+  int rc = chpl_launcher_check_locales_per_node(localesPerNode);
+  if (rc) {
+    return rc;
+  }
   chpl_env_set_uint("GASNET_PSHM_NODES", numLocales, 1);
 
   chpl_compute_real_binary_name(argv[0]);

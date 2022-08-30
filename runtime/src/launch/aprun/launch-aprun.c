@@ -36,7 +36,12 @@
 static const char *_ccArg = NULL;
 static const char* debug = NULL;
 
-int chpl_launch(int argc, char* argv[], int32_t numLocales) {
+int chpl_launch(int argc, char* argv[], int32_t numLocales,
+                int32_t localesPerNode) {
+  int rc = chpl_launcher_check_locales_per_node(localesPerNode);
+  if (rc) {
+    return rc;
+  }
   debug = getenv("CHPL_LAUNCHER_DEBUG");
   return chpl_launch_using_exec("aprun",
                                 chpl_create_aprun_cmd(argc, argv,

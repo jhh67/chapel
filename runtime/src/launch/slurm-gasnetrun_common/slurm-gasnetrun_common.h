@@ -323,8 +323,12 @@ static void chpl_launch_cleanup(void) {
 }
 
 
-int chpl_launch(int argc, char* argv[], int32_t numLocales) {
+int chpl_launch(int argc, char* argv[], int32_t numLocales, int32_t localesPerNode) {
   int retcode;
+  int rc = chpl_launcher_check_locales_per_node(localesPerNode);
+  if (rc) {
+    return rc;
+  }
 
   debug = getenv("CHPL_LAUNCHER_DEBUG");
 

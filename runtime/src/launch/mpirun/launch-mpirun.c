@@ -61,9 +61,13 @@ static char** chpl_launch_create_argv(const char *launch_cmd,
   return chpl_bundle_exec_args(argc, argv, largc, largv);
 }
 
-int chpl_launch(int argc, char* argv[], int32_t numLocales) {
+int chpl_launch(int argc, char* argv[], int32_t numLocales,
+                int32_t localesPerNode) {
   const char *cmd = "mpirun";
-
+  int rc = chpl_launcher_check_locales_per_node(localesPerNode);
+  if (rc) {
+    return rc;
+  }
   return chpl_launch_using_exec(cmd,
                                 chpl_launch_create_argv(cmd, argc, argv,
                                                         numLocales),

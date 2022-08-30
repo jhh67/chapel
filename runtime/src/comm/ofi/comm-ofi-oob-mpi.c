@@ -118,7 +118,7 @@ int chpl_comm_ofi_oob_locales_on_node(int *localRank) {
   MPI_CHK(MPI_Comm_free(&nodeComm));
   DBG_PRINTF(DBG_OOB, "MPI OOB locales on node: %d", nodeSize);
   if (localRank != NULL) {
-    *localRank = 0;  // TODO: implement this
+    *localRank = -1;  // TODO: implement this
   }
   return nodeSize;
 }

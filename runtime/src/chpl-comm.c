@@ -265,10 +265,13 @@ int32_t chpl_get_num_locales_on_node(void) {
   return numLocalesOnNode;
 }
 
+// Sets the rank (ordering) of the calling locale on the local node.
 void chpl_set_local_rank(int32_t rank) {
   localRank = rank;
 }
 
+// Returns the rank (ordering) of the calling locale on the local node.
+// Returns -1 if chpl_set_local_rank has not been called.
 int32_t chpl_get_local_rank(void) {
   return localRank;
 }

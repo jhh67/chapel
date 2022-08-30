@@ -74,7 +74,12 @@ static char** chpl_launch_create_argv(int argc, char* argv[],
 }
 
 
-int chpl_launch(int argc, char* argv[], int32_t numLocales) {
+int chpl_launch(int argc, char* argv[], int32_t numLocales,
+                int32_t localesPerNode) {
+  int rc = chpl_launcher_check_locales_per_node(localesPerNode);
+  if (rc) {
+    return rc;
+  }
   chpl_env_set("BSUB_QUIET", "1", 0);
   return chpl_launch_using_exec("bsub",
                                 chpl_launch_create_argv(argc, argv, numLocales),

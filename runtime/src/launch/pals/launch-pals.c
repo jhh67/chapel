@@ -32,7 +32,12 @@
 static const char *ccArg = NULL;
 
 
-int chpl_launch(int argc, char* argv[], int32_t numLocales) {
+int chpl_launch(int argc, char* argv[], int32_t numLocales,
+                int32_t localesPerNode) {
+  int rc = chpl_launcher_check_locales_per_node(localesPerNode);
+  if (rc) {
+    return rc;
+  }
   char **launchCmd = chpl_create_pals_cmd(argc, argv, numLocales, ccArg);
   return chpl_launch_using_exec(launchCmd[0], launchCmd, argv[0]);
 }

@@ -68,6 +68,7 @@ int chpl_launch_prep(int* c_argc, char* argv[], int32_t* c_execNumLocales,
 int chpl_launcher_main(int argc, char* argv[]);
 
 void chpl_launcher_get_job_name(char* baseName, char* jobName, int jobLen);
+int chpl_launcher_check_locales_per_node(int32_t localesPerNode);
 
 //
 // Defined in launch_<CHPL_LAUNCHER>.c

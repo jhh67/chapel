@@ -42,12 +42,16 @@ void* chpl_topo_getHwlocTopology(void) {
 }
 
 
-int chpl_topo_getNumCPUsPhysical(chpl_bool accessible_only) {
+int chpl_topo_getNumCPUsPhysical(chpl_bool accessible_only,
+                                 chpl_bool available_only) {
+  // available_only isn't supported
   return chpl_sys_getNumCPUsPhysical(accessible_only);
 }
 
 
-int chpl_topo_getNumCPUsLogical(chpl_bool accessible_only) {
+int chpl_topo_getNumCPUsLogical(chpl_bool accessible_only,
+                                chpl_bool available_only) {
+  // available_only isn't supported
   return chpl_sys_getNumCPUsLogical(accessible_only);
 }
 

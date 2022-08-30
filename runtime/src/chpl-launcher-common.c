@@ -751,6 +751,16 @@ void chpl_launcher_get_job_name(char *baseName, char *jobName, int jobLen) {
   }
 }
 
+int chpl_launcher_check_locales_per_node(int32_t localesPerNode) {
+  int rc = 0;
+  if (localesPerNode > 1) {
+    printf("Error: This launcher only supports one locale per node.\n");
+    rc = 1;
+  }
+  return rc;
+}
+
+
 
 int chpl_launch_prep(int* c_argc, char* argv[], int32_t* c_execNumLocales,
                      int32_t* c_execLocalesPerNode) {
