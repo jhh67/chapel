@@ -412,7 +412,7 @@ static char* chpl_launch_create_command(int argc, char* argv[],
     len += sprintf(iCom+len, "--nodes=%d ",numNodes);
     len += sprintf(iCom+len, "--ntasks=%d ", numLocales);
     len += sprintf(iCom+len, "--ntasks-per-node=%d ", localesPerNode);
-    if (localesPerNode > 1) {
+    if (localesPerNode == 1) {
       // Don't specify cpus-per-task if oversubscribed otherwise cores
       // won't be used due to rounding.
       len += sprintf(iCom+len, "--cpus-per-task=%d ", getCoresPerLocale(  nomultithread(false), localesPerNode));
