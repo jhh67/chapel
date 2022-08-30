@@ -658,35 +658,39 @@ static void setupAffinity(void) {
         chpl_qt_setenv("LAYOUT", "COMPACT", 0);
 
         // If the number of CPUs accessible and available to us is less
-        // than the total number of CPUs then we set CPUBIND so that
-        // qthreads only uses our CPUs.
+        // than the total number of CPUs and we are oversubscribed and
+        // we know our rank (which allows the CPUs to be partitioned)
+        // then set CPUBIND so that qthreads only uses our CPUs.
 
         int avail = chpl_topo_getNumCPUsPhysical(true, true);
         int total = chpl_topo_getNumCPUsPhysical(false, false);
         fprintf(stderr, "XXX affinity total %d avail %d\n", total, avail);
-        if (chpl_topo_getNumCPUsPhysical(true, true) <
-            chpl_topo_getNumCPUsPhysical(false, false)) {
+        if (chpl_get_oversubscribed()) {
+            if ((chpl_get_local_rank() != -1) &&
+                (chpl_topo_getNumCPUsPhysical(true, true) <
+                chpl_topo_getNumCPUsPhysical(false, false))) {
 
-            hwloc_const_cpuset_t cpuset = chpl_topo_getCPUsPhysical(true);
-            if (cpuset) {
-                char buf[4096];
-                int offset = 0;
-                buf[0] = '\0';
-                int i;
-                hwloc_bitmap_foreach_begin(i, cpuset)
-                    offset += snprintf(buf+offset, sizeof(buf) - offset, "%d:", i);
-                hwloc_bitmap_foreach_end();
-                if (offset > 0) {
-                    // remove trailing ':'
-                    buf[offset-1] = '\0';
+                hwloc_const_cpuset_t cpuset = chpl_topo_getCPUsPhysical(true);
+                if (cpuset) {
+                    char buf[4096];
+                    int offset = 0;
+                    buf[0] = '\0';
+                    int i;
+                    hwloc_bitmap_foreach_begin(i, cpuset)
+                        offset += snprintf(buf+offset, sizeof(buf) - offset, "%d:", i);
+                    hwloc_bitmap_foreach_end();
+                    if (offset > 0) {
+                        // remove trailing ':'
+                        buf[offset-1] = '\0';
+                    }
+                    // tell binders to only use these cores
+                    fprintf(stderr, "XXX %d cores %s\n", getpid(), buf);
+                    chpl_qt_setenv("CPUBIND", buf, 1);
                 }
-                // tell binders to only use these cores
-                fprintf(stderr, "XXX %d cores %s\n", getpid(), buf);
-                chpl_qt_setenv("CPUBIND", buf, 1);
+            } else {
+                chpl_qt_setenv("AFFINITY", "no", 0);
             }
         }
-    } else if (chpl_get_oversubscribed()) {
-        chpl_qt_setenv("AFFINITY", "no", 0);
     }
 }
 
