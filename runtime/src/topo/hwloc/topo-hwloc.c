@@ -403,18 +403,20 @@ void getNumCPUs(void) {
       if (numLocales > 1) {
         // Determine which PUs we should use.
         int rank = chpl_get_local_rank();
-        uint numPerLocale = numCPUsLogAcc / numLocales;
-        uint first = rank * numPerLocale;
-        uint last = (rank == (numLocales-1)) ? numCPUsLogAcc-1 :
-                   (((rank+1) * numPerLocale) - 1);
-        hwloc_cpuset_t ours = NULL;
-        CHK_ERR_ERRNO((ours = hwloc_bitmap_alloc()) != NULL);
-        for (uint i = first; i <= last; i++) {
-          hwloc_bitmap_set(ours, i);
-        }
-        hwloc_bitmap_and(logAccSet, logAccSet, ours);
-        if (ours != NULL) {
-          hwloc_bitmap_free(ours);
+        if (rank != -1) {
+          uint numPerLocale = numCPUsLogAcc / numLocales;
+          uint first = rank * numPerLocale;
+          uint last = (rank == (numLocales-1)) ? numCPUsLogAcc-1 :
+                     (((rank+1) * numPerLocale) - 1);
+          hwloc_cpuset_t ours = NULL;
+          CHK_ERR_ERRNO((ours = hwloc_bitmap_alloc()) != NULL);
+          for (uint i = first; i <= last; i++) {
+            hwloc_bitmap_set(ours, i);
+          }
+          hwloc_bitmap_and(logAccSet, logAccSet, ours);
+          if (ours != NULL) {
+            hwloc_bitmap_free(ours);
+          }
         }
       }
     }
