@@ -62,6 +62,11 @@ ifneq ($(MAKE_LAUNCHER),1)
   endif
 endif
 
+ifneq ($(MAKE_LAUNCHER),1)
+	ifeq (binders, $(CHPL_QTHREAD_TOPOLOGY))
+		LAUNCHER_CFLAGS += -DCHPL_QTHREAD_TOPOLOGY_BINDERS
+	endif
+endif
 # Get runtime headers and required -D flags.
 # sets RUNTIME_INCLUDE_ROOT RUNTIME_CFLAGS RUNTIME_INCLS
 include $(RUNTIME_ROOT)/make/Makefile.runtime.include

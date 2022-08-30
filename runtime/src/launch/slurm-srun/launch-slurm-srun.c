@@ -44,6 +44,7 @@ static int generate_sbatch_script = 0;
 static char* nodelist = NULL;
 static char* partition = NULL;
 static char* exclude = NULL;
+static chpl_bool useBinders = false;
 
 char slurmFilename[FILENAME_MAX];
 
@@ -194,6 +195,9 @@ static char* chpl_launch_create_command(int argc, char* argv[],
   char stdoutFileNoFmt    [MAX_COM_LEN];
   char tmpStdoutFileNoFmt [MAX_COM_LEN];
 
+#ifdef CHPL_QTHREAD_TOPOLOGY_BINDERS
+  useBinders = true;
+#endif
   // command line walltime takes precedence over env var
   if (!walltime) {
     walltime = getenv("CHPL_LAUNCHER_WALLTIME");
@@ -405,19 +409,26 @@ static char* chpl_launch_create_command(int argc, char* argv[],
       numNodes = (numLocales+1) / localesPerNode;
     }
 
-    // request the number of locales, with 1 task per node, and number of cores
-    // cpus-per-task. We probably don't need --nodes and --ntasks specified
-    // since 1 task-per-node with n --tasks implies -n nodes
     len += sprintf(iCom+len, "--nodes=%d ",numNodes);
     len += sprintf(iCom+len, "--ntasks=%d ", numLocales);
     len += sprintf(iCom+len, "--ntasks-per-node=%d ", localesPerNode);
-    len += sprintf(iCom+len, "--cpus-per-task=%d ", getCoresPerLocale(nomultithread(false), localesPerNode));
-    len += sprintf(iCom+len, "--cpu-bind=none ");
+    if (localesPerNode > 1) {
+      // Don't specify cpus-per-task if oversubscribed otherwise cores
+      // won't be used due to rounding.
+      len += sprintf(iCom+len, "--cpus-per-task=%d ", getCoresPerLocale(  nomultithread(false), localesPerNode));
+    }
+    if (useBinders) {
+      len += sprintf(iCom+len, "--cpu-bind=none ");
+    }
 
     // request specified node access
-    if (nodeAccessStr != NULL)
-      len += sprintf(iCom+len, "--%s ", nodeAccessStr);
-
+    if (nodeAccessStr != NULL) {
+      // Don't request exclusive access with binders and oversubscribed
+      // because the locales will partition the CPUs themselves
+      if ((localesPerNode == 1) || !useBinders || !strcmp(nodeAccessStr, "exclusive")) {
+        len += sprintf(iCom+len, "--%s ", nodeAccessStr);
+      }
+    }
     // request specified amount of memory
     if (memStr != NULL)
       len += sprintf(iCom+len, "--mem=%s ", memStr);

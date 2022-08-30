@@ -47,7 +47,7 @@ TOPOLOGY = $(CHPL_QTHREAD_TOPOLOGY)
 endif
 
 ifneq (, $(TOPOLOGY))
-CHPL_QTHREAD_CFG_OPTIONS += --with-topology=$(TOPOLOGY) 
+CHPL_QTHREAD_CFG_OPTIONS += --with-topology=$(TOPOLOGY)
 endif
 
 # Have qthreads use Chapel's allocator, unless directed not to
