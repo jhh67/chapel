@@ -105,8 +105,14 @@ void INTERNAL qt_affinity_init(qthread_shepherd_id_t *nbshepherds,
 {                                      /*{{{ */
     qthread_debug(AFFINITY_CALLS, "nbshepherds:%p:%u nbworkers:%p:%u\n", nbshepherds, *nbshepherds, nbworkers, *nbworkers);
     if (qthread_cas(&initialized, 0, 1) == 0) {
+#ifdef HWLOC_GET_TOPOLOGY_FUNCTION
+        extern hwloc_topology_t HWLOC_GET_TOPOLOGY_FUNCTION;
+        topology = HWLOC_GET_TOPOLOGY_FUNCTION;
+        qassertnot(topology, NULL);
+#else
         qassert(hwloc_topology_init(&topology), 0);
         qassert(hwloc_topology_load(topology), 0);
+#endif
         MACHINE_FENCE;
         initialized = 2;
     } else {

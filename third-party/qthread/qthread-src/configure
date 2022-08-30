@@ -4736,7 +4736,7 @@ then :
   with_topology=none_specified
 fi
              case "$with_topology" in
-                 hwloc|hwloc_via_chapel|binders|hwloc_v2|lgrp|libnuma|libnumaV2|mach|no|plpa|sys|tilera) ;;
+                 hwloc|binders|hwloc_v2|lgrp|libnuma|libnumaV2|mach|no|plpa|sys|tilera) ;;
                  none_specified) ;;
                  *)
                  as_fn_error $? "Unsupported topology library ($with_topology)" "$LINENO" 5
@@ -28467,7 +28467,7 @@ then :
   qthread_topo=no
 fi
        # First, check for hwloc, since it gives me the most portable/flexible/reliable/detailed information.
-       if test "x$qthread_topo" = xno -o "x$qthread_topo" = xbinders -o "x$qthread_topo" = xhwloc -o "x$qthread_topo" = xhwloc_via_chapel -o "x$qthread_topo" = xhwloc_v2
+       if test "x$qthread_topo" = xno -o "x$qthread_topo" = xbinders -o "x$qthread_topo" = xhwloc -o "x$qthread_topo" = xhwloc_v2
 then :
 
   qt_allgoodsofar=yes
@@ -28632,7 +28632,7 @@ then :
 
 printf "%s\n" "#define QTHREAD_HAVE_HWLOC 1" >>confdefs.h
 
-		 if test "x$qthread_topo" != xhwloc -a "x$qthread_topo" != xhwloc_via_chapel -a "x$qthread_topo" != xhwloc_v2 -a "x$qthread_topo" != xbinders
+		 if test "x$qthread_topo" != xhwloc -a "x$qthread_topo" != xhwloc_v2 -a "x$qthread_topo" != xbinders
 then :
   qthread_topo=hwloc
 fi

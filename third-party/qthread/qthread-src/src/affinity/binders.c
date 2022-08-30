@@ -96,7 +96,10 @@ void INTERNAL qt_affinity_init(qthread_shepherd_id_t *nbshepherds,
 #ifdef HWLOC_GET_TOPOLOGY_FUNCTION
   extern hwloc_topology_t HWLOC_GET_TOPOLOGY_FUNCTION;
   topology = HWLOC_GET_TOPOLOGY_FUNCTION;
-  fprintf(stderr, "XXX got technology %p\n", topology);
+  if (topology == NULL) {
+    printf("unable to get topology\n");
+    exit(-1);
+  }
 #else
   hwloc_topology_init(&topology);
   hwloc_topology_load(topology);
@@ -173,7 +176,6 @@ void INTERNAL qt_affinity_init(qthread_shepherd_id_t *nbshepherds,
       //hwloc_bitmap_list_snprintf(tmp, 256, sheps.binds[i]);
           char buf[1024];
           hwloc_bitmap_list_snprintf(buf, sizeof(buf), sheps.binds[i]);
-          fprintf(stderr, "XXX %d sheps.binds[%d]  %s\n", getpid(), i, buf);
       workers.num += hwloc_bitmap_weight(sheps.binds[i]);
     }
     j = 0;
@@ -187,7 +189,6 @@ void INTERNAL qt_affinity_init(qthread_shepherd_id_t *nbshepherds,
         //hwloc_bitmap_list_snprintf(tmp, 256, workers.binds[j]);
           char buf[1024];
           hwloc_bitmap_list_snprintf(buf, sizeof(buf), workers.binds[j]);
-          fprintf(stderr, "XXX %d workers.binds[%d]  %s\n", getpid(), j, buf);
         j++;
       hwloc_bitmap_foreach_end();
     }
@@ -209,7 +210,6 @@ void INTERNAL qt_affinity_set(qthread_worker_t *me,
   hwloc_set_cpubind(topology, workers.binds[me->packed_worker_id], HWLOC_CPUBIND_THREAD);
   char buf[1024];
   hwloc_bitmap_list_snprintf(buf, sizeof(buf), workers.binds[me->packed_worker_id]);
-  fprintf(stderr, "XXX %d qt_affinity_set %d %s\n", getpid(), me->packed_worker_id, buf);
 }                                     
 
 int INTERNAL qt_affinity_gendists(qthread_shepherd_t   *sheps,
