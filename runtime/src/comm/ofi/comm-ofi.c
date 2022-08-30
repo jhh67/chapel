@@ -1061,7 +1061,7 @@ void chpl_comm_init(int *argc_p, char ***argv_p) {
   envInjectAM = chpl_env_rt_get_bool("COMM_OFI_INJECT_AM", true);
 
   envUseDedicatedAmhCores = chpl_env_rt_get_bool(
-                                  "COMM_OFI_DEDICATED_AMH_CORES", true);
+                                  "COMM_OFI_DEDICATED_AMH_CORES", false);
 
   fprintf(stderr, "XXX envUseDedicatedAmhCores %d\n", envUseDedicatedAmhCores);
 
