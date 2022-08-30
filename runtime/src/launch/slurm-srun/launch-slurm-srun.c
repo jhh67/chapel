@@ -425,7 +425,7 @@ static char* chpl_launch_create_command(int argc, char* argv[],
     if (nodeAccessStr != NULL) {
       // Don't request exclusive access with binders and oversubscribed
       // because the locales will partition the CPUs themselves
-      if ((localesPerNode == 1) || !useBinders || !strcmp(nodeAccessStr, "exclusive")) {
+      if ((localesPerNode == 1) || !useBinders || strcmp(nodeAccessStr, "exclusive")) {
         len += sprintf(iCom+len, "--%s ", nodeAccessStr);
       }
     }
