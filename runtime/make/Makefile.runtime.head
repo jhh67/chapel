@@ -62,7 +62,7 @@ ifneq ($(MAKE_LAUNCHER),1)
   endif
 endif
 
-ifneq ($(MAKE_LAUNCHER),1)
+ifeq ($(MAKE_LAUNCHER),1)
 	ifeq (binders, $(CHPL_QTHREAD_TOPOLOGY))
 		LAUNCHER_CFLAGS += -DCHPL_QTHREAD_TOPOLOGY_BINDERS
 	endif
