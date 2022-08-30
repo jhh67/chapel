@@ -29,6 +29,7 @@ ifneq ($(CHPL_MAKE_HWLOC),none)
   # unless directed not to.
   ifeq (, $(call isTrue, $(CHPL_QTHREAD_DONT_GET_TOPO_FROM_RT)))
     TOPOLOGY = hwloc
+    CFLAGS_NEEDS_RT_INCLUDES = y
     CHPL_QTHREAD_CFG_OPTIONS += --with-hwloc-get-topology-function="chpl_topo_getHwlocTopology()"
   else
     TOPOLOGY = hwloc
@@ -52,6 +53,47 @@ endif
 # Have qthreads use Chapel's allocator, unless directed not to
 ifeq (, $(call isTrue, $(CHPL_QTHREAD_NO_CHPL_ALLOC)))
   CHPL_QTHREAD_CFG_OPTIONS += --with-alloc=chapel
+  CFLAGS_NEEDS_RT_INCLUDES = y
+endif
+
+FAILBUILD=
+ifeq ($(CFLAGS_NEEDS_RT_INCLUDES), y)
+  #
+  # When building the Chapel allocator file we need all the Chapel runtime
+  # defs and include directories, plus the third-party include dirs other
+  # than that for Qthreads itself (since we're building it).  Notably, we
+  # do not want -DNDEBUG; if we have that set when building Qthreads it
+  # seems to cause Chapel programs built with the result to hang during
+  # exit when shutting down Qthreads.
+  #
+  # Note that we call compileline with CHPL_MAKE_COMM=none. Under
+  # CHPL_MAKE_COMM=gasnet, compileline will fail if gasnet is not built,
+  # so in order to avoid ordering/dependencies just ignore the comm
+  # setting since it does not impact the qthreads build. We don't want
+  # to reset the CHPLENV_CACHE since the regular CHPL_COMM setting could
+  # impact things like CHPL_TARGET_CPU, which is part of the build path
+  #
+  # Throw COMPILELINE_STDERR_REDIRECT= if compileline failure is reported
+  # and you want to see the stderr from that.
+  #
+  COMPILELINE_STDERR_REDIRECT=2> /dev/null
+  COMM_NONE_CHPLENV_CACHE := $(shell echo "$(CHPL_MAKE_CHPLENV_CACHE)" | sed 's/|CHPL_MAKE_COMM=[^|]*|/|CHPL_MAKE_COMM=none|/')
+  INCS_DEFS := \
+    $(shell CHPL_HOME=$(CHPL_MAKE_HOME) CHPL_MAKE_CHPLENV_CACHE="$(COMM_NONE_CHPLENV_CACHE)" $(CHPL_MAKE_HOME)/util/config/compileline --includes-and-defines \
+               $(COMPILELINE_STDERR_REDIRECT) \
+            || echo compilelineFAILURE)
+  ifneq (, $(findstring compilelineFAILURE,$(INCS_DEFS)))
+    FAILBUILD=y
+  else
+    INCS_DEFS_PROCESSED := \
+      $(shell echo $(INCS_DEFS) \
+              | tr ' ' '\n' \
+              | grep '^-DCHPL\|/runtime//*include\|/third-party/.*/install' \
+              | grep -v '/third-party/qthread/install' \
+              | tr '\n' ' ' \
+              | sed 's/ $$//')
+    CFLAGS += $(INCS_DEFS_PROCESSED)
+  endif
 endif
 
 # enable guard pages for stack overflow detection, unless directed not to
