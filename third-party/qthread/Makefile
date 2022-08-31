@@ -159,7 +159,7 @@ CFLAGS += $(SHARED_LIB_CFLAGS)
 endif
 
 ifneq (, $(CHPL_QTHREAD_DEBUG))
-    CHPL_QTHREAD_CFG_OPTIONS += --enable-debugging --enable-debug=affinity
+    CHPL_QTHREAD_CFG_OPTIONS += --enable-debugging --enable-debug=$(CHPL_QTHREAD_DEBUG)
 endif
 
 CHPL_QTHREAD_CFG_OPTIONS += $(CHPL_QTHREAD_MORE_CFG_OPTIONS)

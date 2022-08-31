@@ -266,6 +266,7 @@ struct amRequest_execOnLrg_t {
 
 static int numAmHandlers = 1;
 
+// CPU set for AM handlers if not NULL
 static hwloc_cpuset_t cpuset = NULL;
 
 //
@@ -2058,12 +2059,14 @@ void init_ofiReserveCPUs() {
 #ifdef CHPL_USE_HWLOC
   if (envUseDedicatedAmhCores &&
       (chpl_topo_getNumCPUsPhysical(true, true) > numAmHandlers)) {
-    hwloc_bitmap_t cpuset = chpl_topo_getCPUsPhysical(true);
-    if (cpuset != NULL) {
+    cpuset = hwloc_bitmap_alloc();
+    hwloc_bitmap_t tmp = chpl_topo_getCPUsPhysical(true);
+    if (tmp != NULL) {
       int count = 0;
-      for (uint i = hwloc_bitmap_last(cpuset);
-           i >= hwloc_bitmap_first(cpuset); i--) {
-        if (hwloc_bitmap_isset(cpuset, i)) {
+      for (uint i = hwloc_bitmap_last(tmp);
+           i >= hwloc_bitmap_first(tmp); i--) {
+        if (hwloc_bitmap_isset(tmp, i)) {
+            hwloc_bitmap_set(cpuset, i);
             chpl_topo_reserveCPUPhysical(i);
             if (++count == numAmHandlers) {
               break;

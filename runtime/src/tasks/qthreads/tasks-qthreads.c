@@ -654,22 +654,30 @@ static void setupSpinWaiting(void) {
 
 static void setupAffinity(void) {
     char* topo = getenv("CHPL_QTHREAD_TOPOLOGY");
+    chpl_bool affinity = true;
+    if (chpl_get_oversubscribed()) {
+        affinity = false;
+    }
     if (topo != NULL && strcmp(topo, "binders") == 0) {
+        // By default binders should pack the threads onto CPUs.
         chpl_qt_setenv("LAYOUT", "COMPACT", 0);
-
-        // If the number of CPUs accessible and available to us is less
-        // than the total number of CPUs and we are oversubscribed and
-        // we know our rank (which allows the CPUs to be partitioned)
-        // then set CPUBIND so that qthreads only uses our CPUs.
 
         int avail = chpl_topo_getNumCPUsPhysical(true, true);
         int total = chpl_topo_getNumCPUsPhysical(false, false);
         fprintf(stderr, "XXX affinity total %d avail %d\n", total, avail);
-        if (chpl_get_oversubscribed()) {
-            if ((chpl_get_local_rank() != -1) &&
-                (chpl_topo_getNumCPUsPhysical(true, true) <
-                chpl_topo_getNumCPUsPhysical(false, false))) {
+        if (chpl_topo_getNumCPUsPhysical(true, true) <
+            chpl_topo_getNumCPUsPhysical(false, false)) {
 
+            // Some CPUs are not available to us. If we are the only
+            // locale, or we are oversubscribed but we have a rank,
+            // then use all available CPUs (having a rank means
+            // chpl_topo_getCPUsPhysical will only return CPUs we can
+            // use). Otherwise, if we are oversubscribed then turn off
+            // affinity, otherwise by default binders will do the
+            // binding.
+
+            if (!chpl_get_oversubscribed() || (chpl_get_local_rank() != -1)) {
+                // Use all the available CPUs
                 hwloc_const_cpuset_t cpuset = chpl_topo_getCPUsPhysical(true);
                 if (cpuset) {
                     char buf[4096];
@@ -683,15 +691,15 @@ static void setupAffinity(void) {
                         // remove trailing ':'
                         buf[offset-1] = '\0';
                     }
-                    // tell binders to only use these cores
+                    // tell binders to use these cores
                     fprintf(stderr, "XXX %d cores %s\n", getpid(), buf);
                     chpl_qt_setenv("CPUBIND", buf, 1);
+                    affinity = true;
                 }
-            } else {
-                chpl_qt_setenv("AFFINITY", "no", 0);
             }
         }
     }
+    chpl_qt_setenv("AFFINITY", affinity ? "yes" : "no", 0);
 }
 
 void chpl_task_init(void)

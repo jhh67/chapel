@@ -567,7 +567,7 @@ void INTERNAL qt_affinity_set(qthread_worker_t *me,
                       (shep_pus * myshep->node) + ((me->worker_id + (wraparounds * nworkerspershep)) % shep_pus),
                       (shep_pus * myshep->node) + (((me->worker_id * worker_pus) + (wraparounds * nworkerspershep) + (worker_wraparounds)) % shep_pus),
                       str);
-        FREE(str, strlen(str));
+        //FREE(str, strlen(str));
     }
 #endif /* ifdef QTHREAD_DEBUG_AFFINITY */
     if (hwloc_set_cpubind(topology, sub_obj->cpuset, HWLOC_CPUBIND_THREAD)) {
