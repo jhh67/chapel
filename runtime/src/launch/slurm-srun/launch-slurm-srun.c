@@ -484,12 +484,12 @@ static char* chpl_launch_create_command(int argc, char* argv[],
     }
 
     // add the (possibly wrapped) binary name
-    len += sprintf(iCom+len, "%s %s",
+    len += sprintf(iCom+len, "%s %s ",
         chpl_get_real_binary_wrapper(), chpl_get_real_binary_name());
 
     // add any arguments passed to the launcher to the binary
     for (i=1; i<argc; i++) {
-      len += sprintf(iCom+len, " %s", argv[i]);
+      len += sprintf(iCom+len, "%s ", argv[i]);
     }
 
     // add -nl in case it isn't already there
