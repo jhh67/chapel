@@ -24,11 +24,15 @@ module ChapelNumLocales {
   private use ChapelBase;
 
   extern proc chpl_comm_default_num_locales(): int;
+  private proc getEnvInt(name: string, default: int): int {
+    extern proc getenv(name : c_string) : c_string;
+    var strval = getenv(name.localize().c_str()): string;
+    if strval.isEmpty() { return default; }
+    return try! strval: int;
+  }
 
   //
   // the number of locales on which to run the program
   //
-  config const numLocales = chpl_comm_default_num_locales();
-  config const localesPerNode = 1;
-  config const numNodes = numLocales;
+  config const numLocales = getEnvInt("CHPL_RT_NUM_LOCALES", chpl_comm_default_num_locales());
 }
