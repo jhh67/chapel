@@ -22,6 +22,9 @@
 //
 module ChapelNumLocales {
   private use ChapelBase;
+
+  extern proc chpl_comm_default_num_locales(): int;
+
   //
   // the number of locales on which to run the program
   //
