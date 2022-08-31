@@ -840,7 +840,7 @@ int chpl_launch_prep(int* c_argc, char* argv[], int32_t* c_execNumLocales,
   // Put the number of locales in an environment variable in case it
   // wasn't specified on the command line.
   //
-  chpl_env_set_uint("NUM_LOCALES", execNumLocales, 1);
+  chpl_env_set_uint("CHPL_RT_NUM_LOCALES", execNumLocales, 1);
 
   //
   // Let the comm layer do any last-minute pre-launch activities it

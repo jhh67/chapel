@@ -247,10 +247,6 @@ void chpl_rt_init(int argc, char* argv[]) {
   // verify that it is reasonable.
   //
   execNumLocales = getArgNumLocales();
-  if (execNumLocales == 0) {
-    execNumLocales = chpl_env_rt_get_int("NUM_LOCALES", 0);
-  }
-
   if (execNumLocales != 0) {
     chpl_comm_verify_num_locales(execNumLocales);
   }
