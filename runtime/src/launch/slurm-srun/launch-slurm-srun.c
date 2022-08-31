@@ -377,6 +377,9 @@ static char* chpl_launch_create_command(int argc, char* argv[],
       fprintf(slurmFile, "'%s' ", argv[i]);
     }
 
+    // add -nl in case it isn't already there
+    fprintf(slurmFile, "'-nl' '%d' ", numLocales);
+
     // buffer stdout to the tmp stdout file
     if (bufferStdout != NULL) {
       fprintf(slurmFile, "> %s", tmpStdoutFileNoFmt);
@@ -488,7 +491,9 @@ static char* chpl_launch_create_command(int argc, char* argv[],
     for (i=1; i<argc; i++) {
       len += sprintf(iCom+len, " %s", argv[i]);
     }
-    len += sprintf(iCom+len, " -nl %d", numLocales);
+
+    // add -nl in case it isn't already there
+    len += sprintf(iCom+len, "-nl %d ", numLocales);
 
     // launch the job using srun
     sprintf(baseCommand, "srun %s", iCom);
