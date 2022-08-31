@@ -35,4 +35,6 @@ module ChapelNumLocales {
   // the number of locales on which to run the program
   //
   config const numLocales = getEnvInt("CHPL_RT_NUM_LOCALES", chpl_comm_default_num_locales());
+  config const localesPerNode = 1;
+  config const numNodes = numLocales;
 }
