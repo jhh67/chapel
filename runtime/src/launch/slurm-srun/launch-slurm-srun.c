@@ -279,21 +279,35 @@ static char* chpl_launch_create_command(int argc, char* argv[],
     // suppress informational messages, will still display errors
     fprintf(slurmFile, "#SBATCH --quiet\n");
 
-    int32_t numNodes = numLocales;
-    if (localesPerNode != 1) {
+    int32_t numNodes;
+
+    if (localesPerNode == 1) {
+      numNodes = numLocales;
+    } else {
       numNodes = (numLocales+1) / localesPerNode;
     }
-    // request the number of locales, with 1 task per node, and number of cores
-    // cpus-per-task. We probably don't need --nodes and --ntasks specified
-    // since 1 task-per-node with n --tasks implies -n nodes
+
     fprintf(slurmFile, "#SBATCH --nodes=%d\n", numNodes);
     fprintf(slurmFile, "#SBATCH --ntasks=%d\n", numLocales);
     fprintf(slurmFile, "#SBATCH --ntasks-per-node=%d\n", localesPerNode);
-    fprintf(slurmFile, "#SBATCH --cpus-per-task=%d\n", getCoresPerLocale(nomultithread(true), localesPerNode));
+    if (localesPerNode == 1) {
+
+      // Don't specify cpus-per-task if oversubscribed otherwise cores
+      // won't be used due to rounding.
+      fprintf(slurmFile, "#SBATCH --cpus-per-task=%d\n", getCoresPerLocale(nomultithread(true), localesPerNode));
+    }
+    if (useBinders) {
+      fprintf(slurmFile, "#SBATCH --cpu-bind=none\n");
+    }
 
     // request specified node access
-    if (nodeAccessStr != NULL)
-      fprintf(slurmFile, "#SBATCH --%s\n", nodeAccessStr);
+    if (nodeAccessStr != NULL) {
+      // Don't request exclusive access with binders and oversubscribed
+      // because the locales will partition the CPUs themselves
+      if ((localesPerNode == 1) || !useBinders || strcmp(nodeAccessStr, "exclusive")) {
+        fprintf(slurmFile, "#SBATCH --%s\n", nodeAccessStr);
+      }
+    }
 
     // request specified amount of memory
     if (memStr != NULL)
