@@ -4981,7 +4981,8 @@ void processRxAmReqCntr(void) {
       // found it. zero and repost current buffer, switch to other
       memset(ofi_msg_reqs[ofi_msg_i].msg_iov->iov_base, '\0',
              ofi_msg_reqs[ofi_msg_i].msg_iov->iov_len);
-      OFI_CHK(fi_recvmsg(ofi_rxEp, &ofi_msg_reqs[ofi_msg_i], FI_MULTI_RECV));
+      
+      OFI_RIDE_OUT_EAGAIN(amTcip, fi_recvmsg(ofi_rxEp, &ofi_msg_reqs[ofi_msg_i], FI_MULTI_RECV));
       ofi_msg_i = other;
       ofi_rxEnd = rxEnd;
     }
@@ -5042,7 +5043,7 @@ void processRxAmReqCQ(void) {
       // Multi-receive buffer filled; post the other one.
       //
       ofi_msg_i = 1 - ofi_msg_i;
-      OFI_CHK(fi_recvmsg(ofi_rxEp, &ofi_msg_reqs[ofi_msg_i], FI_MULTI_RECV));
+      OFI_RIDE_OUT_EAGAIN(amTcip, fi_recvmsg(ofi_rxEp, &ofi_msg_reqs[ofi_msg_i], FI_MULTI_RECV));
       DBG_PRINTF(DBG_AM_BUF,
                  "re-post fi_recvmsg(AMLZs %p, len %#zx)",
                  ofi_msg_reqs[ofi_msg_i].msg_iov->iov_base,
