@@ -4451,6 +4451,8 @@ void amReqFn_msgOrdFence(c_nodeid_t node,
     flags |= FI_FENCE;
   }
 
+  // Ensure that we are progressing the endpoint.
+  (*tcip->ensureProgressFn)(tcip, false)
   DBG_PRINTF(DBG_AM, "reqSize %zd inject_size %ld\n", reqSize, ofi_info->tx_attr->inject_size);
   if (!blocking && (reqSize <= ofi_info->tx_attr->inject_size) && envInjectAM) {
     // Inject if we can and should.
