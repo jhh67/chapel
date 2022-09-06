@@ -5042,14 +5042,17 @@ void processRxAmReqCQ(void) {
     }
     if ((cqes[i].flags & FI_MULTI_RECV) != 0) {
       //
-      // Multi-receive buffer filled; post the other one.
+      // Multi-receive buffer filled; re-post it and switch to the other.
       //
-      ofi_msg_i = 1 - ofi_msg_i;
-      OFI_RIDE_OUT_EAGAIN(amTcip, fi_recvmsg(ofi_rxEp, &ofi_msg_reqs[ofi_msg_i], FI_MULTI_RECV));
+      DBG_PRINTF(DBG_AM_BUF, "XXX processRxAmReqCQ got FI_MULTI_RECV event %d\n", ofi_msg_i);
+      fprintf(stderr, "XXX processRxAmReqCQ got FI_MULTI_RECV event %d\n", ofi_msg_i);
+      OFI_CHK(fi_recvmsg(ofi_rxEp, &ofi_msg_reqs[ofi_msg_i], FI_MULTI_RECV));
+      //OFI_RIDE_OUT_EAGAIN(amTcip, fi_recvmsg(ofi_rxEp, &ofi_msg_reqs[ofi_msg_i], FI_MULTI_RECV));
       DBG_PRINTF(DBG_AM_BUF,
                  "re-post fi_recvmsg(AMLZs %p, len %#zx)",
                  ofi_msg_reqs[ofi_msg_i].msg_iov->iov_base,
                  ofi_msg_reqs[ofi_msg_i].msg_iov->iov_len);
+      ofi_msg_i = 1 - ofi_msg_i;
     }
 
     CHK_TRUE((cqes[i].flags & ~(FI_MSG | FI_RECV | FI_MULTI_RECV)) == 0);
@@ -7118,7 +7121,9 @@ void amCheckRxTxCmpls(chpl_bool* pHadRxEvent, chpl_bool* pHadTxEvent,
     // will be handled by the main loop. Also, avoid CPU monopolization
     // even if we had events, because we can't actually tell.
 
+    static int64_t yields = 0;
     sched_yield();
+    yields++;
     if (pHadRxEvent != NULL) {
       *pHadRxEvent = true;
     }
