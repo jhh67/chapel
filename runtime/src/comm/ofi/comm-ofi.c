@@ -5064,6 +5064,10 @@ void processRxAmReqCQ(void) {
       // Re-post the buffer that just filled and switch to the other one
       //
       fprintf(stderr, "XXX processRxAmReqCQ got FI_MULTI_RECV event %d\n", ofi_msg_i);
+      DBG_PRINTF(DBG_AM_BUF,
+                 "re-posting fi_recvmsg(AMLZs %p, len %#zx)",
+                 ofi_msg_reqs[ofi_msg_i].msg_iov->iov_base,
+                 ofi_msg_reqs[ofi_msg_i].msg_iov->iov_len);
       OFI_CHK(fi_recvmsg(ofi_rxEp, &ofi_msg_reqs[ofi_msg_i], FI_MULTI_RECV));
       //OFI_RIDE_OUT_EAGAIN(amTcip, fi_recvmsg(ofi_rxEp, &ofi_msg_reqs[ofi_msg_i], FI_MULTI_RECV));
       DBG_PRINTF(DBG_AM_BUF,
