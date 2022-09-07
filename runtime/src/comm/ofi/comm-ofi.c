@@ -3688,6 +3688,7 @@ void *txCtxInit(struct perTxCtxInfo_t* tcip, int line, atomic_bool *done) {
   if (tcip->txCntr == NULL) {
     atomic_init_bool(done, false);
     ctx = txnTrkEncodeDone(done);
+    DBG_PRINTF(DBG_ACK, "txCtxInit ctx %p", ctx);
   } else {
     ctx = txnTrkEncodeId(line);
   }
@@ -4465,6 +4466,7 @@ void amReqFn_msgOrdFence(c_nodeid_t node,
     waitComplete = false;
   } else if (!blocking && (reqSize <= tcip->nbam.bufSize) &&
             (tcip->nbam.numBuffers > 0)) {
+    DBG_PRINTF(DBG_AM, "XXX ALLOCATING BUFFER");
     nbamState_t *nbam = &tcip->nbam;
     while (nbam->inuse == nbam->numBuffers) {
       (*tcip->checkTxCmplsFn)(tcip, true);
@@ -4642,6 +4644,7 @@ ssize_t wrap_fi_send(c_nodeid_t node,
                      void* ctx,
                      struct perTxCtxInfo_t* tcip) { 
 
+  (*tcip->ensureProgressFn)(tcip, false);
   chpl_bool dbg = false;
   if (DBG_TEST_MASK(DBG_AM | DBG_AM_SEND)
       || (req->b.op == am_opAMO && DBG_TEST_MASK(DBG_AMO))) {
@@ -4666,6 +4669,7 @@ static inline
 ssize_t wrap_fi_inject(c_nodeid_t node,
                        amRequest_t* req, size_t reqSize,
                        struct perTxCtxInfo_t* tcip) {
+  (*tcip->ensureProgressFn)(tcip, false);
   if (DBG_TEST_MASK(DBG_AM | DBG_AM_SEND)
       || (req->b.op == am_opAMO && DBG_TEST_MASK(DBG_AMO))) {
     DBG_DO_PRINTF("tx AM send inject to %d: %s",
@@ -4692,6 +4696,7 @@ ssize_t wrap_fi_sendmsg(c_nodeid_t node,
                               .iov_count = 1,
                               .addr = rxAddr(tcip, node),
                               .context = ctx };
+  (*tcip->ensureProgressFn)(tcip, false);
   if (DBG_TEST_MASK(DBG_AM | DBG_AM_SEND)
       || (req->b.op == am_opAMO && DBG_TEST_MASK(DBG_AMO))) {
     DBG_DO_PRINTF("tx AM send msg to %d: %s, ctx %p, flags %#" PRIx64,
@@ -5829,9 +5834,11 @@ void ofi_wait_for_transmits_complete(void) {
     // tciFree should ensure progress until all outstanding transmits
     // have completed.
     CHK_TRUE((tcip = tciAlloc()) != NULL);
+    DBG_PRINTF(DBG_AM, "ofi_wait_for_transmits_complete tcip %p numTxnsOut %lu", tcip, tcip->numTxnsOut);
     while (tcip->numTxnsOut > 0) {
       (*tcip->ensureProgressFn)(tcip, false);
     }
+    DBG_PRINTF(DBG_AM, "ofi_wait_for_transmits_complete done tcip %p", tcip);
   }
 }
 
