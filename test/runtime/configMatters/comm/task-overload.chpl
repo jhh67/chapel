@@ -23,3 +23,4 @@ assert(counter.read() == numTasksCreating * remoteTasksCreatedPerTask);
 if printTimings {
   writeln(t.elapsed());
 }
+writeln("Happy Birthday!");
