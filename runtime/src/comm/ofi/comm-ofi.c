@@ -5049,7 +5049,9 @@ void processRxAmReqCQ(void) {
       //
       // Re-post the buffer that just filled and switch to the other one
       //
-      OFI_RIDE_OUT_EAGAIN(amTcip, fi_recvmsg(ofi_rxEp, &ofi_msg_reqs[ofi_msg_i], FI_MULTI_RECV));
+      fprintf(stderr, "XXX processRxAmReqCQ got FI_MULTI_RECV event %d\n", ofi_msg_i);
+      OFI_CHK(fi_recvmsg(ofi_rxEp, &ofi_msg_reqs[ofi_msg_i], FI_MULTI_RECV));
+      //OFI_RIDE_OUT_EAGAIN(amTcip, fi_recvmsg(ofi_rxEp, &ofi_msg_reqs[ofi_msg_i], FI_MULTI_RECV));
       DBG_PRINTF(DBG_AM_BUF,
                  "re-post fi_recvmsg(AMLZs %p, len %#zx)",
                  ofi_msg_reqs[ofi_msg_i].msg_iov->iov_base,
@@ -7122,7 +7124,9 @@ void amCheckRxTxCmpls(chpl_bool* pHadRxEvent, chpl_bool* pHadTxEvent,
     // will be handled by the main loop. Also, avoid CPU monopolization
     // even if we had events, because we can't actually tell.
 
+    static int64_t yields = 0;
     sched_yield();
+    yields++;
     if (pHadRxEvent != NULL) {
       *pHadRxEvent = true;
     }
