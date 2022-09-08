@@ -348,7 +348,7 @@ static chpl_comm_nb_handle_t ofi_put(const void*, c_nodeid_t, void*, size_t);
 static void ofi_put_lowLevel(const void*, void*, c_nodeid_t,
                              uint64_t, uint64_t, size_t, void*,
                              uint64_t, struct perTxCtxInfo_t*);
-static void ofi_wait_for_transmits_complete(void);
+static void ofi_wait_for_transmits_to_complete(void);
 static void do_remote_put_buff(void*, c_nodeid_t, void*, size_t);
 static chpl_comm_nb_handle_t ofi_get(void*, c_nodeid_t, void*, size_t);
 static void ofi_get_lowLevel(void*, void*, c_nodeid_t,
@@ -3688,7 +3688,6 @@ void *txCtxInit(struct perTxCtxInfo_t* tcip, int line, atomic_bool *done) {
   if (tcip->txCntr == NULL) {
     atomic_init_bool(done, false);
     ctx = txnTrkEncodeDone(done);
-    DBG_PRINTF(DBG_ACK, "txCtxInit ctx %p", ctx);
   } else {
     ctx = txnTrkEncodeId(line);
   }
@@ -4466,7 +4465,6 @@ void amReqFn_msgOrdFence(c_nodeid_t node,
     waitComplete = false;
   } else if (!blocking && (reqSize <= tcip->nbam.bufSize) &&
             (tcip->nbam.numBuffers > 0)) {
-    DBG_PRINTF(DBG_AM, "XXX ALLOCATING BUFFER");
     nbamState_t *nbam = &tcip->nbam;
     while (nbam->inuse == nbam->numBuffers) {
       (*tcip->checkTxCmplsFn)(tcip, true);
@@ -4518,10 +4516,7 @@ void amReqFn_msgOrdFence(c_nodeid_t node,
   if (waitComplete) {
     // wait for transmit-complete if necessary
     ctx = txCtxInit(tcip, __LINE__, &txnDone);
-  } else {
-      DBG_PRINTF(DBG_AM, "not waiting for transmit complete");
   }
-   
 
   // Note: could call wrap_fi_sendmsg in both cases. This would eliminate
   // the conditional but may have higher overhead.
@@ -4642,25 +4637,17 @@ static inline
 ssize_t wrap_fi_send(c_nodeid_t node,
                      amRequest_t* req, size_t reqSize, void* mrDesc,
                      void* ctx,
-                     struct perTxCtxInfo_t* tcip) { 
-
-  (*tcip->ensureProgressFn)(tcip, false);
-  chpl_bool dbg = false;
+                     struct perTxCtxInfo_t* tcip) {
   if (DBG_TEST_MASK(DBG_AM | DBG_AM_SEND)
       || (req->b.op == am_opAMO && DBG_TEST_MASK(DBG_AMO))) {
     DBG_DO_PRINTF("tx AM send to %d: %s, ctx %p",
                   (int) node, am_reqStr(node, req, reqSize), ctx);
-    dbg = true;
   }
   OFI_RIDE_OUT_EAGAIN(tcip,
                       fi_send(tcip->txCtx, req, reqSize, mrDesc,
                               rxAddr(tcip, node), ctx));
   tcip->numTxnsOut++;
   tcip->numTxnsSent++;
-  if (dbg) {
-    DBG_DO_PRINTF("tx AM sent ctx %p numTxnsOut %lu numTxnsSent %lu", ctx, tcip->numTxnsOut,
-    tcip->numTxnsSent); 
-  }
   return FI_SUCCESS;
 }
 
@@ -4669,7 +4656,6 @@ static inline
 ssize_t wrap_fi_inject(c_nodeid_t node,
                        amRequest_t* req, size_t reqSize,
                        struct perTxCtxInfo_t* tcip) {
-  (*tcip->ensureProgressFn)(tcip, false);
   if (DBG_TEST_MASK(DBG_AM | DBG_AM_SEND)
       || (req->b.op == am_opAMO && DBG_TEST_MASK(DBG_AMO))) {
     DBG_DO_PRINTF("tx AM send inject to %d: %s",
@@ -4696,7 +4682,6 @@ ssize_t wrap_fi_sendmsg(c_nodeid_t node,
                               .iov_count = 1,
                               .addr = rxAddr(tcip, node),
                               .context = ctx };
-  (*tcip->ensureProgressFn)(tcip, false);
   if (DBG_TEST_MASK(DBG_AM | DBG_AM_SEND)
       || (req->b.op == am_opAMO && DBG_TEST_MASK(DBG_AMO))) {
     DBG_DO_PRINTF("tx AM send msg to %d: %s, ctx %p, flags %#" PRIx64,
@@ -4831,7 +4816,7 @@ void amHandler(void* argNil) {
 
   isAmHandler = true;
 
-  DBG_PRINTF(DBG_AM, "AM handler running, tcip %p pid %d", tcip, getpid());
+  DBG_PRINTF(DBG_AM, "AM handler running");
 
   //
   // Count this AM handler thread as running.  The creator thread
@@ -5063,12 +5048,6 @@ void processRxAmReqCQ(void) {
       //
       // Re-post the buffer that just filled and switch to the other one
       //
-      fprintf(stderr, "XXX processRxAmReqCQ got FI_MULTI_RECV event %d\n", ofi_msg_i);
-      DBG_PRINTF(DBG_AM_BUF,
-                 "re-posting fi_recvmsg(AMLZs %p, len %#zx)",
-                 ofi_msg_reqs[ofi_msg_i].msg_iov->iov_base,
-                 ofi_msg_reqs[ofi_msg_i].msg_iov->iov_len);
-      //OFI_CHK(fi_recvmsg(ofi_rxEp, &ofi_msg_reqs[ofi_msg_i], FI_MULTI_RECV));
       OFI_RIDE_OUT_EAGAIN(amTcip, fi_recvmsg(ofi_rxEp, &ofi_msg_reqs[ofi_msg_i], FI_MULTI_RECV));
       DBG_PRINTF(DBG_AM_BUF,
                  "re-post fi_recvmsg(AMLZs %p, len %#zx)",
@@ -5830,7 +5809,7 @@ static rmaPutFn_t rmaPutFn_selector;
  * that we progress the endpoint until the transmits complete.
  */
 inline
-void ofi_wait_for_transmits_complete(void) {
+void ofi_wait_for_transmits_to_complete(void) {
   struct perTxCtxInfo_t* tcip;
   if (chpl_numNodes > 1) {
     // This only makes sense if the endpoint is bound to the thread.
@@ -5838,11 +5817,9 @@ void ofi_wait_for_transmits_complete(void) {
     // tciFree should ensure progress until all outstanding transmits
     // have completed.
     CHK_TRUE((tcip = tciAlloc()) != NULL);
-    DBG_PRINTF(DBG_AM, "ofi_wait_for_transmits_complete tcip %p numTxnsOut %lu", tcip, tcip->numTxnsOut);
     while (tcip->numTxnsOut > 0) {
       (*tcip->ensureProgressFn)(tcip, false);
     }
-    DBG_PRINTF(DBG_AM, "ofi_wait_for_transmits_complete done tcip %p", tcip);
   }
 }
 
@@ -6801,7 +6778,6 @@ static ssize_t wrap_fi_atomicmsg(struct amoBundle_t* ab, uint64_t flags,
 static
 chpl_comm_nb_handle_t amoFn_msgOrdFence(struct amoBundle_t *ab,
                                         struct perTxCtxInfo_t* tcip) {
-  (*tcip->ensureProgressFn)(tcip, false);
   if (ab->iovRes.addr == NULL
       && tcip->bound
       && ab->size <= ofi_info->tx_attr->inject_size
@@ -6824,8 +6800,7 @@ chpl_comm_nb_handle_t amoFn_msgOrdFence(struct amoBundle_t *ab,
     // conformance.
     //
     atomic_bool txnDone;
-    //if (ab->iovRes.addr != NULL) {
-    if (true) {
+    if (ab->iovRes.addr != NULL) {
       ab->m.context = txCtxInit(tcip, __LINE__, &txnDone);;
     }
 
@@ -6852,8 +6827,7 @@ chpl_comm_nb_handle_t amoFn_msgOrdFence(struct amoBundle_t *ab,
       (void) wrap_fi_atomicmsg(ab, 0, tcip);
     }
 
-    //if (ab->iovRes.addr != NULL) {
-    if (true) {
+    if (ab->iovRes.addr != NULL) {
       waitForTxnComplete(tcip, ab->m.context);
       txCtxCleanup(ab->m.context);
     }
@@ -6972,7 +6946,6 @@ ssize_t wrap_fi_inject_atomic(struct amoBundle_t* ab,
 static inline
 ssize_t wrap_fi_atomicmsg(struct amoBundle_t* ab, uint64_t flags,
                           struct perTxCtxInfo_t* tcip) {
-  (*tcip->ensureProgressFn)(tcip, false);
   if (ab->iovRes.addr == NULL) {
     // Non-fetching.
     DBG_PRINTF(DBG_AMO,
@@ -7148,13 +7121,11 @@ void amCheckRxTxCmpls(chpl_bool* pHadRxEvent, chpl_bool* pHadTxEvent,
     // will be handled by the main loop. Also, avoid CPU monopolization
     // even if we had events, because we can't actually tell.
 
-    static int64_t yields = 0;
     sched_yield();
-    yields++;
     if (pHadRxEvent != NULL) {
       *pHadRxEvent = true;
     }
-    (*tcip->checkTxCmplsFn)(tcip, false);
+    (*tcip->checkTxCmplsFn)(tcip, true);
     if (pHadTxEvent != NULL) {
       *pHadTxEvent = true;
     }
@@ -7167,9 +7138,6 @@ void checkTxCmplsCQ(struct perTxCtxInfo_t* tcip, bool block /* notused */) {
   struct fi_cq_msg_entry cqes[txCQLen];
   const size_t cqesSize = sizeof(cqes) / sizeof(cqes[0]);
   const size_t numEvents = readCQ(tcip->txCQ, cqes, cqesSize);
-  if (numEvents > 0) {
-    DBG_PRINTF(DBG_AM, "checkTxCmplsCQ tcip %p events %zd", tcip, numEvents);
-  }
 
   tcip->numTxnsOut -= numEvents;
   for (int i = 0; i < numEvents; i++) {
@@ -7270,12 +7238,8 @@ void reportCQError(struct fid_cq* cq) {
 
 static inline
 void waitForTxnComplete(struct perTxCtxInfo_t* tcip, void* ctx) {
-    // XXX
-  (*tcip->ensureProgressFn)(tcip, true);
   const txnTrkCtx_t trk = txnTrkDecode(ctx);
   if (trk.typ == txnTrkDone) {
-    DBG_PRINTF(DBG_AM, "waitForTxnComplete txnTrkDone tcip %p ctx %p numTxnsOut %lu txCQLen %lu", tcip, 
-    ctx, tcip->numTxnsOut, txCQLen);
     // wait for the individual transmit to complete
     while (!atomic_load_explicit_bool((atomic_bool*) trk.ptr,
                                       memory_order_acquire)) {
@@ -7285,7 +7249,6 @@ void waitForTxnComplete(struct perTxCtxInfo_t* tcip, void* ctx) {
   } else {
     // wait for all outstanding transmits to complete
     while (tcip->numTxnsOut > 0) {
-      DBG_PRINTF(DBG_AM, "waitForTxnComplete tcip %p ctx %p numTxnsOut %lu", tcip, ctx, tcip->numTxnsOut);
       sched_yield();
       (*tcip->ensureProgressFn)(tcip, true);
     }
