@@ -481,6 +481,7 @@ static chpl_bool amDoLivenessChecks = false;
   do {                                                                  \
     ssize_t _ret;                                                       \
     if (isAmHandler) {                                                  \
+      (*tcip->ensureProgressFn)(tcip, false);                           \
       do {                                                              \
         OFI_CHK_2(expr, _ret, -FI_EAGAIN);                              \
         if (_ret == -FI_EAGAIN) {                                       \
@@ -489,6 +490,7 @@ static chpl_bool amDoLivenessChecks = false;
       } while (_ret == -FI_EAGAIN                                       \
                && !atomic_load_bool(&amHandlersExit));                  \
     } else {                                                            \
+      (*tcip->ensureProgressFn)(tcip, false);                           \
       do {                                                              \
         OFI_CHK_2(expr, _ret, -FI_EAGAIN);                              \
         if (_ret == -FI_EAGAIN) {                                       \
@@ -4451,11 +4453,14 @@ void amReqFn_msgOrdFence(c_nodeid_t node,
     flags |= FI_FENCE;
   }
 
-  // Ensure that we are progressing the endpoint.
-  (*tcip->ensureProgressFn)(tcip, false)
   DBG_PRINTF(DBG_AM, "reqSize %zd inject_size %ld\n", reqSize, ofi_info->tx_attr->inject_size);
   if (!blocking && (reqSize <= ofi_info->tx_attr->inject_size) && envInjectAM) {
-    // Inject if we can and should.
+    /*
+     * Inject if we can and should. Do it this way and not by calling
+     * fi_inject so that we get a transmit complete event. Otherwise we don't
+     * know when we can stop progressing the endpoint and
+     * ofi_wait_for_transmits_to_complete won't wait for injected messages.
+     */
     flags |= FI_INJECT;
     ctx = txnTrkEncodeId(__LINE__);
     waitComplete = false;
@@ -4510,7 +4515,7 @@ void amReqFn_msgOrdFence(c_nodeid_t node,
     }
   }
   if (waitComplete) {
-    // do it the old-fashioned way and wait for transmit-complete
+    // wait for transmit-complete if necessary
     ctx = txCtxInit(tcip, __LINE__, &txnDone);
   }
 
@@ -5042,16 +5047,15 @@ void processRxAmReqCQ(void) {
     }
     if ((cqes[i].flags & FI_MULTI_RECV) != 0) {
       //
-      // Multi-receive buffer filled; post the other one.
+      // Re-post the buffer that just filled and switch to the other one
       //
-      ofi_msg_i = 1 - ofi_msg_i;
       OFI_RIDE_OUT_EAGAIN(amTcip, fi_recvmsg(ofi_rxEp, &ofi_msg_reqs[ofi_msg_i], FI_MULTI_RECV));
       DBG_PRINTF(DBG_AM_BUF,
                  "re-post fi_recvmsg(AMLZs %p, len %#zx)",
                  ofi_msg_reqs[ofi_msg_i].msg_iov->iov_base,
                  ofi_msg_reqs[ofi_msg_i].msg_iov->iov_len);
+      ofi_msg_i = 1 - ofi_msg_i;
     }
-
     CHK_TRUE((cqes[i].flags & ~(FI_MSG | FI_RECV | FI_MULTI_RECV)) == 0);
   }
 }
@@ -5384,8 +5388,8 @@ int chpl_comm_try_nb_some(chpl_comm_nb_handle_t* h, size_t nhandles) {
   return 0;
 }
 
-void chpl_comm_wait_for_transmits_complete(void) {
-  ofi_wait_for_transmits_complete();
+void chpl_comm_wait_for_transmits_to_complete(void) {
+  ofi_wait_for_transmits_to_complete();
 }
 
 void chpl_comm_put(void* addr, c_nodeid_t node, void* raddr,
