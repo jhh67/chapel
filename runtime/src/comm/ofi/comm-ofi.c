@@ -481,21 +481,15 @@ static chpl_bool amDoLivenessChecks = false;
   do {                                                                  \
     ssize_t _ret;                                                       \
     if (isAmHandler) {                                                  \
-      (*tcip->ensureProgressFn)(tcip, false);                           \
       do {                                                              \
+        (*tcip->ensureProgressFn)(tcip, false);                         \
         OFI_CHK_2(expr, _ret, -FI_EAGAIN);                              \
-        if (_ret == -FI_EAGAIN) {                                       \
-          (*tcip->ensureProgressFn)(tcip, false);                       \
-        }                                                               \
       } while (_ret == -FI_EAGAIN                                       \
                && !atomic_load_bool(&amHandlersExit));                  \
     } else {                                                            \
-      (*tcip->ensureProgressFn)(tcip, false);                           \
       do {                                                              \
+        (*tcip->ensureProgressFn)(tcip, false);                         \
         OFI_CHK_2(expr, _ret, -FI_EAGAIN);                              \
-        if (_ret == -FI_EAGAIN) {                                       \
-          (*tcip->ensureProgressFn)(tcip, false);                       \
-        }                                                               \
       } while (_ret == -FI_EAGAIN);                                     \
     }                                                                   \
   } while (0)
@@ -4442,7 +4436,7 @@ void amReqFn_msgOrdFence(c_nodeid_t node,
     break;
   }
 
-  uint64_t flags = 0;
+  uint64_t flags = ofi_info->tx_attr->op_flags | FI_TRANSMIT_COMPLETE;
   void *ctx = NULL;
   atomic_bool txnDone;
   bool waitComplete = true;
@@ -7243,14 +7237,14 @@ void waitForTxnComplete(struct perTxCtxInfo_t* tcip, void* ctx) {
     // wait for the individual transmit to complete
     while (!atomic_load_explicit_bool((atomic_bool*) trk.ptr,
                                       memory_order_acquire)) {
-      sched_yield();
       (*tcip->ensureProgressFn)(tcip, true);
+      sched_yield();
     }
   } else {
     // wait for all outstanding transmits to complete
     while (tcip->numTxnsOut > 0) {
-      sched_yield();
       (*tcip->ensureProgressFn)(tcip, true);
+      sched_yield();
     }
   }
 }
