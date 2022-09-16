@@ -52,7 +52,8 @@ void chpl_memhook_check_post(void* memAlloc,
     const int messageSize = 1024;
     char message[messageSize];
 
-    snprintf(message, messageSize, "Out of memory allocating \"%s\"",
+    extern c_nodeid_t chpl_nodeID;
+    snprintf(message, messageSize, "XXX %d: Out of memory allocating \"%s\"", chpl_nodeID,
              chpl_mem_descString(description));
     chpl_error(message, lineno, filename);
   }

@@ -117,8 +117,12 @@ def Parse(path):
                     # The value of CHPL_COMM_DEBUG is determined by a suffix of the component name.
                     # It's a bit odd in that the build is based on whether or not it is set, 
                     # not its value. "+" denotes that is it set, "-" that it is not set.
-
-                    config['CHPL_COMM_DEBUG'] = "+" if fields[-1] == 'debug' else "-"
+                    if value.endswith('-debug'):
+                       config['CHPL_COMM_DEBUG'] = "+"
+                       value = '-'.join(value.split('-')[:-1])
+                       config[var] = value
+                    else:
+                       config['CHPL_COMM_DEBUG'] = "-"
                     used.add('CHPL_COMM_DEBUG')
                 if value == 'ofi':
                     nextState = State.LIBFABRIC
