@@ -669,7 +669,7 @@ module ChapelIO {
       comma1tup = new ioLiteral("");
       end = new ioLiteral("]");
     } else {
-      f.encoder.encode(this);
+      f.encoder.encode(f, this);
     }
 
     if !binary {
@@ -700,7 +700,7 @@ module ChapelIO {
   pragma "no doc"
   proc range.writeThis(f) throws
   {
-    f.encoder.encode(this);
+    f.encoder.encode(f, this);
   }
 
   pragma "no doc"
