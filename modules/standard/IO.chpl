@@ -1522,13 +1522,13 @@ class DefaultEncoder: Encoder {
 
   proc encodeArray(ch:channel, param kind: iokind, x: ?t) : void throws {
     var space = false;
-    for i in 0..<x.size {
+    for y in x {
       if space {
         ch.writeOneDirect(kind, " ");
       } else {
         space = true;
       }
-      this.encode(ch, kind, x(i));
+      this.encode(ch, kind, y);
     }
   }
 
