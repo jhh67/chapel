@@ -297,7 +297,7 @@ module ChapelIO {
           start = new ioLiteral("new " + t:string + "(");
         } else {
           // the default 'braces' type
-          writer.encoder.encode(x);
+          writer.encoder.encode(writer, x);
           return;
         }
         writer.writeIt(start);
