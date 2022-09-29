@@ -515,6 +515,11 @@ static void setupAvailableParallelism(int32_t maxThreads) {
         } else {
             chpl_qt_setenv("HWPAR", newenv_workers, 1);
         }
+    } else if (CHPL_QTHREAD_SCHEDULER_ONE_WORKER_PER_SHEPHERD) {
+        // The qthreads scheduler can only support one worker per shepherd.
+        // Set the QT environment variable to force binders to only use
+        // one worker per shepherd.
+        chpl_qt_setenv("NUM_WORKERS_PER_SHEPHERD", "1", 1);
     }
 }
 
