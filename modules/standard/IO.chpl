@@ -426,6 +426,7 @@ import OS.POSIX.{EBADF};
 import OS.{errorCode};
 use CTypes;
 public use OS;
+use Reflection;
 
 
 /*
@@ -1456,6 +1457,8 @@ operator ioHintSet.!=(lhs: ioHintSet, rhs: ioHintSet) {
   return !(lhs == rhs);
 }
 
+
+
 /*
 The :record:`file` type is implementation-defined.  A value of the
 :record:`file` type refers to the state that is used by the implementation to
@@ -2000,6 +2003,8 @@ proc openmemHelper(style:iostyleInternal = defaultIOStyleInternal()):file throws
   return ret;
 }
 
+var defaultEncoder = new shared DefaultEncoder();
+
 pragma "ignore noinit"
 pragma "no doc"
 record _channel {
@@ -2033,6 +2038,7 @@ record _channel {
   // Therefore further locking by the same task is not necessary.
   pragma "no doc"
   var _readWriteThisFromLocale = nilLocale;
+  var encoder: shared Encoder = defaultEncoder;
 }
 
 /*
@@ -2102,6 +2108,144 @@ The :record:`fileWriter` type supports 3 fields:
  */
 type fileWriter;
 fileWriter = _channel(writing=true, ?);
+
+class Encoder {
+  proc encode(writer:fileWriter, x) : void throws {}
+  proc encode(writer:fileWriter, param kind: iokind, x) : void throws {}
+  proc encode(writer:fileWriter, key, x) : void throws {}
+  proc encode(writer:fileWriter, param kind: iokind, key, x) : void throws {}
+}
+
+// Default Chapel encoder.
+class DefaultEncoder: Encoder {
+  /*
+   * Encodes a class into "{name1 = value1, name2 = value2}".
+   */
+  proc encodeClass(writer:fileWriter, param kind: iokind, x: ?t) : void throws {
+    param count = numFields(t);
+    writer.writeOneDirect(kind, "{");
+    var comma = false;
+    for param i in 0..<count {
+      var name = getFieldName(t, i);
+      // I/O ignores param and type fields
+      if !isType(getField(x,i)) && !isParam(getField(x,i)) {
+        if comma {
+          writer.writeOneDirect(kind, ", ");
+        } else {
+          comma = true;
+        }
+        this.encode(writer, kind, name, getField(x, i));
+      }
+    }
+    writer.writeOneDirect(kind, "}");
+  }
+
+  /*
+   * Encodes a union into "(name = value)".
+   */
+
+  proc encodeUnion(writer:fileWriter, param kind: iokind, x: ?t) : void throws {
+    // The Reflection module doesn't give us a way to determine the active field.
+    // For some reason the id is one-based, adjust it to be zero-based.
+    var id = __primitive("get_union_id", x)-1;
+    writer.writeDirect(kind, "(");
+    // We need the loop here because the second argument to get* must be param
+    for param i in 0..<numFields(t) {
+      if i == id {
+        this.encode(writer, kind, getFieldName(t, i), getField(x, i));
+        break;
+      }
+    }
+    writer.writeDirect(kind, ")");
+  }
+
+  proc encodeRange(writer:fileWriter, param kind: iokind, x: ?t) : void throws {
+    var tmp = x;
+    tmp.normalizeAlignment();
+    if tmp.hasLowBound() {
+      writer.writeOneDirect(kind, tmp.lowBound);
+    }
+    writer.writeDirect("..");
+    if tmp.hasHighBound() {
+      writer.writeOneDirect(kind, tmp.highBound);
+    }
+    if tmp.stride != 1 {
+      writer.writeDirect(kind, " by ", tmp.stride);
+    }
+    if tmp.aligned && !tmp.isNaturallyAligned() {
+      writer.writeDirect(kind, " align ", tmp.alignment % tmp.stride);
+    }
+  }
+
+  proc encodeTuple(writer:fileWriter, param kind: iokind, x: ?t) : void throws {
+    writer.writeOneDirect(kind, "(");
+    var comma = false;
+    for param i in 0..<x.size {
+      if comma {
+        writer.writeOneDirect(kind, ", ");
+      } else {
+        comma = true;
+      }
+      this.encode(writer, kind, x(i));
+    }
+    writer.writeOneDirect(kind, ")");
+  }
+
+  proc encodeArray(writer:fileWriter, param kind: iokind, x: ?t) : void throws {
+    var space = false;
+    for y in x {
+      if space {
+        writer.writeOneDirect(kind, " ");
+      } else {
+        space = true;
+      }
+      this.encode(writer, kind, y);
+    }
+  }
+
+  override proc encode(writer:fileWriter, x: ?t) : void throws {
+    this.encode(writer, writer.kind, x);
+  }
+
+  override proc encode(writer:fileWriter, param kind: iokind, x: ?t) : void throws {
+    if isClassType(t) {
+      /*
+       * Managed class instances are wrapped by a management class
+       * instance, and getField returns the wrapper's fields. Not sure of
+       * the kosher way to do this, but the first field of the wrapper
+       * appears to be the type fof the wrapped class, and the second
+       * appears to the wrapped class instance.
+       */
+      if !isUnmanagedClass(x) {
+        // TODO -- why does this no longer compile?
+        //this.encodeClass(writer, kind, getField(x, 1));
+      } else {
+        this.encodeClass(writer, kind, x);
+      }
+    } else if isUnionType(t) {
+      this.encodeUnion(writer, kind, x);
+    } else if isRangeType(t) {
+      this.encodeRange(writer, kind, x);
+    } else if isTupleType(t) {
+      this.encodeTuple(writer, kind, x);
+    } else if isArrayType(t) {
+      this.encodeArray(writer, kind, x);
+    } else {
+      writer.writeOneDirect(kind, x);
+    }
+  }
+  // Encodes "key = x"
+  override proc encode(writer:fileWriter, key, x) : void throws {
+    this.encode(writer, writer.kind, key, x);
+  }
+
+  // Encodes "key = x"
+  override proc encode(writer:fileWriter, param kind: iokind, key, x) : void throws {
+    this.encode(writer, kind, key);
+    this.encode(writer, kind, " = ");
+    this.encode(writer, kind, x);
+  }
+}
 
 /*
 
@@ -2182,6 +2326,7 @@ proc _channel.init(x: _channel) {
   this._home = x._home;
   this._channel_internal = x._channel_internal;
   this._readWriteThisFromLocale = x._readWriteThisFromLocale;
+  this.encoder = x.encoder;
   this.complete();
   on x._home {
     qio_channel_retain(x._channel_internal);
@@ -2208,6 +2353,7 @@ proc _channel.init=(x: _channel) {
   this._home = x._home;
   this._channel_internal = x._channel_internal;
   this._readWriteThisFromLocale = x._readWriteThisFromLocale;
+  this.encoder = x.encoder;
   this.complete();
   on x._home {
     qio_channel_retain(x._channel_internal);
@@ -2229,13 +2375,15 @@ operator :(rhs: _channel, type t: _channel) {
 pragma "no doc"
 proc _channel.init(param writing:bool, param kind:iokind, param locking:bool,
                   home: locale, _channel_internal:qio_channel_ptr_t,
-                  _readWriteThisFromLocale: locale) {
+                  _readWriteThisFromLocale: locale, 
+                  encoder = defaultEncoder:Encoder) {
   this.writing = writing;
   this.kind = kind;
   this.locking = locking;
   this._home = home;
   this._channel_internal = _channel_internal;
   this._readWriteThisFromLocale = _readWriteThisFromLocale;
+  this.encoder = encoder;
 }
 
 pragma "no doc"
@@ -3473,6 +3621,39 @@ proc _channel._readOne(param kind: iokind, ref x:?t,
   if err != ENOERR {
     const msg = _constructIoErrorMsg(kind, x);
     try _ch_ioerror(err, msg);
+  }
+}
+
+pragma "no doc"
+proc _channel.writeOneDirect(const value) throws {
+  try this.writeOneDirect(this.kind, value);
+}
+
+pragma "no doc"
+proc _channel.writeDirect(const values ...?k) throws {
+  on this._home {
+    try this.lock(); defer { this.unlock(); }
+    for param i in 0..k-1 {
+      try this.writeOneDirect(values(i));
+    }
+  }
+}
+
+pragma "no doc"
+proc _channel.writeOneDirect(param kind: iokind, const value) throws {
+  on this._home {
+    try this.lock(); defer { this.unlock(); }
+    try this._writeOne(kind, value, this.getLocaleOfIoRequest());
+  }
+}
+
+pragma "no doc"
+proc _channel.writeDirect(param kind: iokind, const values ...?k) throws {
+  on this._home {
+    try this.lock(); defer { this.unlock(); }
+    for param i in 0..k-1 {
+      try this.writeOneDirect(kind, values(i));
+    }
   }
 }
 
@@ -5022,6 +5203,21 @@ proc _channel.read(type t ...?numTypes) throws where numTypes > 1 {
   var tupleVal: t;
   this._readInner((...tupleVal));
   return tupleVal;
+}
+
+inline proc _channel.encode(const value):bool throws {
+  try this.encode(this.kind, value);
+  return true;
+}
+
+inline proc _channel.encode(param kind: iokind, const value):bool throws {
+  if !writing then compilerError("encode on read-only channel");
+
+  on this.home {
+    try this.lock(); defer { this.unlock(); }
+    try this.encoder.encode(this, kind, value);
+  }
+  return true;
 }
 
 /*
@@ -7194,7 +7390,7 @@ proc _channel._writefOne(fmtStr, ref arg, i: int,
         // a regex. So we just don't handle it.
         err = qio_format_error_write_regex();
       } when QIO_CONV_ARG_TYPE_REPR {
-        try _writeOne(iokind.dynamic, arg, origLocale);
+        try this.encoder.encode(this, iokind.dynamic, arg);
       } otherwise {
         // Unhandled argument type!
         throw new owned IllegalArgumentError("args(" + i:string + ")",

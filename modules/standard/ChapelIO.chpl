@@ -250,6 +250,11 @@ module ChapelIO {
     proc writeThisDefaultImpl(writer, x:?t) throws {
       if !writer.binary() {
         const st = writer.styleElement(QIO_STYLE_ELEMENT_AGGREGATE);
+        if ((st != QIO_AGGREGATE_FORMAT_JSON) &&
+            (st != st == QIO_AGGREGATE_FORMAT_CHPL)) {
+          writer.encoder.encode(writer, x);
+          return;
+        }
         const start = if st == QIO_AGGREGATE_FORMAT_JSON then "{"
                       else if st == QIO_AGGREGATE_FORMAT_CHPL
                       then "new " + t:string + "("
@@ -585,6 +590,11 @@ module ChapelIO {
     const st = f.styleElement(QIO_STYLE_ELEMENT_TUPLE);
     const binary = f.binary();
 
+    if ((f.writing) && (st != QIO_TUPLE_FORMAT_SPACE) &&
+        (st != QIO_TUPLE_FORMAT_JSON)) {
+      f.encoder.encode(f, this);
+      return;
+    }
     // Returns a 4-tuple containing strings representing:
     // - start of a tuple
     // - the comma/separator between elements
