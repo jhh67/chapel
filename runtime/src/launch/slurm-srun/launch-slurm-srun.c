@@ -156,6 +156,7 @@ static char* chpl_launch_create_command(int argc, char* argv[],
   char* errorfn = getenv("CHPL_LAUNCHER_SLURM_ERROR_FILENAME");
   char* nodeAccessEnv = getenv("CHPL_LAUNCHER_NODE_ACCESS");
   char* memEnv = getenv("CHPL_LAUNCHER_MEM");
+  char* lpnEnv = getenv(CHPL_LPN_VAR);
   const char* nodeAccessStr = NULL;
   const char* memStr = NULL;
   char* basenamePtr = strrchr(argv[0], '/');

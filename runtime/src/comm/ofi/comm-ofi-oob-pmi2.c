@@ -343,8 +343,20 @@ int chpl_comm_ofi_oob_locales_on_node(int *rank) {
       c = ((c & 0x40) >> 1) | (c & 0x1f);
       hash = ((hash << 6) | ((hash >> 58) & 0x3F)) ^ c;
     }
+    // The hash code is borrowed from gasnet including the comment.
+    // See third-party/gasnet/gasnet-src/license.txt.
 
-    // get the hashes for all locales
+    /* The "c = ..." squeezes ASCII down to 6 bits, while encoding
+     * all chars valid in hostnames and IP addresses (IPV4 and IPV6).
+     * A unique value is assigned to each of the digits, the lower
+     * case letters, '-', '.' and ':'.  The upper case letters map
+     * to the same values as the corresponding lower-case.
+     */
+    c = ((c & 0x40) >> 1) | (c & 0x1f);
+    hash = ((hash << 6) | ((hash >> 58) & 0x3F)) ^ c;
+  }
+
+  // get the hashes for all locales
 
     locale_info_t info;
     info.hash = hash;

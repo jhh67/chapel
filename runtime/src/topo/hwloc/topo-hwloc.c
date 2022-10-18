@@ -416,6 +416,7 @@ void chpl_topo_post_args_init(void) {
   }
 }
 
+
 //
 // Fills the "cpus" array with the hwloc "cpuset" (a bitmap whose bits are
 // set according to CPU physical OS indexes).
