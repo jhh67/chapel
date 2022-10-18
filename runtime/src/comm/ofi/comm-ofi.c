@@ -251,7 +251,7 @@ struct amRequest_execOnLrg_t {
 
 #define NUM_AM_HANDLERS 1
 static int numAmHandlers = NUM_AM_HANDLERS;
-static int reservedCores[NUM_AM_HANDLERS];
+static int reservedCPUs[NUM_AM_HANDLERS];
 
 //
 // AM request landing zones.
@@ -992,8 +992,12 @@ void chpl_comm_init(int *argc_p, char ***argv_p) {
   time_init();
   chpl_comm_ofi_oob_init();
   DBG_INIT();
-  int32_t count = chpl_comm_ofi_oob_locales_on_node();
+  int32_t rank;
+  int32_t count = chpl_comm_ofi_oob_locales_on_node(&rank);
   chpl_set_num_locales_on_node(count);
+  if (rank != -1) {
+    chpl_set_local_rank(rank);
+  }
   //
   // Gather run-invariant environment info as early as possible.
   //
@@ -2001,15 +2005,9 @@ void init_ofiFabricDomain(void) {
 //
 static
 void init_ofiReserveCores() {
-  if (envUseDedicatedAmhCores &&
-      (chpl_topo_getNumCPUsPhysical(true) > numAmHandlers)) {
-    for (int i = 0; i < numAmHandlers; i++) {
-      reservedCores[i] = chpl_topo_reserveCPUPhysical();
-    }
-  } else {
-    for (int i = 0; i < numAmHandlers; i++) {
-      reservedCores[i] = -1;
-    }
+  for (int i = 0; i < numAmHandlers; i++) {
+    reservedCPUs[i] = envUseDedicatedAmhCores ?
+      chpl_topo_reserveCPUPhysical() : -1;
   }
 }
 
@@ -2739,12 +2737,14 @@ void init_ofiForMem(void) {
     bufAcc |= FI_SEND | FI_READ | FI_WRITE;
   }
 
+  DBG_PRINTF(DBG_MR, "memTabCount %d", memTabCount);
   for (int i = 0; i < memTabCount; i++) {
     DBG_PRINTF(DBG_MR, "[%d] fi_mr_reg(%p, %#zx, %#" PRIx64 ")",
                i, memTab[i].addr, memTab[i].size, bufAcc);
     OFI_CHK(fi_mr_reg(ofi_domain,
                       memTab[i].addr, memTab[i].size,
                       bufAcc, 0, (prov_key ? 0 : i), 0, &ofiMrTab[i], NULL));
+    DBG_PRINTF(DBG_MR, "[%d] fi_mr_reg complete", i);
     if ((ofi_info->domain_attr->mr_mode & FI_MR_ENDPOINT) != 0) {
       OFI_CHK(fi_mr_bind(ofiMrTab[i], &ofi_rxEp->fid, 0));
       OFI_CHK(fi_mr_enable(ofiMrTab[i]));
@@ -2755,6 +2755,7 @@ void init_ofiForMem(void) {
                prov_key ? "(prov)" : "");
     CHK_TRUE(prov_key || memTab[i].key == i);
   }
+  DBG_PRINTF(DBG_MR, "memory registration complete");
 
   //
   // Unless we're doing scalable registration of the entire address
@@ -4659,7 +4660,7 @@ void init_amHandling(void) {
   
   PTHREAD_CHK(pthread_mutex_lock(&amStartStopMutex));
   for (int i = 0; i < numAmHandlers; i++) {
-    CHK_TRUE(chpl_task_createCommTask(amHandler, &reservedCores[i]) == 0);
+    CHK_TRUE(chpl_task_createCommTask(amHandler, NULL, reservedCPUs[i]) == 0);
   }
   PTHREAD_CHK(pthread_cond_wait(&amStartStopCond, &amStartStopMutex));
   PTHREAD_CHK(pthread_mutex_unlock(&amStartStopMutex));
@@ -4695,8 +4696,7 @@ void fini_amHandling(void) {
 static __thread struct perTxCtxInfo_t* amTcip;
 
 static
-void amHandler(void* arg) {
-  int cpu = *((int *) arg);
+void amHandler(void* argNil) {
   struct perTxCtxInfo_t* tcip;
   CHK_TRUE((tcip = tciAllocForAmHandler()) != NULL);
   amTcip = tcip;
@@ -4714,15 +4714,6 @@ void amHandler(void* arg) {
   if (++numAmHandlersActive == 1)
     PTHREAD_CHK(pthread_cond_signal(&amStartStopCond));
   PTHREAD_CHK(pthread_mutex_unlock(&amStartStopMutex));
-
-  //
-  // If we are using dedicated cores for the AM handlers then bind
-  // this thread to its core.
-  //
-  if (cpu >= 0) {
-    CHK_TRUE(chpl_topo_bindCPUPhysical(cpu) == 0);
-    DBG_PRINTF(DBG_AM, "AM handler bound to CPU %d", cpu);
-  }
 
   //
   // Process AM requests and watch transmit responses arrive.

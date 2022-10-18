@@ -19,8 +19,20 @@
 RUNTIME_ROOT = ../../..
 RUNTIME_SUBDIR = src/topo/hwloc
 
+ifdef CHPL_TOPO_DEBUG
+CFLAGS += -DDEBUG
+endif
+
+ifdef DEBUG_NODEID
+CFLAGS += -DDEBUG_NODEID
+endif
+
 ifndef CHPL_MAKE_HOME
 export CHPL_MAKE_HOME=$(shell pwd)/$(RUNTIME_ROOT)/..
+endif
+
+ifdef CHPL_TOPO_DEBUG
+CFLAGS += -DDEBUG
 endif
 
 #
