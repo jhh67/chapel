@@ -328,7 +328,13 @@ void chpl_topo_post_comm_init(void) {
       (rank != -1)) {
     int numSockets = hwloc_get_nbobjs_inside_cpuset_by_type(topology,
                           root->cpuset, HWLOC_OBJ_PACKAGE);
-    CHK_ERR(numSockets == numLocalesOnNode);
+    if (numSockets != numLocalesOnNode) {
+      char msg[100];
+      snprintf(msg, sizeof(msg), "The number of locales on the node does not "
+               "equal the number of sockets (%d != %d).", numLocalesOnNode,
+               numSockets);
+      chpl_error(msg, 0, 0);
+    }
 
     // Each locale gets its own socket.
 

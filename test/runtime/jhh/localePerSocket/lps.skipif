@@ -1,5 +1,4 @@
 CHPL_TARGET_PLATFORM != hpe-cray-ex
 CHPL_COMM != ofi
 CHPL_TASKS != qthreads
-CHPL_QTHREAD_TOPOLOGY != binders
 CHPL_HWLOC != bundled

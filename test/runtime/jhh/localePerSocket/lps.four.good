@@ -1,5 +1,4 @@
-internal error: topo-hwloc.c: 331: !(numSockets == numLocalesOnNode)
-internal error: topo-hwloc.c: 331: !(numSockets == numLocalesOnNode)
-internal error: topo-hwloc.c: 331: !(numSockets == numLocalesOnNode)
-internal error: topo-hwloc.c: 331: !(numSockets == numLocalesOnNode)
-srun: error: nid000022: tasks 0-3: Exited with exit code 2
+error: The number of locales on the node does not equal the number of sockets (4 != 2).
+error: The number of locales on the node does not equal the number of sockets (4 != 2).
+error: The number of locales on the node does not equal the number of sockets (4 != 2).
+error: The number of locales on the node does not equal the number of sockets (4 != 2).
