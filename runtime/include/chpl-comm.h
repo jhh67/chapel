@@ -601,6 +601,9 @@ void chpl_set_local_rank(int32_t rank);
 // not been called.
 int32_t chpl_get_local_rank(void);
 
+// Returns true if node is oversubscribed, false otherwise.
+chpl_bool chpl_get_oversubscribed(void);
+
 #ifdef __cplusplus
 }
 #endif

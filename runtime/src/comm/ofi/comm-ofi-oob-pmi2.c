@@ -372,20 +372,5 @@ int chpl_comm_ofi_oob_locales_on_node(int *rank) {
 
     // count the number of hashes that match ours
 
-    for (int i = 0; i < chpl_numNodes; i++) {
-      if (infos[i].hash == hash) {
-        if ((rank != NULL) && (infos[i].nodeID == chpl_nodeID)) {
-          // record our rank among the locales on the same node
-          *rank = count;
-        }
-        count++;
-      }
-    }
-    CHK_SYS_FREE(infos);
-  }
-  DBG_PRINTF(DBG_OOB, "PMI2 OOB locales on node: %d", count);
-  if (rank != NULL) {
-    DBG_PRINTF(DBG_OOB, "PMI2 OOB local rank: %d", *rank);
-  }
   return count;
 }
