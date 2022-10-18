@@ -307,8 +307,7 @@ void getCPUInfo(void) {
   hwloc_get_next_obj_inside_cpuset_by_type(topology, logAccSet,    \
                                            HWLOC_OBJ_PU, pu)
 
-  for (hwloc_obj_t pu = NEXT_PU(logAccSet, NULL); pu != NULL;
-       pu = NEXT_PU(logAccSet, pu)) {
+  for (hwloc_obj_t pu = NEXT_PU(NULL); pu != NULL; pu = NEXT_PU(pu)) {
     hwloc_obj_t core;
     CHK_ERR_ERRNO(core = hwloc_get_ancestor_obj_by_type(topology,
                                                          HWLOC_OBJ_CORE,
