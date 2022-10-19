@@ -337,13 +337,14 @@ void chpl_topo_post_comm_init(void) {
 
   int numLocalesOnNode = chpl_get_num_locales_on_node();
   int rank = chpl_get_local_rank();
+  _DBG_P("XXX pid %d numLocalesOnNode %d rank %d", getpid(), 
+         numLocalesOnNode, rank);
   _DBG_P("XXX pid %d numCPUsLogAcc %d numCPUsLogAll  %d", getpid(), numCPUsLogAcc, numCPUsLogAll);
   if ((numCPUsLogAcc == numCPUsLogAll) && (numLocalesOnNode > 1) &&
       (rank != -1)) {
     int numSockets = hwloc_get_nbobjs_inside_cpuset_by_type(topology,
                           root->cpuset, HWLOC_OBJ_PACKAGE);
-    
-    _DBG_P("XXX pid %d numLocalesOnNode %d rank %d numSockets %d", getpid(), numLocalesOnNode, rank, numSockets);
+    _DBG_P("XXX numSockets %d", numSockets);
     if (numSockets == numLocalesOnNode) {
       _DBG_P("each locale will use its own socket");
 
@@ -365,6 +366,7 @@ void chpl_topo_post_comm_init(void) {
 #endif
       root = socket;
     } else {
+      _DBG_P("divying up the PUs between the locales");
 
       // Determine which PUs are ours. Divide them evenly among the locales
       // sharing the node.
@@ -373,6 +375,7 @@ void chpl_topo_post_comm_init(void) {
       uint first = rank * numPerLocale;
       uint last = (rank == (numLocalesOnNode-1)) ? numCPUsLogAcc-1 :
                      (((rank+1) * numPerLocale) - 1);
+      _DBG_P("using %d PUs", (last - first) + 1);
       hwloc_cpuset_t ours = NULL;
       CHK_ERR_ERRNO((ours = hwloc_bitmap_alloc()) != NULL);
       for (int i = first; i <= last; i++) {
@@ -383,6 +386,11 @@ void chpl_topo_post_comm_init(void) {
       hwloc_bitmap_and(logAccSet, logAccSet, ours);
       numCPUsLogAcc = hwloc_bitmap_weight(logAccSet);
       CHK_ERR(numCPUsLogAcc > 0);
+#ifdef DEBUG
+      char buf[1024];
+      hwloc_bitmap_list_snprintf(buf, sizeof(buf), logAccSet);
+      _DBG_P("numCPUsLogAcc: %d logAccSet: %s", numCPUsLogAcc, buf);
+#endif
       hwloc_bitmap_free(ours);
     }
   }
