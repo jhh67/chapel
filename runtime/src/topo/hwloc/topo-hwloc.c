@@ -325,7 +325,16 @@ void chpl_topo_post_comm_init(void) {
   //
   numCPUsLogAll = hwloc_get_nbobjs_by_type(topology, HWLOC_OBJ_PU);
   CHK_ERR(numCPUsLogAll > 0);
-
+#ifdef DEBUG
+  {
+      char buf[1024];
+      hwloc_bitmap_list_snprintf(buf, sizeof(buf), hwloc_get_root_obj(topology)->cpuset);
+      _DBG_P("XXX %d root cpuset %s", getpid(), buf);
+      hwloc_bitmap_list_snprintf(buf, sizeof(buf),
+                                 hwloc_topology_get_allowed_cpuset(topology));
+      _DBG_P("XXX %d allowed cpuset %s", getpid(), buf);
+  }
+#endif
   //
   // If some PUs are inaccesssible to us then assume we've been restricted to
   // certain PUs at a higher level such as by the launcher. If so, use all
@@ -337,9 +346,9 @@ void chpl_topo_post_comm_init(void) {
 
   int numLocalesOnNode = chpl_get_num_locales_on_node();
   int rank = chpl_get_local_rank();
-  _DBG_P("XXX pid %d numLocalesOnNode %d rank %d", getpid(), 
+  _DBG_P("XXX %d numLocalesOnNode %d rank %d", getpid(),
          numLocalesOnNode, rank);
-  _DBG_P("XXX pid %d numCPUsLogAcc %d numCPUsLogAll  %d", getpid(), numCPUsLogAcc, numCPUsLogAll);
+  _DBG_P("XXX %d numCPUsLogAcc %d numCPUsLogAll  %d", getpid(), numCPUsLogAcc, numCPUsLogAll);
   if ((numCPUsLogAcc == numCPUsLogAll) && (numLocalesOnNode > 1) &&
       (rank != -1)) {
     int numSockets = hwloc_get_nbobjs_inside_cpuset_by_type(topology,
@@ -362,7 +371,7 @@ void chpl_topo_post_comm_init(void) {
 #ifdef DEBUG
       char buf[1024];
       hwloc_bitmap_list_snprintf(buf, sizeof(buf), logAccSet);
-      _DBG_P("numCPUsLogAcc: %d logAccSet: %s", numCPUsLogAcc, buf);
+      _DBG_P("%d numCPUsLogAcc: %d logAccSet: %s", getpid(), numCPUsLogAcc, buf);
 #endif
       root = socket;
     } else {
@@ -375,7 +384,7 @@ void chpl_topo_post_comm_init(void) {
       uint first = rank * numPerLocale;
       uint last = (rank == (numLocalesOnNode-1)) ? numCPUsLogAcc-1 :
                      (((rank+1) * numPerLocale) - 1);
-      _DBG_P("using %d PUs", (last - first) + 1);
+      _DBG_P("%d using %d PUs", getpid(), (last - first) + 1);
       hwloc_cpuset_t ours = NULL;
       CHK_ERR_ERRNO((ours = hwloc_bitmap_alloc()) != NULL);
       for (int i = first; i <= last; i++) {
@@ -389,7 +398,7 @@ void chpl_topo_post_comm_init(void) {
 #ifdef DEBUG
       char buf[1024];
       hwloc_bitmap_list_snprintf(buf, sizeof(buf), logAccSet);
-      _DBG_P("numCPUsLogAcc: %d logAccSet: %s", numCPUsLogAcc, buf);
+      _DBG_P("%d numCPUsLogAcc: %d logAccSet: %s", getpid(), numCPUsLogAcc, buf);
 #endif
       hwloc_bitmap_free(ours);
     }
@@ -445,13 +454,13 @@ void chpl_topo_post_comm_init(void) {
   }
 #ifdef DEBUG
   char buf[1024];
-  _DBG_P("numCPUsLogAll: %d", numCPUsLogAll);
+  _DBG_P("%d numCPUsLogAll: %d", getpid(), numCPUsLogAll);
   hwloc_bitmap_list_snprintf(buf, sizeof(buf), logAccSet);
-  _DBG_P("numCPUsLogAcc: %d logAccSet: %s", numCPUsLogAcc, buf);
+  _DBG_P("%d numCPUsLogAcc: %d logAccSet: %s", getpid(), numCPUsLogAcc, buf);
 
-  _DBG_P("numCPUsPhysAll: %d\n", numCPUsPhysAll);
+  _DBG_P("%d numCPUsPhysAll: %d", getpid(), numCPUsPhysAll);
   hwloc_bitmap_list_snprintf(buf, sizeof(buf), physAccSet);
-  _DBG_P("numCPUsPhysAcc: %d physAccSet: %s", numCPUsPhysAcc, buf);
+  _DBG_P("%d numCPUsPhysAcc: %d physAccSet: %s", getpid(), numCPUsPhysAcc, buf);
 #endif
 }
 
