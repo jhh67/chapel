@@ -337,11 +337,15 @@ void chpl_topo_post_comm_init(void) {
 
   int numLocalesOnNode = chpl_get_num_locales_on_node();
   int rank = chpl_get_local_rank();
+  _DBG_P("XXX pid %d numCPUsLogAcc %d numCPUsLogAll  %d", getpid(), numCPUsLogAcc, numCPUsLogAll);
   if ((numCPUsLogAcc == numCPUsLogAll) && (numLocalesOnNode > 1) &&
       (rank != -1)) {
     int numSockets = hwloc_get_nbobjs_inside_cpuset_by_type(topology,
                           root->cpuset, HWLOC_OBJ_PACKAGE);
+    
+    _DBG_P("XXX pid %d numLocalesOnNode %d rank %d numSockets %d", getpid(), numLocalesOnNode, rank, numSockets);
     if (numSockets == numLocalesOnNode) {
+      _DBG_P("each locale will use its own socket");
 
       // Each locale gets its own socket.
 
@@ -354,6 +358,11 @@ void chpl_topo_post_comm_init(void) {
       hwloc_bitmap_and(logAccSet, logAccSet, socket->cpuset);
       numCPUsLogAcc = hwloc_bitmap_weight(logAccSet);
       CHK_ERR(numCPUsLogAcc > 0);
+#ifdef DEBUG
+      char buf[1024];
+      hwloc_bitmap_list_snprintf(buf, sizeof(buf), logAccSet);
+      _DBG_P("numCPUsLogAcc: %d logAccSet: %s", numCPUsLogAcc, buf);
+#endif
       root = socket;
     } else {
 
@@ -431,9 +440,8 @@ void chpl_topo_post_comm_init(void) {
   _DBG_P("numCPUsLogAll: %d", numCPUsLogAll);
   hwloc_bitmap_list_snprintf(buf, sizeof(buf), logAccSet);
   _DBG_P("numCPUsLogAcc: %d logAccSet: %s", numCPUsLogAcc, buf);
-  hwloc_bitmap_list_snprintf(buf, sizeof(buf), physAccSet);
+
   _DBG_P("numCPUsPhysAll: %d\n", numCPUsPhysAll);
-  _DBG_P("numCPUsPhysAcc: %d physAccSet: %s", numCPUsPhysAcc, buf);
   hwloc_bitmap_list_snprintf(buf, sizeof(buf), physAccSet);
   _DBG_P("numCPUsPhysAcc: %d physAccSet: %s", numCPUsPhysAcc, buf);
 #endif
