@@ -46,6 +46,7 @@ int32_t          chpl_nodeID = -1;
 int32_t          chpl_numNodes = -1;
 static int32_t   numLocalesOnNode = -1;
 static chpl_bool oversubscribed = false;
+static int32_t   localRank = -1;
 
 
 //
@@ -155,7 +156,7 @@ void set_maxHeapSize(void)
   }
 }
 
-ssize_t chpl_comm_getenvMaxHeapSize(void)
+ssize_t chpl_comm_getenvMaxHeapSize()
 {
   if (pthread_once(&maxHeapSize_once, set_maxHeapSize) != 0) {
     chpl_internal_error("pthread_once(&maxHeapSize_once) failed");
@@ -178,7 +179,6 @@ typedef struct {
 // element of every system page or non-transparent huge page to fault in.
 static void *touch_thread(void *mem_region) {
   memory_region* mr = (memory_region*) mem_region;
-
   uintptr_t page_size = chpl_comm_regMemHeapPageSize();
   uintptr_t touch_size = page_size > 2<<20 ? page_size: 2<<20;
   unsigned char* aligned_start = round_up_to_mask_ptr(mr->start, touch_size-1);
@@ -262,6 +262,17 @@ int32_t chpl_get_num_locales_on_node(void) {
       chpl_internal_error("chpl_set_num_locales_on_node has not been called");
   }
   return numLocalesOnNode;
+}
+
+// Sets the rank (ordering) of the calling locale on the local node.
+void chpl_set_local_rank(int32_t rank) {
+  localRank = rank;
+}
+
+// Returns the rank (ordering) of the calling locale on the local node.
+// Returns -1 if chpl_set_local_rank has not been called.
+int32_t chpl_get_local_rank(void) {
+  return localRank;
 }
 
 chpl_bool chpl_get_oversubscribed(void) {

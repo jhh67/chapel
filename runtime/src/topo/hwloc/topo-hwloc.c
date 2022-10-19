@@ -29,6 +29,7 @@
 #include "chplcgfns.h"
 #include "chplsys.h"
 #include "chpl-topo.h"
+#include "chpl-comm.h"
 #include "chpltypes.h"
 #include "error.h"
 
@@ -64,17 +65,19 @@ static int topoDepth;
 static int numaLevel;
 static int numNumaDomains;
 
-// A note on core and PU numbering. An hwloc cpuset contains OS indices of PUs,
-// which are guaranteed to be unique across the topology. The logical index
-// and physical index of a core are not guaranteed to be unique, however. For
-// this reason we represent a core in a cpuset with the smallest OS index of
-// its PUs. For example, the physAccSet contains the OS indices of the
-// smallest PU for each accessible core.
+// A note on core and PU numbering. As per the hwloc documentation, a cpuset
+// contains OS indices of PUs. In order to use a cpuset to represent a
+// collection of cores and not break this invariant, we represent a core in a
+// cpuset with the smallest OS index of its PUs. For example, the physAccSet
+// contains the OS indices of the smallest PU for each accessible core.
 
 // Accessible cores and PUs.
 static hwloc_cpuset_t physAccSet = NULL;
 static hwloc_cpuset_t physReservedSet = NULL;
 static hwloc_cpuset_t logAccSet = NULL;
+
+// Our root within the overall topology.
+static hwloc_obj_t root = NULL;
 
 static hwloc_obj_t getNumaObj(c_sublocid_t);
 static void alignAddrSize(void*, size_t, chpl_bool,
@@ -176,6 +179,14 @@ void chpl_topo_init(void) {
   topoDepth = hwloc_topology_get_depth(topology);
 
   //
+  // By default our root is the root of the topology.
+  //
+
+  root = hwloc_get_root_obj(topology);
+
+  // XXX do we need NUMA stuff?
+
+  //
   // How many NUMA domains do we have?
   //
   {
@@ -249,7 +260,6 @@ void* chpl_topo_getHwlocTopology(void) {
 //
 // How many CPUs (cores or PUs) are there?
 //
-static pthread_once_t numCPUs_ctrl = PTHREAD_ONCE_INIT;
 static void getCPUInfo(void);
 static int numCPUsPhysAcc = -1;
 static int numCPUsPhysAll = -1;
@@ -269,11 +279,14 @@ int chpl_topo_getNumCPUsLogical(chpl_bool accessible_only) {
   return (accessible_only) ? numCPUsLogAcc : numCPUsLogAll;
 }
 
+
+
 //
-// Gets information about CPUs (cores and PUs) from the toplogy.
+// Initializes information about CPUs (cores and PUs) and and NICs from the
+// toplogy.
 //
-static
-void getCPUInfo(void) {
+
+void chpl_topo_post_comm_init(void) {
   //
   // accessible cores and PUs
   //
@@ -285,6 +298,8 @@ void getCPUInfo(void) {
   // Hwloc can't tell us the number of accessible cores directly, so
   // get that by counting the parent cores of the accessible PUs.
   //
+
+  // accessible PUs
 
   //
   // We could seemingly use hwloc_topology_get_allowed_cpuset() to get
@@ -302,6 +317,68 @@ void getCPUInfo(void) {
 
   hwloc_bitmap_and(logAccSet, logAccSet,
                    hwloc_topology_get_online_cpuset(topology));
+  numCPUsLogAcc = hwloc_bitmap_weight(logAccSet);
+  CHK_ERR(numCPUsLogAcc > 0);
+
+  //
+  // all PUs
+  //
+  numCPUsLogAll = hwloc_get_nbobjs_by_type(topology, HWLOC_OBJ_PU);
+  CHK_ERR(numCPUsLogAll > 0);
+
+  //
+  // If some PUs are inaccesssible to us then assume we've been restricted to
+  // certain PUs at a higher level such as by the launcher. If so, use all
+  // accessible PUs. Otherwise, if we can access all PUs but we are sharing
+  // the machine with other locales then divy up the PUs between the locales.
+  // If the number of locales equals the number of sockets then limit
+  // ourselves to the PUs in our socket.
+  //
+
+  int numLocalesOnNode = chpl_get_num_locales_on_node();
+  int rank = chpl_get_local_rank();
+  if ((numCPUsLogAcc == numCPUsLogAll) && (numLocalesOnNode > 1) &&
+      (rank != -1)) {
+    int numSockets = hwloc_get_nbobjs_inside_cpuset_by_type(topology,
+                          root->cpuset, HWLOC_OBJ_PACKAGE);
+    if (numSockets == numLocalesOnNode) {
+
+      // Each locale gets its own socket.
+
+      hwloc_obj_t socket = hwloc_get_obj_inside_cpuset_by_type(topology,
+                                root->cpuset, HWLOC_OBJ_PACKAGE, rank);
+      CHK_ERR(socket != NULL);
+
+      // Limit the accessible PUs to those in our socket.
+
+      hwloc_bitmap_and(logAccSet, logAccSet, socket->cpuset);
+      numCPUsLogAcc = hwloc_bitmap_weight(logAccSet);
+      CHK_ERR(numCPUsLogAcc > 0);
+      root = socket;
+    } else {
+
+      // Determine which PUs are ours. Divide them evenly among the locales
+      // sharing the node.
+
+      uint numPerLocale = numCPUsLogAcc / numLocalesOnNode;
+      uint first = rank * numPerLocale;
+      uint last = (rank == (numLocalesOnNode-1)) ? numCPUsLogAcc-1 :
+                     (((rank+1) * numPerLocale) - 1);
+      hwloc_cpuset_t ours = NULL;
+      CHK_ERR_ERRNO((ours = hwloc_bitmap_alloc()) != NULL);
+      for (int i = first; i <= last; i++) {
+        hwloc_obj_t pu = hwloc_get_obj_inside_cpuset_by_type(topology,
+                              logAccSet, HWLOC_OBJ_PU, i);
+        hwloc_bitmap_or(ours, ours, pu->cpuset);
+      }
+      hwloc_bitmap_and(logAccSet, logAccSet, ours);
+      numCPUsLogAcc = hwloc_bitmap_weight(logAccSet);
+      CHK_ERR(numCPUsLogAcc > 0);
+      hwloc_bitmap_free(ours);
+    }
+  }
+
+// accessible cores
 
 #define NEXT_PU(pu)                                                \
   hwloc_get_next_obj_inside_cpuset_by_type(topology, logAccSet,    \
@@ -331,17 +408,37 @@ void getCPUInfo(void) {
   CHK_ERR(numCPUsPhysAll > 0);
 
   //
-  // accessible PUs
+  // Find the NUMA nodes, that is, the objects at numaLevel that also
+  // have CPUs.  This is as opposed to things like Xeon Phi HBM, which
+  // is memory-only, no CPUs.  Allow for overriding this through the
+  // environment.
   //
-  numCPUsLogAcc = hwloc_bitmap_weight(logAccSet);
-  CHK_ERR(numCPUsLogAcc > 0);
+  if (strcmp(CHPL_LOCALE_MODEL, "flat") != 0) {
+    //
+    // The number of NUMA domains only matters for locale models other
+    // than 'flat'.
+    //
+    numNumaDomains = (int) chpl_env_rt_get_uint("NUM_NUMA_DOMAINS", 0);
+  }
 
-  //
-  // all PUs
-  //
-  numCPUsLogAll = hwloc_get_nbobjs_by_type(topology, HWLOC_OBJ_PU);
-  CHK_ERR(numCPUsLogAll > 0);
+  if (numNumaDomains == 0) {
+    numNumaDomains =
+      hwloc_get_nbobjs_inside_cpuset_by_depth(topology, root->cpuset,
+                                              numaLevel);
+  }
+#ifdef DEBUG
+  char buf[1024];
+  _DBG_P("numCPUsLogAll: %d", numCPUsLogAll);
+  hwloc_bitmap_list_snprintf(buf, sizeof(buf), logAccSet);
+  _DBG_P("numCPUsLogAcc: %d logAccSet: %s", numCPUsLogAcc, buf);
+  hwloc_bitmap_list_snprintf(buf, sizeof(buf), physAccSet);
+  _DBG_P("numCPUsPhysAll: %d\n", numCPUsPhysAll);
+  _DBG_P("numCPUsPhysAcc: %d physAccSet: %s", numCPUsPhysAcc, buf);
+  hwloc_bitmap_list_snprintf(buf, sizeof(buf), physAccSet);
+  _DBG_P("numCPUsPhysAcc: %d physAccSet: %s", numCPUsPhysAcc, buf);
+#endif
 }
+
 
 //
 // Fills the "cpus" array with the hwloc "cpuset" (a bitmap whose bits are
@@ -675,11 +772,10 @@ c_sublocid_t chpl_topo_getMemLocality(void* p) {
 int
 chpl_topo_reserveCPUPhysical(void) {
   int id = -1;
-  CHK_ERR(pthread_once(&numCPUs_ctrl, getCPUInfo) == 0);
   if (topoSupport->cpubind->set_thread_cpubind) {
 
 #ifdef DEBUG
-    char buf[100];
+    char buf[1024];
     _DBG_P("chpl_topo_reserveCPUPhysical before");
     hwloc_bitmap_list_snprintf(buf, sizeof(buf), physAccSet);
     _DBG_P("physAccSet: %s", buf);
@@ -713,7 +809,7 @@ chpl_topo_reserveCPUPhysical(void) {
     }
   }
 #ifdef DEBUG
-  char buf[100];
+  char buf[1024];
   _DBG_P("chpl_topo_reserveCPUPhysical %d", id);
   hwloc_bitmap_list_snprintf(buf, sizeof(buf), physAccSet);
   _DBG_P("physAccSet: %s", buf);
@@ -734,7 +830,6 @@ chpl_topo_reserveCPUPhysical(void) {
 //
 int chpl_topo_bindCPUPhysical(int id) {
   int status = 1;
-  CHK_ERR(pthread_once(&numCPUs_ctrl, getCPUInfo) == 0);
   if (hwloc_bitmap_isset(physReservedSet, id)) {
     int flags = HWLOC_CPUBIND_THREAD | HWLOC_CPUBIND_STRICT;
     hwloc_cpuset_t cpuset;
