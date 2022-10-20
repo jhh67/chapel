@@ -66,6 +66,16 @@
 #include <unistd.h>
 #include <math.h>
 
+#ifdef DEBUG
+// note: format arg 'f' must be a string constant
+#define _DBG_P(f, ...)                                                  \
+        do {                                                            \
+          printf("%s:%d: " f "\n", __FILE__, __LINE__, ## __VA_ARGS__); \
+        } while (0)
+#else
+#define _DBG_P(f, ...)
+#endif
+
 #define ALIGN_DN(i, size)  ((i) & ~((size) - 1))
 #define ALIGN_UP(i, size)  ALIGN_DN((i) + (size) - 1, size)
 
@@ -695,6 +705,7 @@ static void setupAffinity(void) {
           buf[offset-1] = '\0';
       }
       // tell binders which PUs to use
+      _DBG_P("QT_CPUBIND: %s", buf);
       chpl_qt_setenv("CPUBIND", buf, 1);
       chpl_free(buf);
     }
