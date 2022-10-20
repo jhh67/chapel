@@ -491,9 +491,6 @@ static char* chpl_launch_create_command(int argc, char* argv[],
       len += sprintf(iCom+len, "%s ", argv[i]);
     }
 
-    // add -nl in case it isn't already there
-    len += sprintf(iCom+len, "-nl %d ", numLocales);
-
     // launch the job using srun
     sprintf(baseCommand, "srun %s", iCom);
   }
