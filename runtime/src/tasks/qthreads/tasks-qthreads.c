@@ -714,7 +714,7 @@ static void setupAffinity(void) {
           buf[offset-1] = '\0';
       }
       // tell binders which PUs to use
-      _DBG_P("QT_CPUBIND: %s", buf);
+      _DBG_P("QT_CPUBIND: %s (%d)", buf, numCpus);
       chpl_qt_setenv("CPUBIND", buf, 1);
       chpl_free(buf);
     }
