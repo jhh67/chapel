@@ -255,6 +255,10 @@ static char* chpl_launch_create_command(int argc, char* argv[],
     }
   }
 
+  if (localesPerNode > numLocales) {
+    localesPerNode = numLocales;
+  }
+
   if (basenamePtr == NULL) {
     basenamePtr = argv[0];
   } else {
