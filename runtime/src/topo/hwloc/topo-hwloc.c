@@ -395,17 +395,16 @@ void chpl_topo_post_comm_init(void) {
       int pusPerLocale = (int) chpl_task_getenvNumThreadsPerLocale();
       if (pusPerLocale == 0) {
 
-        // User has not specified threads per locale. Determine how
-        // many PUs (threads) each locale can use without sharing a core.
+        // User has not specified threads per locale. Give each locale a
+        // whole number of cores.
 
         hwloc_obj_t core = hwloc_get_obj_by_type(topology, HWLOC_OBJ_CORE, 0);
         CHK_ERR(core != NULL);
-        pusPerCore = hwloc_bitmap_weight(core->cpuset);
-        // XXX is there a better way to do this?
-        pusPerLocale = numCPUsLogAcc / numLocalesOnNode;
-        int coresPerLocale = pusPerLocale / pusPerCore;
+        int pusPerCore = hwloc_bitmap_weight(core->cpuset);
+        int coresPerLocale = numCPUsLogAcc / pusPerCore;
         pusPerLocale = coresPerLocale * pusPerCore;
-        extraCores = (numCPUsLogAcc - (pusPerLocale * numLocalesOnNode)) / pusPerCore;
+        extraCores = (numCPUsLogAcc - (numLocalesOnNode * pusPerLocale)) /
+                      pusPerCore;
         _DBG_P("pusPerCore: %d", pusPerCore);
         _DBG_P("coresPerLocale: %d", coresPerLocale);
       }
@@ -414,10 +413,10 @@ void chpl_topo_post_comm_init(void) {
 
       int first = rank * pusPerLocale;
       if (rank < extraCores) {
-        first += rank * extraCores * pusPerCore;
+        first += rank * pusPerCore;
       }
       int end = first + pusPerLocale;
-      if (rank < leftovers) {
+      if (rank < extraCores) {
         end += pusPerCore;
       }
       _DBG_P("first %d end %d count %d PUs", first, end, end - first);
