@@ -390,6 +390,7 @@ void chpl_topo_post_comm_init(void) {
       // the user has specified a number of threads per locale that makes
       // sharing a core unavoidable.
 
+      int leftovers = 0;
       int pusPerLocale = (int) chpl_task_getenvNumThreadsPerLocale();
       if (pusPerLocale == 0) {
 
@@ -403,18 +404,24 @@ void chpl_topo_post_comm_init(void) {
         pusPerLocale = numCPUsLogAcc / numLocalesOnNode;
         int coresPerLocale = pusPerLocale / pusPerCore;
         pusPerLocale = coresPerLocale * pusPerCore;
+        leftovers = numCPUsLogAcc - (pusPerLocale * numLocalesOnNode);
         _DBG_P("pusPerCore: %d", pusPerCore);
         _DBG_P("coresPerLocale: %d", coresPerLocale);
       }
+      _DBG_P("leftovers: %d", leftovers);
       _DBG_P("pusPerLocale: %d", pusPerLocale);
       int first = rank * pusPerLocale;
-      int last = (rank == (numLocalesOnNode-1)) ? numCPUsLogAcc-1 :
-                     (((rank+1) * pusPerLocale) - 1);
-      _DBG_P("%d first %d last %d count %d PUs", first, last,
-             (last - first) + 1);
+      if (rank < leftovers) {
+        first += rank;
+      }
+      int end = first + pusPerLocale;
+      if (rank < leftovers) {
+        end++;
+      }
+      _DBG_P("%d first %d end %d count %d PUs", first, end, end - first);
       hwloc_cpuset_t ours = NULL;
       CHK_ERR_ERRNO((ours = hwloc_bitmap_alloc()) != NULL);
-      for (int i = first; i <= last; i++) {
+      for (int i = first; i < end; i++) {
         hwloc_obj_t pu = hwloc_get_obj_inside_cpuset_by_type(topology,
                               logAccSet, HWLOC_OBJ_PU, i);
         hwloc_bitmap_or(ours, ours, pu->cpuset);
