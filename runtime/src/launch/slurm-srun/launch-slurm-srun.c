@@ -385,9 +385,6 @@ static char* chpl_launch_create_command(int argc, char* argv[],
       fprintf(slurmFile, "'%s' ", argv[i]);
     }
 
-    // add -nl in case it isn't already there
-    fprintf(slurmFile, "'-nl' '%d' ", numLocales);
-
     // buffer stdout to the tmp stdout file
     if (bufferStdout != NULL) {
       fprintf(slurmFile, "> %s", tmpStdoutFileNoFmt);
