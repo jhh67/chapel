@@ -68,10 +68,18 @@
 
 #ifdef DEBUG
 // note: format arg 'f' must be a string constant
+#ifdef DEBUG_NODEID
+#define _DBG_P(f, ...)                                                  \
+        do {                                                            \
+          printf("%d:%s:%d: " f "\n", chpl_nodeID, __FILE__, __LINE__,     \
+                                      ## __VA_ARGS__);                  \
+        } while (0)
+#else
 #define _DBG_P(f, ...)                                                  \
         do {                                                            \
           printf("%s:%d: " f "\n", __FILE__, __LINE__, ## __VA_ARGS__); \
         } while (0)
+#endif
 #else
 #define _DBG_P(f, ...)
 #endif
@@ -674,6 +682,7 @@ static void setupAffinity(void) {
     int numCpus;
     chpl_bool physical;
     char *unit = chpl_qt_getenv_str("WORKER_UNIT");
+    _DBG_P("QT_WORKER_UNIT: %s", unit);
     if ((unit != NULL) && !strcmp(unit, "pu")) {
         physical = false;
         numCpus = chpl_topo_getNumCPUsLogical(true);

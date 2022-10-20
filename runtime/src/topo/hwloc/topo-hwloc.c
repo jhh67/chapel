@@ -45,10 +45,18 @@
 
 #ifdef DEBUG
 // note: format arg 'f' must be a string constant
+#ifdef DEBUG_NODEID
+#define _DBG_P(f, ...)                                                  \
+        do {                                                            \
+          printf("%d:%s:%d: " f "\n", chpl_nodeID, __FILE__, __LINE__,     \
+                                      ## __VA_ARGS__);                  \
+        } while (0)
+#else
 #define _DBG_P(f, ...)                                                  \
         do {                                                            \
           printf("%s:%d: " f "\n", __FILE__, __LINE__, ## __VA_ARGS__); \
         } while (0)
+#endif
 #else
 #define _DBG_P(f, ...)
 #endif
@@ -346,9 +354,8 @@ void chpl_topo_post_comm_init(void) {
 
   int numLocalesOnNode = chpl_get_num_locales_on_node();
   int rank = chpl_get_local_rank();
-  _DBG_P("XXX %d numLocalesOnNode %d rank %d", getpid(),
-         numLocalesOnNode, rank);
-  _DBG_P("XXX %d numCPUsLogAcc %d numCPUsLogAll  %d", getpid(), numCPUsLogAcc, numCPUsLogAll);
+  _DBG_P("XXX numLocalesOnNode %d rank %d", numLocalesOnNode, rank);
+  _DBG_P("XXX numCPUsLogAcc %d numCPUsLogAll %d", numCPUsLogAcc, numCPUsLogAll);
   if ((numCPUsLogAcc == numCPUsLogAll) && (numLocalesOnNode > 1) &&
       (rank != -1)) {
     int numSockets = hwloc_get_nbobjs_inside_cpuset_by_type(topology,
@@ -371,20 +378,40 @@ void chpl_topo_post_comm_init(void) {
 #ifdef DEBUG
       char buf[1024];
       hwloc_bitmap_list_snprintf(buf, sizeof(buf), logAccSet);
-      _DBG_P("%d numCPUsLogAcc: %d logAccSet: %s", getpid(), numCPUsLogAcc, buf);
+      _DBG_P("numCPUsLogAcc: %d logAccSet: %s", numCPUsLogAcc, buf);
 #endif
       root = socket;
     } else {
       _DBG_P("divying up the PUs between the locales");
 
       // Determine which PUs are ours. Divide them evenly among the locales
-      // sharing the node.
+      // sharing the node. One complication is that we don't want to share
+      // a core across locales unless we have to, and we only have to if
+      // the user has specified a number of threads per locale that makes
+      // sharing a core unavoidable.
 
-      uint numPerLocale = numCPUsLogAcc / numLocalesOnNode;
-      uint first = rank * numPerLocale;
-      uint last = (rank == (numLocalesOnNode-1)) ? numCPUsLogAcc-1 :
-                     (((rank+1) * numPerLocale) - 1);
-      _DBG_P("%d using %d PUs", getpid(), (last - first) + 1);
+      int pusPerLocale = (int) chpl_task_getenvNumThreadsPerLocale();
+      if (pusPerLocale == 0) {
+
+        // User has not specified threads per locale. Determine how
+        // many PUs (threads) each locale can use without sharing a core.
+
+        hwloc_obj_t core = hwloc_get_obj_by_type(topology, HWLOC_OBJ_CORE, 0);
+        CHK_ERR(core != NULL);
+        int pusPerCore = hwloc_bitmap_weight(core->cpuset);
+        // XXX is there a better way to do this?
+        pusPerLocale = numCPUsLogAcc / numLocalesOnNode;
+        int coresPerLocale = pusPerLocale / pusPerCore;
+        pusPerLocale = coresPerLocale * pusPerCore;
+        _DBG_P("pusPerCore: %d", pusPerCore);
+        _DBG_P("coresPerLocale: %d", coresPerLocale);
+      }
+      _DBG_P("pusPerLocale: %d", pusPerLocale);
+      int first = rank * pusPerLocale;
+      int last = (rank == (numLocalesOnNode-1)) ? numCPUsLogAcc-1 :
+                     (((rank+1) * pusPerLocale) - 1);
+      _DBG_P("%d first %d last %d count %d PUs", first, last,
+             (last - first) + 1);
       hwloc_cpuset_t ours = NULL;
       CHK_ERR_ERRNO((ours = hwloc_bitmap_alloc()) != NULL);
       for (int i = first; i <= last; i++) {
@@ -398,7 +425,7 @@ void chpl_topo_post_comm_init(void) {
 #ifdef DEBUG
       char buf[1024];
       hwloc_bitmap_list_snprintf(buf, sizeof(buf), logAccSet);
-      _DBG_P("%d numCPUsLogAcc: %d logAccSet: %s", getpid(), numCPUsLogAcc, buf);
+      _DBG_P("numCPUsLogAcc: %d logAccSet: %s", numCPUsLogAcc, buf);
 #endif
       hwloc_bitmap_free(ours);
     }
