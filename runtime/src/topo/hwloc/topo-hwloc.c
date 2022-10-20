@@ -390,7 +390,8 @@ void chpl_topo_post_comm_init(void) {
       // the user has specified a number of threads per locale that makes
       // sharing a core unavoidable.
 
-      int leftovers = 0;
+      int extraCores = 0;
+      int pusPerCore = 1;
       int pusPerLocale = (int) chpl_task_getenvNumThreadsPerLocale();
       if (pusPerLocale == 0) {
 
@@ -399,26 +400,27 @@ void chpl_topo_post_comm_init(void) {
 
         hwloc_obj_t core = hwloc_get_obj_by_type(topology, HWLOC_OBJ_CORE, 0);
         CHK_ERR(core != NULL);
-        int pusPerCore = hwloc_bitmap_weight(core->cpuset);
+        pusPerCore = hwloc_bitmap_weight(core->cpuset);
         // XXX is there a better way to do this?
         pusPerLocale = numCPUsLogAcc / numLocalesOnNode;
         int coresPerLocale = pusPerLocale / pusPerCore;
         pusPerLocale = coresPerLocale * pusPerCore;
-        leftovers = numCPUsLogAcc - (pusPerLocale * numLocalesOnNode);
+        extraCores = (numCPUsLogAcc - (pusPerLocale * numLocalesOnNode)) / pusPerCore;
         _DBG_P("pusPerCore: %d", pusPerCore);
         _DBG_P("coresPerLocale: %d", coresPerLocale);
       }
-      _DBG_P("leftovers: %d", leftovers);
+      _DBG_P("extraCores: %d", extraCores);
       _DBG_P("pusPerLocale: %d", pusPerLocale);
+
       int first = rank * pusPerLocale;
-      if (rank < leftovers) {
-        first += rank;
+      if (rank < extraCores) {
+        first += rank * extraCores * pusPerCore;
       }
       int end = first + pusPerLocale;
       if (rank < leftovers) {
-        end++;
+        end += pusPerCore;
       }
-      _DBG_P("%d first %d end %d count %d PUs", first, end, end - first);
+      _DBG_P("first %d end %d count %d PUs", first, end, end - first);
       hwloc_cpuset_t ours = NULL;
       CHK_ERR_ERRNO((ours = hwloc_bitmap_alloc()) != NULL);
       for (int i = first; i < end; i++) {
