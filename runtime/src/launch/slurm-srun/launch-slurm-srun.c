@@ -247,7 +247,7 @@ static char* chpl_launch_create_command(int argc, char* argv[],
   localesPerNode = 1;
   if (lpnEnv != NULL) {
     localesPerNode = atoi(lpnEnv);
-    if (localesPerNode == 0) {
+    if (localesPerNode <= 0) {
       char msg[100];
       snprintf(msg, sizeof(msg), "%s must be > 0.", CHPL_LPN_VAR);
       chpl_warning(msg, 0, 0);

@@ -2743,12 +2743,14 @@ void init_ofiForMem(void) {
     bufAcc |= FI_SEND | FI_READ | FI_WRITE;
   }
 
+  DBG_PRINTF(DBG_MR, "memTabCount %d", memTabCount);
   for (int i = 0; i < memTabCount; i++) {
     DBG_PRINTF(DBG_MR, "[%d] fi_mr_reg(%p, %#zx, %#" PRIx64 ")",
                i, memTab[i].addr, memTab[i].size, bufAcc);
     OFI_CHK(fi_mr_reg(ofi_domain,
                       memTab[i].addr, memTab[i].size,
                       bufAcc, 0, (prov_key ? 0 : i), 0, &ofiMrTab[i], NULL));
+    DBG_PRINTF(DBG_MR, "[%d] fi_mr_reg complete", i);
     if ((ofi_info->domain_attr->mr_mode & FI_MR_ENDPOINT) != 0) {
       OFI_CHK(fi_mr_bind(ofiMrTab[i], &ofi_rxEp->fid, 0));
       OFI_CHK(fi_mr_enable(ofiMrTab[i]));
@@ -2759,6 +2761,7 @@ void init_ofiForMem(void) {
                prov_key ? "(prov)" : "");
     CHK_TRUE(prov_key || memTab[i].key == i);
   }
+  DBG_PRINTF(DBG_MR, "memory registration complete");
 
   //
   // Unless we're doing scalable registration of the entire address
