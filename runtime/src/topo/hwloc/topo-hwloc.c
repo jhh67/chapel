@@ -401,7 +401,7 @@ void chpl_topo_post_comm_init(void) {
         hwloc_obj_t core = hwloc_get_obj_by_type(topology, HWLOC_OBJ_CORE, 0);
         CHK_ERR(core != NULL);
         int pusPerCore = hwloc_bitmap_weight(core->cpuset);
-        int coresPerLocale = numCPUsLogAcc / pusPerCore;
+        int coresPerLocale = (numCPUsLogAcc / pusPerCore) / numLocalesOnNode;
         pusPerLocale = coresPerLocale * pusPerCore;
         extraCores = (numCPUsLogAcc - (numLocalesOnNode * pusPerLocale)) /
                       pusPerCore;
@@ -425,6 +425,7 @@ void chpl_topo_post_comm_init(void) {
       for (int i = first; i < end; i++) {
         hwloc_obj_t pu = hwloc_get_obj_inside_cpuset_by_type(topology,
                               logAccSet, HWLOC_OBJ_PU, i);
+        CHK_ERR(pu != NULL);
         hwloc_bitmap_or(ours, ours, pu->cpuset);
       }
       hwloc_bitmap_and(logAccSet, logAccSet, ours);
