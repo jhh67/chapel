@@ -410,15 +410,22 @@ void chpl_topo_post_comm_init(void) {
       }
       _DBG_P("extraCores: %d", extraCores);
       _DBG_P("pusPerLocale: %d", pusPerLocale);
+      _DBG_P("rank: %d", rank);
 
       int first = rank * pusPerLocale;
+      _DBG_P("initial first: %d", first);
       if (rank < extraCores) {
+        _DBG_P("adding %d to first", rank * pusPerCore);
         first += rank * pusPerCore;
       }
       int end = first + pusPerLocale;
+      _DBG_P("initial end: %d", end);
       if (rank < extraCores) {
+        _DBG_P("adding %d to end", pusPerCore);
         end += pusPerCore;
       }
+      int count = end - first;
+      CHK_ERR((count % pusPerCore) == 0);
       _DBG_P("first %d end %d count %d PUs", first, end, end - first);
       hwloc_cpuset_t ours = NULL;
       CHK_ERR_ERRNO((ours = hwloc_bitmap_alloc()) != NULL);
