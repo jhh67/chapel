@@ -418,6 +418,9 @@ void chpl_topo_post_comm_init(void) {
       if (rank < extraCores) {
         _DBG_P("adding %d to first", rank * pusPerCore);
         first += rank * pusPerCore;
+      } else {
+        _DBG_P("adding %d to first", extraCores * pusPerCore);
+        first += extraCores * pusPerCore;
       }
       int end = first + pusPerLocale;
       _DBG_P("initial end: %d", end);
