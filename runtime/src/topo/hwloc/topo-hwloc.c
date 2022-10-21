@@ -391,49 +391,40 @@ void chpl_topo_post_comm_init(void) {
       // sharing a core unavoidable.
 
       int extraCores = 0;
-      int pusPerCore = 1;
-      int pusPerLocale = (int) chpl_task_getenvNumThreadsPerLocale();
-      if (pusPerLocale == 0) {
+      int numCPUSLogPerCore = 1;
+      int numCPUSLogPerLocale = (int) chpl_task_getenvNumThreadsPerLocale();
+      if (numCPUSLogPerLocale == 0) {
 
         // User has not specified threads per locale. Give each locale a
         // whole number of cores.
 
         hwloc_obj_t core = hwloc_get_obj_by_type(topology, HWLOC_OBJ_CORE, 0);
         CHK_ERR(core != NULL);
-        pusPerCore = hwloc_bitmap_weight(core->cpuset);
-        int numCores = numCPUsLogAcc / pusPerCore;
+        numCPUSLogPerCore = hwloc_bitmap_weight(core->cpuset);
+        int numCores = numCPUsLogAcc / numCPUSLogPerCore;
         int coresPerLocale = numCores / numLocalesOnNode;
-        pusPerLocale = coresPerLocale * pusPerCore;
+        numCPUSLogPerLocale = coresPerLocale * numCPUSLogPerCore;
         extraCores = numCores % numLocalesOnNode;
-        pusPerLocale = coresPerLocale * pusPerCore;
-        _DBG_P("pusPerCore: %d", pusPerCore);
+        _DBG_P("numCPUSLogPerCore: %d", numCPUSLogPerCore);
         _DBG_P("coresPerLocale: %d", coresPerLocale);
       }
       _DBG_P("extraCores: %d", extraCores);
-      _DBG_P("pusPerLocale: %d", pusPerLocale);
+      _DBG_P("numCPUSLogPerLocale: %d", numCPUSLogPerLocale);
       _DBG_P("rank: %d", rank);
 
-      int first = rank * pusPerLocale;
-      _DBG_P("initial first: %d", first);
+      int extras = (rank < extraCores) ? rank : extraCores;
+      int firstPU = rank * numCPUSLogPerLocale + extras * numCPUSLogPerCore;
+      int endPU = firstPU + numCPUSLogPerLocale;
       if (rank < extraCores) {
-        _DBG_P("adding %d to first", rank * pusPerCore);
-        first += rank * pusPerCore;
-      } else {
-        _DBG_P("adding %d to first", extraCores * pusPerCore);
-        first += extraCores * pusPerCore;
+        _DBG_P("adding %d to end", numCPUSLogPerCore);
+        endPU += numCPUSLogPerCore;
       }
-      int end = first + pusPerLocale;
-      _DBG_P("initial end: %d", end);
-      if (rank < extraCores) {
-        _DBG_P("adding %d to end", pusPerCore);
-        end += pusPerCore;
-      }
-      int count = end - first;
-      CHK_ERR((count % pusPerCore) == 0);
+      int count = endPU - firstPU;
+      CHK_ERR((count % numCPUSLogPerCore) == 0);
       _DBG_P("first %d end %d count %d PUs", first, end, end - first);
       hwloc_cpuset_t ours = NULL;
       CHK_ERR_ERRNO((ours = hwloc_bitmap_alloc()) != NULL);
-      for (int i = first; i < end; i++) {
+      for (int i = firstPU; i < endPU; i++) {
         hwloc_obj_t pu = hwloc_get_obj_inside_cpuset_by_type(topology,
                               logAccSet, HWLOC_OBJ_PU, i);
         CHK_ERR(pu != NULL);
