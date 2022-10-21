@@ -421,7 +421,7 @@ void chpl_topo_post_comm_init(void) {
       }
       int count = endPU - firstPU;
       CHK_ERR((count % numCPUSLogPerCore) == 0);
-      _DBG_P("first %d end %d count %d PUs", first, end, end - first);
+      _DBG_P("firstPU %d endPU %d count %d PUs", firstPU, endPU, end - first);
       hwloc_cpuset_t ours = NULL;
       CHK_ERR_ERRNO((ours = hwloc_bitmap_alloc()) != NULL);
       for (int i = firstPU; i < endPU; i++) {
