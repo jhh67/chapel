@@ -1019,7 +1019,7 @@ void chpl_comm_init(int *argc_p, char ***argv_p) {
   envInjectAMO = chpl_env_rt_get_bool("COMM_OFI_INJECT_AMO", true);
   envInjectAM = chpl_env_rt_get_bool("COMM_OFI_INJECT_AM", true);
   envUseDedicatedAmhCores = chpl_env_rt_get_bool(
-                                  "COMM_OFI_DEDICATED_AMH_CORES", false);
+                                  "COMM_OFI_DEDICATED_AMH_CORES", CHPL_DEDICATED_NETWORK_CORE);
   //
   // The user can specify the provider by setting either the Chapel
   // CHPL_RT_COMM_OFI_PROVIDER environment variable or the libfabric

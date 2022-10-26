@@ -77,6 +77,7 @@ extern const char* CHPL_THIRD_PARTY;
 extern const int CHPL_STACK_CHECKS;
 extern const int CHPL_CACHE_REMOTE;
 extern const int CHPL_INTERLEAVE_MEM;
+extern const int CHPL_DEDICATED_NETWORK_CORE;
 
 // Sorted lookup table of filenames used with insertLineNumbers for error
 // messages and logging. Defined in chpl_compilation_config.c (needed by launchers)
