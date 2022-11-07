@@ -44,7 +44,8 @@
 
 #define PMI2_SUCCESS 0
 #define PMI2_ID_NULL -1
-#define PMI2_MAX_VALLEN 1024
+//#define PMI2_MAX_VALLEN 1024
+#define PMI2_MAX_VALLEN 4
 
 extern int PMI2_Initialized(void);
 extern int PMI2_Init(int* spawned, int* size, int* rank, int* appnum);
