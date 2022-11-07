@@ -280,7 +280,7 @@ void chpl_comm_ofi_oob_bcast(void* buf, size_t size) {
 
 static inline
 void encode_kvs(char* enc, const char* raw, size_t size) {
-  fprintf(stderr, "XXX encode_kvs enc %p size %zu end %p\n", enc, size, enc + size);
+  fprintf(stderr, "XXX encode_kvs enc %p size %zu end %p\n", enc, size, enc + (2 * size));
   for (size_t i = 0; i < size; i++) {
     enc[2 * i + 0] = ((raw[i] >> (0 * 4)) & 0xf) + 'a';
     enc[2 * i + 1] = ((raw[i] >> (1 * 4)) & 0xf) + 'a';
