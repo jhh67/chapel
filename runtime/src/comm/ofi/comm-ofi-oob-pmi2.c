@@ -177,7 +177,7 @@ void chpl_comm_ofi_oob_allgather(const void* mine, void* all, size_t size) {
     //
     size_t size_remaining = size;
     size_t chunk_size_max = (PMI2_MAX_VALLEN - 1) / 2; // unencoded max chunk
-    fprintf(stderr, "XXX size_remaining %z chunk_size_max %z\n");
+    fprintf(stderr, "XXX size_remaining %zu chunk_size_max %zu\n", size_remaining, chunk_size_max);
     while (size_remaining > chunk_size_max) {
       allgather_kvs(mine, all, size, size - size_remaining, chunk_size_max);
       size_remaining -= chunk_size_max;
@@ -199,12 +199,12 @@ void allgather_kvs(const void* mine, void* all, size_t size,
   //
   size_t chunk_size_enc = 2 * chunk_size + 1;
 
-  fprintf(stderr, "XXX chunk_size %z chunk_size_enc %z\n", chunk_size,
+  fprintf(stderr, "XXX chunk_size %zu chunk_size_enc %zu\n", chunk_size,
           chunk_size_enc);
 
   char* enc;
   CHK_SYS_MALLOC_SZ(enc, 1, chunk_size_enc);
-  fprintf(stderr, "XXX allgather_kvs enc %p size %z\n", enc, chunk_size_enc);
+  fprintf(stderr, "XXX allgather_kvs enc %p size %zu\n", enc, chunk_size_enc);
   encode_kvs(enc, (const char*) mine + chunk_off, chunk_size);
 
   char key[64];
@@ -279,7 +279,7 @@ void chpl_comm_ofi_oob_bcast(void* buf, size_t size) {
 
 static inline
 void encode_kvs(char* enc, const char* raw, size_t size) {
-  fprintf(stderr, "enc %p size %z", enc, size);
+  fprintf(stderr, "enc %p size %zu", enc, size);
   for (size_t i = 0; i < size; i++) {
     enc[2 * i + 0] = ((raw[i] >> (0 * 4)) & 0xf) + 'a';
     enc[2 * i + 1] = ((raw[i] >> (1 * 4)) & 0xf) + 'a';
