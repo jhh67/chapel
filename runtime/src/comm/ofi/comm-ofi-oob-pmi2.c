@@ -204,7 +204,8 @@ void allgather_kvs(const void* mine, void* all, size_t size,
 
   char* enc;
   CHK_SYS_MALLOC_SZ(enc, 1, chunk_size_enc);
-  fprintf(stderr, "XXX allgather_kvs enc %p size %zu\n", enc, chunk_size_enc);
+  fprintf(stderr, "XXX allgather_kvs mine %p chunk_off %zu enc %p chunk_size_enc %zu end %p\n", mine, chunk_off, enc, chunk_size_enc,
+          enc + chunk_size_enc);
   encode_kvs(enc, (const char*) mine + chunk_off, chunk_size);
 
   char key[64];
@@ -279,7 +280,7 @@ void chpl_comm_ofi_oob_bcast(void* buf, size_t size) {
 
 static inline
 void encode_kvs(char* enc, const char* raw, size_t size) {
-  fprintf(stderr, "enc %p size %zu\n", enc, size);
+  fprintf(stderr, "enc %p size %zu end %p\n", enc, size, enc + size);
   for (size_t i = 0; i < size; i++) {
     enc[2 * i + 0] = ((raw[i] >> (0 * 4)) & 0xf) + 'a';
     enc[2 * i + 1] = ((raw[i] >> (1 * 4)) & 0xf) + 'a';
