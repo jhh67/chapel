@@ -822,6 +822,7 @@ static void *comm_task_wrapper(void *arg)
                      "binding comm task to CPU %d failed", rarg->cpu);
             chpl_warning(msg, 0, 0);
         }
+        _DBG_P("comm task bound to CPU %d", rarg->cpu);
     }
     (*(chpl_fn_p)(rarg->fn))(rarg->arg);
     return 0;
