@@ -314,14 +314,6 @@ void chpl_topo_post_comm_init(void) {
   //
   numCPUsLogAll = hwloc_get_nbobjs_by_type(topology, HWLOC_OBJ_PU);
   CHK_ERR(numCPUsLogAll > 0);
-#ifdef DEBUG
-  {
-      char buf[1024];
-      hwloc_bitmap_list_snprintf(buf, sizeof(buf),
-                                 hwloc_topology_get_allowed_cpuset(topology));
-      _DBG_P("XXX %d allowed cpuset %s", getpid(), buf);
-  }
-#endif
   //
   // If some PUs are inaccesssible to us then assume we've been restricted to
   // certain PUs at a higher level such as by the launcher. If so, use all
@@ -332,13 +324,10 @@ void chpl_topo_post_comm_init(void) {
 
   int numLocalesOnNode = chpl_get_num_locales_on_node();
   int rank = chpl_get_local_rank();
-  _DBG_P("XXX numLocalesOnNode %d rank %d", numLocalesOnNode, rank);
-  _DBG_P("XXX numCPUsLogAcc %d numCPUsLogAll %d", numCPUsLogAcc, numCPUsLogAll);
   if ((numCPUsLogAcc == numCPUsLogAll) && (numLocalesOnNode > 1) &&
       (rank != -1)) {
     int numSockets = hwloc_get_nbobjs_inside_cpuset_by_type(topology,
                           root->cpuset, HWLOC_OBJ_PACKAGE);
-    _DBG_P("XXX numSockets %d", numSockets);
     CHK_ERR(numSockets == numLocalesOnNode);
 
     // Each locale gets its own socket.
