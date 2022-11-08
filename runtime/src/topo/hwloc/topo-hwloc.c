@@ -93,6 +93,8 @@ static void alignAddrSize(void*, size_t, chpl_bool,
 static void chpl_topo_setMemLocalityByPages(unsigned char*, size_t,
                                             hwloc_obj_t);
 
+static void getCPUInfo(void);
+
 // CPU reservation must happen before CPU information is returned to other
 // layers.
 static chpl_bool okToReserveCPU = true;
@@ -233,6 +235,8 @@ void chpl_topo_init(void) {
       hwloc_get_nbobjs_inside_cpuset_by_depth(topology, cpusetAll, numaLevel);
   }
 
+  getCPUInfo();
+
   testProcCPUBind = chpl_env_rt_get("TEST_TOPO_PROC_CPUBIND", NULL);
   _DBG_P("testProcCPUBind: %s", testProcCPUBind);
   testCPUBind = chpl_env_rt_get_bool("TEST_TOPO_CPUBIND", false);
@@ -274,7 +278,7 @@ static int numCPUsLogAcc  = -1;
 static int numCPUsLogAll  = -1;
 
 int chpl_topo_getNumCPUsPhysical(chpl_bool accessible_only) {
-  okToReserveCPU = true;
+  okToReserveCPU = false;
   return (accessible_only) ? numCPUsPhysAcc : numCPUsPhysAll;
 }
 
@@ -291,7 +295,8 @@ int chpl_topo_getNumCPUsLogical(chpl_bool accessible_only) {
 // toplogy.
 //
 
-void chpl_topo_post_comm_init(void) {
+static
+void getCPUInfo(void) {
   //
   // accessible cores and PUs
   //
