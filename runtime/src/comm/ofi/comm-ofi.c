@@ -4696,8 +4696,7 @@ void fini_amHandling(void) {
 static __thread struct perTxCtxInfo_t* amTcip;
 
 static
-void amHandler(void* arg) {
-  int cpu = *((int *) arg);
+void amHandler(void* argNil) {
   struct perTxCtxInfo_t* tcip;
   CHK_TRUE((tcip = tciAllocForAmHandler()) != NULL);
   amTcip = tcip;
@@ -4715,15 +4714,6 @@ void amHandler(void* arg) {
   if (++numAmHandlersActive == 1)
     PTHREAD_CHK(pthread_cond_signal(&amStartStopCond));
   PTHREAD_CHK(pthread_mutex_unlock(&amStartStopMutex));
-
-  //
-  // If we are using dedicated cores for the AM handlers then bind
-  // this thread to its core.
-  //
-  if (cpu >= 0) {
-    CHK_TRUE(chpl_topo_bindCPUPhysical(cpu) == 0);
-    DBG_PRINTF(DBG_AM, "AM handler bound to CPU %d", cpu);
-  }
 
   //
   // Process AM requests and watch transmit responses arrive.
