@@ -348,9 +348,8 @@ void chpl_topo_post_comm_init(void) {
   // If some PUs are inaccesssible to us then assume we've been restricted to
   // certain PUs at a higher level such as by the launcher. If so, use all
   // accessible PUs. Otherwise, if we can access all PUs but we are sharing
-  // the machine with other locales then divy up the PUs between the locales.
-  // If the number of locales equals the number of sockets then limit
-  // ourselves to the PUs in our socket.
+  // the machine with other locales then the number of locales must equal the
+  // number of sockets and we get our own socket.
   //
 
   int numLocalesOnNode = chpl_get_num_locales_on_node();
@@ -362,85 +361,27 @@ void chpl_topo_post_comm_init(void) {
     int numSockets = hwloc_get_nbobjs_inside_cpuset_by_type(topology,
                           root->cpuset, HWLOC_OBJ_PACKAGE);
     _DBG_P("XXX numSockets %d", numSockets);
-    if (numSockets == numLocalesOnNode) {
-      _DBG_P("each locale will use its own socket");
+    CHK_ERR(numSockets == numLocalesOnNode);
 
-      // Each locale gets its own socket.
+    // Each locale gets its own socket.
 
-      hwloc_obj_t socket = hwloc_get_obj_inside_cpuset_by_type(topology,
-                                root->cpuset, HWLOC_OBJ_PACKAGE, rank);
-      CHK_ERR(socket != NULL);
+    hwloc_obj_t socket = hwloc_get_obj_inside_cpuset_by_type(topology,
+                              root->cpuset, HWLOC_OBJ_PACKAGE, rank);
+    CHK_ERR(socket != NULL);
 
-      // Limit the accessible PUs to those in our socket.
+    _DBG_P("using socket %d", socket->logical_index);
 
-      hwloc_bitmap_and(logAccSet, logAccSet, socket->cpuset);
-      numCPUsLogAcc = hwloc_bitmap_weight(logAccSet);
-      CHK_ERR(numCPUsLogAcc > 0);
+    // Limit the accessible PUs to those in our socket.
+
+    hwloc_bitmap_and(logAccSet, logAccSet, socket->cpuset);
+    numCPUsLogAcc = hwloc_bitmap_weight(logAccSet);
+    CHK_ERR(numCPUsLogAcc > 0);
 #ifdef DEBUG
-      char buf[1024];
-      hwloc_bitmap_list_snprintf(buf, sizeof(buf), logAccSet);
-      _DBG_P("numCPUsLogAcc: %d logAccSet: %s", numCPUsLogAcc, buf);
+    char buf[1024];
+    hwloc_bitmap_list_snprintf(buf, sizeof(buf), logAccSet);
+    _DBG_P("numCPUsLogAcc: %d logAccSet: %s", numCPUsLogAcc, buf);
 #endif
-      root = socket;
-    } else {
-      _DBG_P("divying up the PUs between the locales");
-
-      // Determine which PUs are ours. Divide them evenly among the locales
-      // sharing the node. One complication is that we don't want to share
-      // a core across locales unless we have to, and we only have to if
-      // the user has specified a number of threads per locale that makes
-      // sharing a core unavoidable.
-
-      int extraCores = 0;
-      int numCPUSLogPerCore = 1;
-      int numCPUSLogPerLocale = (int) chpl_task_getenvNumThreadsPerLocale();
-      if (numCPUSLogPerLocale == 0) {
-
-        // User has not specified threads per locale. Give each locale a
-        // whole number of cores.
-
-        hwloc_obj_t core = hwloc_get_obj_by_type(topology, HWLOC_OBJ_CORE, 0);
-        CHK_ERR(core != NULL);
-        numCPUSLogPerCore = hwloc_bitmap_weight(core->cpuset);
-        int numCores = numCPUsLogAcc / numCPUSLogPerCore;
-        int coresPerLocale = numCores / numLocalesOnNode;
-        numCPUSLogPerLocale = coresPerLocale * numCPUSLogPerCore;
-        extraCores = numCores % numLocalesOnNode;
-        _DBG_P("numCPUSLogPerCore: %d", numCPUSLogPerCore);
-        _DBG_P("coresPerLocale: %d", coresPerLocale);
-      }
-      _DBG_P("extraCores: %d", extraCores);
-      _DBG_P("numCPUSLogPerLocale: %d", numCPUSLogPerLocale);
-      _DBG_P("rank: %d", rank);
-
-      int extras = (rank < extraCores) ? rank : extraCores;
-      int firstPU = rank * numCPUSLogPerLocale + extras * numCPUSLogPerCore;
-      int endPU = firstPU + numCPUSLogPerLocale;
-      if (rank < extraCores) {
-        _DBG_P("adding %d to end", numCPUSLogPerCore);
-        endPU += numCPUSLogPerCore;
-      }
-      int count = endPU - firstPU;
-      CHK_ERR((count % numCPUSLogPerCore) == 0);
-      _DBG_P("firstPU %d endPU %d count %d PUs", firstPU, endPU, count);
-      hwloc_cpuset_t ours = NULL;
-      CHK_ERR_ERRNO((ours = hwloc_bitmap_alloc()) != NULL);
-      for (int i = firstPU; i < endPU; i++) {
-        hwloc_obj_t pu = hwloc_get_obj_inside_cpuset_by_type(topology,
-                              logAccSet, HWLOC_OBJ_PU, i);
-        CHK_ERR(pu != NULL);
-        hwloc_bitmap_or(ours, ours, pu->cpuset);
-      }
-      hwloc_bitmap_and(logAccSet, logAccSet, ours);
-      numCPUsLogAcc = hwloc_bitmap_weight(logAccSet);
-      CHK_ERR(numCPUsLogAcc > 0);
-#ifdef DEBUG
-      char buf[1024];
-      hwloc_bitmap_list_snprintf(buf, sizeof(buf), logAccSet);
-      _DBG_P("numCPUsLogAcc: %d logAccSet: %s", numCPUsLogAcc, buf);
-#endif
-      hwloc_bitmap_free(ours);
-    }
+    root = socket;
   }
 
 // accessible cores

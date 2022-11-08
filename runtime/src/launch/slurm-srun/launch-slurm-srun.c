@@ -38,7 +38,7 @@
 #define CHPL_PARTITION_FLAG "--partition"
 #define CHPL_EXCLUDE_FLAG "--exclude"
 
-#define CHPL_LPN_VAR "CHPL_LAUNCHER_LOCALES_PER_NODE"
+#define CHPL_LPN_VAR "CHPL_RT_LOCALES_PER_NODE"
 
 static char* debug = NULL;
 static char* walltime = NULL;
@@ -99,7 +99,8 @@ static int nomultithread(int batch) {
 }
 
 // Get the number of locales from the environment variable or if that is not
-// set just use sinfo to get the number of cpus.
+// set just use sinfo to get the number of cpus and divide by the number
+// of locales per node.
 static int getCoresPerLocale(int nomultithread, int32_t localesPerNode) {
   int numCores = -1;
   int threadsPerCore = -1;
