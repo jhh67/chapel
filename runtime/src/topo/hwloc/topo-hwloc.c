@@ -318,7 +318,7 @@ void chpl_topo_post_comm_init(void) {
   {
       char buf[1024];
       hwloc_bitmap_list_snprintf(buf, sizeof(buf), hwloc_get_root_obj(topology)->cpuset);
-:      hwloc_bitmap_list_snprintf(buf, sizeof(buf),
+      hwloc_bitmap_list_snprintf(buf, sizeof(buf),
                                  hwloc_topology_get_allowed_cpuset(topology));
       _DBG_P("XXX %d allowed cpuset %s", getpid(), buf);
   }
