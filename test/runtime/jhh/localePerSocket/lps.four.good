@@ -1,0 +1,5 @@
+internal error: topo-hwloc.c: 331: !(numSockets == numLocalesOnNode)
+internal error: topo-hwloc.c: 331: !(numSockets == numLocalesOnNode)
+internal error: topo-hwloc.c: 331: !(numSockets == numLocalesOnNode)
+internal error: topo-hwloc.c: 331: !(numSockets == numLocalesOnNode)
+srun: error: nid000022: tasks 0-3: Exited with exit code 2
