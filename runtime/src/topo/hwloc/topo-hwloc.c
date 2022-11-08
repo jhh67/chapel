@@ -501,7 +501,11 @@ void chpl_topo_setThreadLocality(c_sublocid_t subloc) {
 
   flags = HWLOC_CPUBIND_THREAD | HWLOC_CPUBIND_STRICT;
   CHK_ERR_ERRNO(hwloc_set_cpubind(topology, cpuset, flags) == 0);
-
+#ifdef DEBUG
+  char buf[1024];
+  hwloc_bitmap_list_snprintf(buf, sizeof(buf), cpuset);
+  _DBG_P("chpl_topo_setThreadLocality: %s", buf);
+#endif
   hwloc_bitmap_free(cpuset);
 }
 
