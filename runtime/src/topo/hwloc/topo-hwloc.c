@@ -317,7 +317,6 @@ void chpl_topo_post_comm_init(void) {
 #ifdef DEBUG
   {
       char buf[1024];
-      hwloc_bitmap_list_snprintf(buf, sizeof(buf), hwloc_get_root_obj(topology)->cpuset);
       hwloc_bitmap_list_snprintf(buf, sizeof(buf),
                                  hwloc_topology_get_allowed_cpuset(topology));
       _DBG_P("XXX %d allowed cpuset %s", getpid(), buf);
@@ -635,9 +634,7 @@ static inline
 hwloc_obj_t getNumaObj(c_sublocid_t subloc) {
   // could easily imagine this being a bit slow, but it's okay for now
   return
-    hwloc_get_obj_inside_cpuset_by_depth(topology,
-                                         hwloc_get_root_obj(topology)->cpuset,
-                                         numaLevel,
+    hwloc_get_obj_inside_cpuset_by_depth(topology, root->cpuset, numaLevel,
                                          subloc);
 }
 
@@ -682,9 +679,7 @@ void chpl_topo_interleaveMemLocality(void* p, size_t size) {
   }
 
   hwloc_bitmap_t set;
-  hwloc_obj_t obj;
-  obj = hwloc_get_root_obj(topology);
-  set = hwloc_bitmap_dup(obj->cpuset);
+  set = hwloc_bitmap_dup(root->cpuset);
 
   flags = 0;
   CHK_ERR_ERRNO(hwloc_set_area_membind(topology, p, size, set, HWLOC_MEMBIND_INTERLEAVE, flags) == 0);
