@@ -1038,13 +1038,6 @@ void chpl_comm_init(int *argc_p, char ***argv_p) {
     }
   }
 
-  //
-  // Reserve cores for the AM handlers. This has to be done early before
-  // calling other routines that use information about the cores, such as
-  // pinning the heap.
-  //
-  init_ofiReserveCores();
-
   pthread_that_inited = pthread_self();
 }
 
