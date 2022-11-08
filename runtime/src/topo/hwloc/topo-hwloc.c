@@ -93,8 +93,6 @@ static void alignAddrSize(void*, size_t, chpl_bool,
 static void chpl_topo_setMemLocalityByPages(unsigned char*, size_t,
                                             hwloc_obj_t);
 
-static void getCPUInfo(void);
-
 // CPU reservation must happen before CPU information is returned to other
 // layers.
 static chpl_bool okToReserveCPU = true;
@@ -273,8 +271,7 @@ int chpl_topo_getNumCPUsLogical(chpl_bool accessible_only) {
 // toplogy.
 //
 
-static
-void getCPUInfo(void) {
+void chpl_topo_post_comm_init(void) {
   //
   // accessible cores and PUs
   //

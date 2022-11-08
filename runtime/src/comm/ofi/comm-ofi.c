@@ -1051,6 +1051,17 @@ void chpl_comm_pre_mem_init(void) {
   init_ofiReserveCores();
 }
 
+void chpl_comm_pre_mem_init(void) {
+  //
+  // Reserve cores for the AM handlers. This is done here because it has
+  // to happen after chpl_topo_post_comm_init has been called, but before
+  // other functions access information about the cores, such as pinning the
+  // heap.
+  //
+  init_ofiReserveCores();
+}
+
+
 
 
 void chpl_comm_post_mem_init(void) {
