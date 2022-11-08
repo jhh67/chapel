@@ -478,6 +478,10 @@ void chpl_topo_setThreadLocality(c_sublocid_t subloc) {
   hwloc_cpuset_from_nodeset(topology, cpuset,
                             getNumaObj(subloc)->allowed_nodeset);
 
+  // Only use accessible CPUs.
+
+  hwloc_bitmap_and(cpuset, cpuset, logAccSet);
+
   flags = HWLOC_CPUBIND_THREAD | HWLOC_CPUBIND_STRICT;
   CHK_ERR_ERRNO(hwloc_set_cpubind(topology, cpuset, flags) == 0);
 #ifdef DEBUG
