@@ -1,0 +1,5 @@
+This branch contains code for supporing an arbitrary number of
+locales per node, with the cores divided evenly among the locales.
+
+I did a rebase and it seems to hang with 3 locales/node on sawmill,
+but it worked before then.
