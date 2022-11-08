@@ -504,7 +504,7 @@ void chpl_topo_setThreadLocality(c_sublocid_t subloc) {
 #ifdef DEBUG
   char buf[1024];
   hwloc_bitmap_list_snprintf(buf, sizeof(buf), cpuset);
-  _DBG_P("chpl_topo_setThreadLocality: %s", buf);
+  _DBG_P("chpl_topo_setThreadLocality(%d): %s", (int) subloc, buf);
 #endif
   hwloc_bitmap_free(cpuset);
 }
