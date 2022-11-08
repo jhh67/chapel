@@ -1048,9 +1048,22 @@ void chpl_comm_init(int *argc_p, char ***argv_p) {
   pthread_that_inited = pthread_self();
 }
 
+void chpl_comm_pre_mem_init(void) {
+  //
+  // Reserve cores for the AM handlers. This is done here because it has
+  // to happen after chpl_topo_post_comm_init has been called, but before
+  // other functions access information about the cores, such as pinning the
+  // heap.
+  //
+  init_ofiReserveCores();
+}
+
+
 
 void chpl_comm_post_mem_init(void) {
   DBG_PRINTF(DBG_IFACE_SETUP, "%s()", __func__);
+
+
 
   chpl_comm_init_prv_bcast_tab();
   init_broadcast_private();
