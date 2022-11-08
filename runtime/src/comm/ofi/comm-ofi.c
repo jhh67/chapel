@@ -251,7 +251,7 @@ struct amRequest_execOnLrg_t {
 
 #define NUM_AM_HANDLERS 1
 static int numAmHandlers = NUM_AM_HANDLERS;
-static int reservedCores[NUM_AM_HANDLERS];
+static int reservedCPUs[NUM_AM_HANDLERS];
 
 //
 // AM request landing zones.
@@ -2005,15 +2005,9 @@ void init_ofiFabricDomain(void) {
 //
 static
 void init_ofiReserveCores() {
-  if (envUseDedicatedAmhCores &&
-      (chpl_topo_getNumCPUsPhysical(true) > numAmHandlers)) {
-    for (int i = 0; i < numAmHandlers; i++) {
-      reservedCores[i] = chpl_topo_reserveCPUPhysical();
-    }
-  } else {
-    for (int i = 0; i < numAmHandlers; i++) {
-      reservedCores[i] = -1;
-    }
+  for (int i = 0; i < numAmHandlers; i++) {
+    reservedCPUs[i] = envUseDedicatedAmhCores ?
+      chpl_topo_reserveCPUPhysical() : -1;
   }
 }
 
@@ -4666,7 +4660,7 @@ void init_amHandling(void) {
   
   PTHREAD_CHK(pthread_mutex_lock(&amStartStopMutex));
   for (int i = 0; i < numAmHandlers; i++) {
-    CHK_TRUE(chpl_task_createCommTask(amHandler, &reservedCores[i]) == 0);
+    CHK_TRUE(chpl_task_createCommTask(amHandler, NULL, reservedCPUs[i]) == 0);
   }
   PTHREAD_CHK(pthread_cond_wait(&amStartStopCond, &amStartStopMutex));
   PTHREAD_CHK(pthread_mutex_unlock(&amStartStopMutex));
