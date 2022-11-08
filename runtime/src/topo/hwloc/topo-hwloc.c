@@ -431,6 +431,7 @@ void chpl_topo_post_comm_init(void) {
     numNumaDomains =
       hwloc_get_nbobjs_inside_cpuset_by_depth(topology, root->cpuset,
                                               numaLevel);
+    _DBG_P("numNumaDomains %d", numNumaDomains);
   }
 #ifdef DEBUG
   char buf[1024];
