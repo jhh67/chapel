@@ -1434,6 +1434,12 @@ struct fi_info* findProvInList(struct fi_info* info,
     if (!isUseableProvider(info)) {
       continue;
     }
+    if ((info->nic != NULL) && (info->nic->link_attr != NULL) &&
+        (info->nic->link_attr->address != NULL) &&
+        (info->nic->device_attr != NULL)) {
+      fprintf(stderr, "XXX %s: %s\n", info->nic->device_attr->name,
+              info->nic->link_attr->address);
+    }
     // got one
     break;
   }
