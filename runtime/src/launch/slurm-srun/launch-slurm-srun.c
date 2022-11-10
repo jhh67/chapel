@@ -444,7 +444,7 @@ static char* chpl_launch_create_command(int argc, char* argv[],
     len += snprintf(iCom+len, sizeof(iCom)-len, "--nodes=%d ",numNodes);
     len += snprintf(iCom+len, sizeof(iCom)-len, "--ntasks=%d ", numLocales);
     len += snprintf(iCom+len, sizeof(iCom)-len, "--ntasks-per-node=%d ",
-                    localsPerNode);
+                    localesPerNode);
     len += snprintf(iCom+len, sizeof(iCom)-len, "--cpus-per-task=%d ",
                     getCoresPerLocale(nomultithread(false), localesPerNode));
 
