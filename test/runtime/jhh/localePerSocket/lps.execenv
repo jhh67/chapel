@@ -9,6 +9,11 @@ import os
 
 prefix = sys.argv[1]
 
+default = prefix + ".default.execenv"
+if os.path.exists(default):
+    with open(default, 'r') as fd:
+        print(fd.read())
+
 for arg in sys.argv[2:]:
     if arg.startswith("--execenv="):
         values = arg.split('=')[1]
