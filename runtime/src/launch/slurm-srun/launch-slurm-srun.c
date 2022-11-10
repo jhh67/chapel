@@ -443,9 +443,10 @@ static char* chpl_launch_create_command(int argc, char* argv[],
 
     len += snprintf(iCom+len, sizeof(iCom)-len, "--nodes=%d ",numNodes);
     len += snprintf(iCom+len, sizeof(iCom)-len, "--ntasks=%d ", numLocales);
-    len += snprintf(iCom+len, sizeof(iCom)-len, "--ntasks-per-node=%d ", procsPerNode);
+    len += snprintf(iCom+len, sizeof(iCom)-len, "--ntasks-per-node=%d ",
+                    localsPerNode);
     len += snprintf(iCom+len, sizeof(iCom)-len, "--cpus-per-task=%d ",
-                    getCoresPerLocale(nomultithread(false)));
+                    getCoresPerLocale(nomultithread(false), localesPerNode));
 
     if (localesPerNode > 1) {
       len += sprintf(iCom+len, "--cpu-bind=none ");
