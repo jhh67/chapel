@@ -871,7 +871,7 @@ int chpl_topo_bindCPU(int id) {
   return status;
 }
 
-chpl_bool chpl_topo_isNICAccessible(char *address)
+chpl_bool chpl_topo_okToUseNIC(char *pciSlot)
 {
   // TODO: handle HWLOC_OBJ_OSDEV_OPENFABRICS objects
   chpl_bool result = false;
@@ -888,10 +888,15 @@ chpl_bool chpl_topo_isNICAccessible(char *address)
           char buf[1024];
           hwloc_obj_attr_snprintf(buf, sizeof(buf), pobj, ",", 1);
           fprintf(stderr, "XXX %s count %d %s\n", pobj->name, pobj->infos_count, buf);
+          const char *busid = hwloc_obj_get_info_by_name(pobj, "busid");
+          if ((busid != NULL) && (!strcmp(busid, pciSlot))) {
+            result = true;
+            break;
+          }
       }
     }
   }
-  return true;
+  return result;
 }
 
 
