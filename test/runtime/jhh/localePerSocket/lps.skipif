@@ -2,17 +2,11 @@
 
 import os
 import sys
-from pprint import *
 
-with open("out", "w") as fd:
-    pprint(os.environ, stream=fd)
 skip = False
 skip |= (os.getenv('CHPL_COMM') != 'ofi')
-print(skip)
 skip |= (os.getenv('CHPL_TASKS') != 'qthreads')
-print(skip)
 skip |= (os.getenv('CHPL_HWLOC') != 'bundled')
-print(skip)
 
 # Skip if CHPL_QTHREAD_TOPOLOGY is set to something other than 'binders'
 skip |= (os.getenv('CHPL_QTHREAD_TOPOLOGY') not in [None, 'binders'])
