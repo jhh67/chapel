@@ -11,12 +11,11 @@ skip |= (os.getenv('CHPL_HWLOC') != 'bundled')
 # Skip if CHPL_QTHREAD_TOPOLOGY is set to something other than 'binders'
 skip |= (os.getenv('CHPL_QTHREAD_TOPOLOGY') not in [None, 'binders'])
 
-# We need pmi2 so skip if CHPL_COMM_OFI_OOB does not equal 'pmi2', or if
-# CHPL_COMM_OFI_OOB is not set and CHPL_TARGET_PLATFORM is not
-# 'hpe-cray-ex'.
+# We need pmi2 so only do the test if CHPL_COMM_OFI_OOB is 'pmi2', or if
+# CHPL_COMM_OFI_OOB is not set and CHPL_TARGET_PLATFORM is 'hpe-cray-ex'.
 
-skip |= (((os.getenv('CHPL_COMM_OFI_OOB') == None) and
-          (os.getenv('CHPL_TARGET_PLATFORM') != 'hpe-cray-ex')) or
-         (os.getenv('CHPL_COMM_OFI_OOB') != 'pmi2'))
+skip |= not ((os.getenv('CHPL_COMM_OFI_OOB') == 'pmi2') or
+       ((os.getenv('CHPL_COMM_OFI_OOB') == None) and 
+        (os.getenv('CHPL_TARGET_PLATFORM') == 'hpe-cray-ex')))
 
 print(skip)
