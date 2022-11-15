@@ -156,6 +156,8 @@ void chpl_topo_touchMemFromSubloc(void*, size_t, chpl_bool, c_sublocid_t);
 //
 c_sublocid_t chpl_topo_getMemLocality(void*);
 
+chpl_bool chpl_topo_isNICAccessible(char *address);
+
 
 #ifdef __cplusplus
 } // end extern "C"

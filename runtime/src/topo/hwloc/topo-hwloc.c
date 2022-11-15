@@ -156,6 +156,10 @@ void chpl_topo_init(void) {
   //
   CHK_ERR_ERRNO(hwloc_topology_init(&topology) == 0);
 
+  // Make sure we get everything including I/O devices.
+  int flags = HWLOC_TOPOLOGY_FLAG_WHOLE_IO | HWLOC_TOPOLOGY_FLAG_IO_BRIDGES | HWLOC_TOPOLOGY_FLAG_IO_DEVICES;
+  CHK_ERR_ERRNO(hwloc_topology_set_flags(topology, flags) == 0);
+
   //
   // Perform the topology detection.
   //
@@ -865,6 +869,21 @@ int chpl_topo_bindCPU(int id) {
   }
   _DBG_P("chpl_topo_bindCPUPhysical id: %d status: %d", id, status);
   return status;
+}
+
+chpl_bool chpl_topo_isNICAccessible(char *address)
+{
+  // TODO: handle HWLOC_OBJ_OSDEV_OPENFABRICS objects
+  chpl_bool result = false;
+  for (hwloc_obj_t obj = hwloc_get_next_osdev(topology, NULL);
+       obj != NULL;
+       obj = hwloc_get_next_osdev(topology, NULL)) {
+    if ((obj->type == HWLOC_OBJ_OS_DEVICE) &&
+        (obj->attr->osdev.type == HWLOC_OBJ_OSDEV_NETWORK)) {
+      fprintf(stderr, "XXX count %d\n", obj->infos_count);
+    }
+  }
+  return true;
 }
 
 

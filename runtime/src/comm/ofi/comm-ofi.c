@@ -1041,15 +1041,6 @@ void chpl_comm_init(int *argc_p, char ***argv_p) {
   pthread_that_inited = pthread_self();
 }
 
-void chpl_comm_pre_mem_init(void) {
-  //
-  // Reserve cores for the AM handlers. This is done here because it has
-  // to happen after chpl_topo_post_comm_init has been called, but before
-  // other functions access information about the cores, such as pinning the
-  // heap.
-  //
-  init_ofiReserveCores();
-}
 
 void chpl_comm_pre_mem_init(void) {
   //
@@ -1060,8 +1051,6 @@ void chpl_comm_pre_mem_init(void) {
   //
   init_ofiReserveCores();
 }
-
-
 
 
 void chpl_comm_post_mem_init(void) {
@@ -1445,12 +1434,21 @@ struct fi_info* findProvInList(struct fi_info* info,
     if (!isUseableProvider(info)) {
       continue;
     }
+
     if ((info->nic != NULL) && (info->nic->link_attr != NULL) &&
         (info->nic->link_attr->address != NULL) &&
         (info->nic->device_attr != NULL)) {
       fprintf(stderr, "XXX %s: %s\n", info->nic->device_attr->name,
               info->nic->link_attr->address);
     }
+
+    if ((info->nic != NULL) && (info->nic->link_attr != NULL) &&
+        (info->nic->link_attr->address != NULL)) {
+      if (!chpl_topo_isNICAccessible(info->nic->link_attr->address)) {
+        continue;
+      }
+    }
+
     // got one
     break;
   }
