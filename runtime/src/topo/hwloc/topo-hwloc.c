@@ -871,7 +871,8 @@ int chpl_topo_bindCPU(int id) {
   return status;
 }
 
-chpl_bool chpl_topo_okToUseNIC(char *pciSlot)
+chpl_bool chpl_topo_okToUseNIC(uint16_t domain, uint8_t bus,
+                               uint8_t device, uint8_t function)
 {
   // TODO: handle HWLOC_OBJ_OSDEV_OPENFABRICS objects
   chpl_bool result = false;
@@ -885,11 +886,10 @@ chpl_bool chpl_topo_okToUseNIC(char *pciSlot)
       fprintf(stderr, "XXX %s count %d %s\n", obj->name, obj->infos_count, buf);
       hwloc_obj_t pobj = obj->parent;
       if (pobj->type == HWLOC_OBJ_PCI_DEVICE) {
-          char buf[1024];
-          hwloc_obj_attr_snprintf(buf, sizeof(buf), pobj, ",", 1);
-          fprintf(stderr, "XXX %s count %d %s\n", pobj->name, pobj->infos_count, buf);
-          const char *busid = hwloc_obj_get_info_by_name(pobj, "busid");
-          if ((busid != NULL) && (!strcmp(busid, pciSlot))) {
+          struct hwloc_pcidev_attr_s *attr = &(pobj->attr->pcidev);
+          if ((attr->domain == domain) && (attr->bus == bus) &&
+              (attr->dev == device) && (attr->func == function)) {
+            fprintf(stderr, "XXX PCI dev match\n");
             result = true;
             break;
           }

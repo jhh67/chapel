@@ -156,7 +156,8 @@ void chpl_topo_touchMemFromSubloc(void*, size_t, chpl_bool, c_sublocid_t);
 //
 c_sublocid_t chpl_topo_getMemLocality(void*);
 
-chpl_bool chpl_topo_okToUseNIC(char *address);
+chpl_bool chpl_topo_okToUseNIC(uint16_t domain_id, uint8_t bus_id,
+                               uint8_t device_id, uint8_t function_id);
 
 
 #ifdef __cplusplus

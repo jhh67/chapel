@@ -1437,13 +1437,9 @@ struct fi_info* findProvInList(struct fi_info* info,
 
     if ((info->nic != NULL) && (info->nic->bus_attr != NULL) &&
         (info->nic->bus_attr->bus_type == FI_BUS_PCI)) {
-      // Convert to PCIE BDF notation
       struct fi_pci_attr *pci = &info->nic->bus_attr->attr.pci;
-      char bdf[32];
-      snprintf(bdf, sizeof(bdf), "%4x:%2x:%2x.%x", 
-               pci->domain_id, pci->bus_id, pci->device_id,
-               pci->function_id);
-      if (!chpl_topo_okToUseNIC(bdf)) {
+      if (!chpl_topo_okToUseNIC(pci->domain_id, pci->bus_id, pci->device_id,
+                                pci->function_id)) {
         continue;
       }
     }
