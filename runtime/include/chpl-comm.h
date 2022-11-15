@@ -201,8 +201,8 @@ void chpl_comm_init(int *argc_p, char ***argv_p);
 void chpl_comm_pre_mem_init(void);
 
 //
-// Allow the communication layer to do any secondary initialization it needs
-// to, after the memory layer is initialized.
+// Allow the communication layer to do any additional initialization
+// after the memory layer is initialized.
 //
 void chpl_comm_post_mem_init(void);
 
@@ -598,7 +598,8 @@ int32_t chpl_get_num_locales_on_node(void);
 // Sets our local rank on the node.
 void chpl_set_local_rank(int32_t rank);
 
-// Returns our local rank on the node, -1 if it is not implemented.
+// Returns our local rank on the node, -1 if chpl_set_local_rank has
+// not been called.
 int32_t chpl_get_local_rank(void);
 
 // Returns true if node is oversubscribed, false otherwise.
