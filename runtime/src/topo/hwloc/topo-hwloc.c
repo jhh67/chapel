@@ -877,10 +877,18 @@ chpl_bool chpl_topo_isNICAccessible(char *address)
   chpl_bool result = false;
   for (hwloc_obj_t obj = hwloc_get_next_osdev(topology, NULL);
        obj != NULL;
-       obj = hwloc_get_next_osdev(topology, NULL)) {
+       obj = hwloc_get_next_osdev(topology, obj)) {
     if ((obj->type == HWLOC_OBJ_OS_DEVICE) &&
         (obj->attr->osdev.type == HWLOC_OBJ_OSDEV_NETWORK)) {
-      fprintf(stderr, "XXX count %d\n", obj->infos_count);
+      char buf[1024];
+      hwloc_obj_attr_snprintf(buf, sizeof(buf), obj, ",", 1);
+      fprintf(stderr, "XXX %s count %d %s\n", obj->name, obj->infos_count, buf);
+      hwloc_obj_t pobj = obj->parent;
+      if (pobj->type == HWLOC_OBJ_PCI_DEVICE) {
+          char buf[1024];
+          hwloc_obj_attr_snprintf(buf, sizeof(buf), pobj, ",", 1);
+          fprintf(stderr, "XXX %s count %d %s\n", pobj->name, pobj->infos_count, buf);
+      }
     }
   }
   return true;
