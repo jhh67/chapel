@@ -194,9 +194,9 @@ int32_t chpl_comm_getMaxThreads(void);
 void chpl_comm_init(int *argc_p, char ***argv_p);
 
 //
-// Allow the communication layer to do any secondary initialization it
-// needs to after the topology layer has been fully initialized and
-// before the memory layer is initialized.
+// Allow the communication layer to do any additional initialization
+// after the topology layer has been fully initialized but before the
+// memory layer is initialized.
 //
 void chpl_comm_pre_mem_init(void);
 
