@@ -930,7 +930,7 @@ chpl_bool chpl_topo_okToUseNIC(chpl_topo_pci_addr_t *addr)
 
   // If the NIC is in our socket we can use it.
   struct hwloc_pcidev_attr_s *nattr = &(nic->attr->pcidev);
-    _DBG_P("Found NIC %04x:%02x:%02x.%x\n",
+    _DBG_P("Found NIC %04x:%02x:%02x.%x",
            nattr->domain, nattr->bus, nattr->dev, nattr->func);
   hwloc_obj_t sobj = hwloc_get_ancestor_obj_by_type(topology, HWLOC_OBJ_PACKAGE, nic);
   if (sobj == NULL) {
@@ -966,10 +966,13 @@ chpl_bool chpl_topo_okToUseNIC(chpl_topo_pci_addr_t *addr)
                  attr->domain, attr->bus, attr->dev, attr->func);
           goto done;
         }
+        _DBG_P("Found socket for NIC %04x:%02x:%02x.%x",
+                 attr->domain, attr->bus, attr->dev, attr->func);
         char value[100];
         snprintf(value, sizeof(value), "%04x:%02x:%02x.%x",
            attr->domain, attr->bus, attr->dev, attr->func);
         hwloc_obj_add_info(sobj, key, value);
+        _DBG_P("Tagged socket");
       }
     }
   }
@@ -993,8 +996,10 @@ chpl_bool chpl_topo_okToUseNIC(chpl_topo_pci_addr_t *addr)
 
   // If we get here all sockets have the same type of NIC, but we are trying
   // to use one in a different socket. Don't use it.
+  _DBG_P("All sockets are tagged with this type of NIC, don't use it.");
   result = false;
 done:
+  _DBG_P("Returning %s", result ? "True" : "False");
   return result;
 }
 
