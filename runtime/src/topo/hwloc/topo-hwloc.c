@@ -361,6 +361,9 @@ void chpl_topo_post_comm_init(void) {
     root = socket;
   }
 
+  char buf[1024];
+  hwloc_obj_type_snprintf(buf, sizeof(buf), root->type, 1);
+  fprintf(stderr, "XXX root type %s\n", buf);
 // accessible cores
 
 #define NEXT_PU(pu)                                                \
@@ -871,6 +874,17 @@ int chpl_topo_bindCPU(int id) {
   return status;
 }
 
+//
+// Determine whether or not it's ok to use the NIC specified by the PCI
+// address. It is *not* ok to use a NIC if the locale is running in its own
+// socket, every socket has a NIC, and we are asked about a NIC other than
+// the one in our socket. Otherwise it's ok to use the NIC. One complication
+// is that every socket might have a NIC but they might be of different
+// capabilities, e.g., one has a low-speed NIC and the other a high-speed.
+// In this case all locales should use the high-speed NIC. TODO: handle
+// that scenerio. For now just assume that the NICs are identical across
+// the sockets if there is more than one of them.
+
 chpl_bool chpl_topo_okToUseNIC(chpl_topo_pci_addr_t *addr)
 {
   // TODO: handle HWLOC_OBJ_OSDEV_OPENFABRICS objects
@@ -886,7 +900,7 @@ chpl_bool chpl_topo_okToUseNIC(chpl_topo_pci_addr_t *addr)
       hwloc_obj_t pobj = obj->parent;
       if (pobj->type == HWLOC_OBJ_PCI_DEVICE) {
           struct hwloc_pcidev_attr_s *attr = &(pobj->attr->pcidev);
-          if ((attr->domain == addr->domain) && (attr->bus == attr->bus) &&
+          if ((attr->domain == addr->domain) && (attr->bus == addr->bus) &&
               (attr->dev == addr->device) && (attr->func == addr->function)) {
             fprintf(stderr, "XXX PCI dev match\n");
             result = true;
