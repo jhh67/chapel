@@ -905,13 +905,8 @@ chpl_bool chpl_topo_okToUseNIC(chpl_topo_pci_addr_t *addr)
   for (hwloc_obj_t obj = hwloc_get_next_pcidev(topology, NULL);
        obj != NULL;
        obj = hwloc_get_next_pcidev(topology, obj)) {
-    char tbuf[1024];
-    hwloc_obj_type_snprintf(tbuf, sizeof(tbuf), obj, 1);
-    _DBG_P("object is of type %s", tbuf);
     if (obj->type == HWLOC_OBJ_PCI_DEVICE) {
       struct hwloc_pcidev_attr_s *attr = &(obj->attr->pcidev);
-        _DBG_P("checking %04x:%02x:%02x.%x", attr->domain, attr->bus,
-           attr->dev, attr->func);
       if ((attr->domain == addr->domain) && (attr->bus == addr->bus) &&
           (attr->dev == addr->device) && (attr->func == addr->function)) {
         fprintf(stderr, "XXX PCI dev match\n");
@@ -1011,7 +1006,7 @@ chpl_bool chpl_topo_okToUseNIC(chpl_topo_pci_addr_t *addr)
   result = false;
 done:
   if (nic != NULL) {
-    hwloc_obj_add_info(sobj, "OkToUse", result ? "True" : "False");
+    hwloc_obj_add_info(nic, "OkToUse", result ? "True" : "False");
   }
   _DBG_P("Returning %s", result ? "True" : "False");
   return result;
