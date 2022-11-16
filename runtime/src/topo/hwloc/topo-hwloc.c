@@ -887,34 +887,100 @@ int chpl_topo_bindCPU(int id) {
 // the one in our socket. Otherwise it's ok to use the NIC. One complication
 // is that every socket might have a NIC but they might be of different
 // capabilities, e.g., one has a low-speed NIC and the other a high-speed.
-// In this case all locales should use the high-speed NIC. TODO: handle
-// that scenerio. For now just assume that the NICs are identical across
-// the sockets if there is more than one of them.
+// In this case we should not use a NIC from a different socket if all
+// sockets have the same type of NIC.
+// TODO: handle HWLOC_OBJ_OSDEV_OPENFABRICS objects
 
 chpl_bool chpl_topo_okToUseNIC(chpl_topo_pci_addr_t *addr)
 {
-  // TODO: handle HWLOC_OBJ_OSDEV_OPENFABRICS objects
-  chpl_bool result = false;
+  chpl_bool result = true;
+  if (root->type != HWLOC_OBJ_PACKAGE) {
+    // We aren't running in a socket, ok to use the NIC.
+    goto done;
+  }
+  // find the PCI object corresponding to the NIC
+  hwloc_obj_t nic = NULL;
   for (hwloc_obj_t obj = hwloc_get_next_osdev(topology, NULL);
        obj != NULL;
        obj = hwloc_get_next_osdev(topology, obj)) {
-    if ((obj->type == HWLOC_OBJ_OS_DEVICE) &&
-        (obj->attr->osdev.type == HWLOC_OBJ_OSDEV_NETWORK)) {
-      char buf[1024];
-      hwloc_obj_attr_snprintf(buf, sizeof(buf), obj, ",", 1);
-      fprintf(stderr, "XXX %s count %d %s\n", obj->name, obj->infos_count, buf);
-      hwloc_obj_t pobj = obj->parent;
-      if (pobj->type == HWLOC_OBJ_PCI_DEVICE) {
-          struct hwloc_pcidev_attr_s *attr = &(pobj->attr->pcidev);
-          if ((attr->domain == addr->domain) && (attr->bus == addr->bus) &&
-              (attr->dev == addr->device) && (attr->func == addr->function)) {
-            fprintf(stderr, "XXX PCI dev match\n");
-            result = true;
-            break;
-          }
+    if (obj->type == HWLOC_OBJ_PCI_DEVICE) {
+      struct hwloc_pcidev_attr_s *attr = &(obj->attr->pcidev);
+      if ((attr->domain == addr->domain) && (attr->bus == addr->bus) &&
+          (attr->dev == addr->device) && (attr->func == addr->function)) {
+        fprintf(stderr, "XXX PCI dev match\n");
+        nic = obj;
+        break;
       }
     }
   }
+  // If we didn't find the NIC something is wrong but go ahead and use it
+  // anyway.
+  if (nic == NULL) {
+    _DBG_P("Could not find NIC %04x:%02x:%02x.%x\n", addr->domain, addr->bus,
+           addr->device, addr->function);
+    goto done;
+  }
+
+  // If the NIC is in our socket we can use it.
+  struct hwloc_pcidev_attr_s *nattr = &(nic->attr->pcidev);
+  hwloc_obj_t sobj = hwloc_get_ancestor_obj_by_type(topology, HWLOC_OBJ_PACKAGE, nic);
+  if (sobj == NULL) {
+    _DBG_P("Could not find socket for NIC %04x:%02x:%02x.%x\n",
+           nattr->domain, nattr->bus, nattr->dev, nattr->func);
+    goto done;
+  }
+  if (sobj == root) {
+    goto done;
+  }
+
+  // Otherwise we can't use the NIC if every socket has the same type of NIC
+  // (same vendor and device).
+  char key[100];
+  snprintf(key, sizeof(key), "%04x:%04x", nattr->vendor_id, nattr->device_id);
+
+  // Find all NICs of the same type and tag their sockets.
+  for (hwloc_obj_t obj = hwloc_get_next_osdev(topology, NULL);
+       obj != NULL;
+       obj = hwloc_get_next_osdev(topology, obj)) {
+    if (obj->type == HWLOC_OBJ_PCI_DEVICE) {
+      struct hwloc_pcidev_attr_s *attr = &(obj->attr->pcidev);
+      if ((attr->vendor_id == nattr->vendor_id) &&
+          (attr->device_id == nattr->device_id)) {
+        sobj = hwloc_get_ancestor_obj_by_type(topology, HWLOC_OBJ_PACKAGE,
+                                              obj);
+        if (sobj == NULL) {
+          _DBG_P("Could not find socket for NIC %04x:%02x:%02x.%x\n",
+                 attr->domain, attr->bus, attr->dev, attr->func);
+          goto done;
+        }
+        char value[100];
+        snprintf(value, sizeof(value), "%04x:%02x:%02x.%x",
+           attr->domain, attr->bus, attr->dev, attr->func);
+        hwloc_obj_add_info(sobj, key, value);
+      }
+    }
+  }
+
+  // See if all sockets are tagged.
+  for (hwloc_obj_t obj = hwloc_get_next_obj_inside_cpuset_by_type(topology,
+                                      hwloc_get_root_obj(topology)->cpuset,
+                                      HWLOC_OBJ_PACKAGE, NULL);
+       obj != NULL;
+       obj = hwloc_get_next_obj_inside_cpuset_by_type(topology,
+                                      hwloc_get_root_obj(topology)->cpuset,
+                                      HWLOC_OBJ_PACKAGE, obj)) {
+    const char *tag = hwloc_obj_get_info_by_name(obj, key);
+    if (tag == NULL) {
+      // This socket doesn't have a NIC. Ok to use the NIC we were asked
+      // about.
+      goto done;
+    }
+  }
+
+  // If we get here all sockets have the same type of NIC, but we are trying
+  // to use one in a different socket. Don't use it.
+  result = false;
+done:
   return result;
 }
 
