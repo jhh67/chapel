@@ -896,12 +896,12 @@ chpl_bool chpl_topo_okToUseNIC(chpl_topo_pci_addr_t *addr)
   _DBG_P("chpl_topo_okToUseNIC: %04x:%02x:%02x.%x", addr->domain, addr->bus,
            addr->device, addr->function);
   chpl_bool result = true;
+  hwloc_obj_t nic = NULL;
   if (root->type != HWLOC_OBJ_PACKAGE) {
     // We aren't running in a socket, ok to use the NIC.
     goto done;
   }
   // find the PCI object corresponding to the NIC
-  hwloc_obj_t nic = NULL;
   for (hwloc_obj_t obj = hwloc_get_next_pcidev(topology, NULL);
        obj != NULL;
        obj = hwloc_get_next_pcidev(topology, obj)) {
@@ -927,6 +927,17 @@ chpl_bool chpl_topo_okToUseNIC(chpl_topo_pci_addr_t *addr)
            addr->device, addr->function);
     goto done;
   }
+
+  // See if we already answered this question about this NIC.
+  const char *tag = hwloc_obj_get_info_by_name(nic, "OkToUse");
+  if (tag != NULL) {
+    _DBG_P("Already answered for this NIC: %s", tag);
+    if(!strcmp(tag, "False")) {
+      result = false;
+    }
+    goto done;
+  }
+
 
   // If the NIC is in our socket we can use it.
   struct hwloc_pcidev_attr_s *nattr = &(nic->attr->pcidev);
@@ -999,6 +1010,9 @@ chpl_bool chpl_topo_okToUseNIC(chpl_topo_pci_addr_t *addr)
   _DBG_P("All sockets are tagged with this type of NIC, don't use it.");
   result = false;
 done:
+  if (nic != NULL) {
+    hwloc_obj_add_info(sobj, "OkToUse", result ? "True" : "False");
+  }
   _DBG_P("Returning %s", result ? "True" : "False");
   return result;
 }
