@@ -910,7 +910,7 @@ chpl_bool chpl_topo_okToUseNIC(chpl_topo_pci_addr_t *addr)
     _DBG_P("object is of type %s", tbuf);
     if (obj->type == HWLOC_OBJ_PCI_DEVICE) {
       struct hwloc_pcidev_attr_s *attr = &(obj->attr->pcidev);
-        _DBG_P("checking %04x:%02x:%02x.%x\n", attr->domain, attr->bus,
+        _DBG_P("checking %04x:%02x:%02x.%x", attr->domain, attr->bus,
            attr->dev, attr->func);
       if ((attr->domain == addr->domain) && (attr->bus == addr->bus) &&
           (attr->dev == addr->device) && (attr->func == addr->function)) {
@@ -923,7 +923,7 @@ chpl_bool chpl_topo_okToUseNIC(chpl_topo_pci_addr_t *addr)
   // If we didn't find the NIC something is wrong but go ahead and use it
   // anyway.
   if (nic == NULL) {
-    _DBG_P("Could not find NIC %04x:%02x:%02x.%x\n", addr->domain, addr->bus,
+    _DBG_P("Could not find NIC %04x:%02x:%02x.%x", addr->domain, addr->bus,
            addr->device, addr->function);
     goto done;
   }
@@ -934,15 +934,15 @@ chpl_bool chpl_topo_okToUseNIC(chpl_topo_pci_addr_t *addr)
            nattr->domain, nattr->bus, nattr->dev, nattr->func);
   hwloc_obj_t sobj = hwloc_get_ancestor_obj_by_type(topology, HWLOC_OBJ_PACKAGE, nic);
   if (sobj == NULL) {
-    _DBG_P("Could not find socket for NIC %04x:%02x:%02x.%x\n",
+    _DBG_P("Could not find socket for NIC %04x:%02x:%02x.%x",
            nattr->domain, nattr->bus, nattr->dev, nattr->func);
     goto done;
   }
-  _DBG_P("Found socket for NIC %04x:%02x:%02x.%x\n",
+  _DBG_P("Found socket for NIC %04x:%02x:%02x.%x",
            nattr->domain, nattr->bus, nattr->dev, nattr->func);
 
   if (sobj == root) {
-    _DBG_P("Socket is our root, returning\n");
+    _DBG_P("Socket is our root, returning.");
     goto done;
   }
 
@@ -962,7 +962,7 @@ chpl_bool chpl_topo_okToUseNIC(chpl_topo_pci_addr_t *addr)
         sobj = hwloc_get_ancestor_obj_by_type(topology, HWLOC_OBJ_PACKAGE,
                                               obj);
         if (sobj == NULL) {
-          _DBG_P("Could not find socket for NIC %04x:%02x:%02x.%x\n",
+          _DBG_P("Could not find socket for NIC %04x:%02x:%02x.%x",
                  attr->domain, attr->bus, attr->dev, attr->func);
           goto done;
         }
