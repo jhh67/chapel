@@ -908,7 +908,7 @@ chpl_bool chpl_topo_okToUseNIC(chpl_topo_pci_addr_t *addr)
     if (obj->type == HWLOC_OBJ_PCI_DEVICE) {
       struct hwloc_pcidev_attr_s *attr = &(obj->attr->pcidev);
         _DBG_P("checking %04x:%02x:%02x.%x\n", attr->domain, attr->bus,
-           attr->device, attr->function);
+           attr->dev, attr->func);
       if ((attr->domain == addr->domain) && (attr->bus == addr->bus) &&
           (attr->dev == addr->device) && (attr->func == addr->function)) {
         fprintf(stderr, "XXX PCI dev match\n");
