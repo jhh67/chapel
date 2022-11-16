@@ -1104,7 +1104,7 @@ void chpl_comm_post_task_init(void) {
 static
 void init_ofi(void) {
   if (verbosity >= 2) {
-    if (chpl_nodeID == 0) {
+    if (chpl_nodeID >= 0) {
       void* start;
       size_t size;
       chpl_comm_regMemHeapInfo(&start, &size);
