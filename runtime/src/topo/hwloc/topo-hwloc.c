@@ -362,7 +362,7 @@ void chpl_topo_post_comm_init(void) {
   }
 
   char buf[1024];
-  hwloc_obj_type_snprintf(buf, sizeof(buf), root->type, 1);
+  hwloc_obj_type_snprintf(buf, sizeof(buf), root, 1);
   fprintf(stderr, "XXX root type %s\n", buf);
 // accessible cores
 
