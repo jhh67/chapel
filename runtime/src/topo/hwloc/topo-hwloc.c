@@ -354,16 +354,18 @@ void chpl_topo_post_comm_init(void) {
     numCPUsLogAcc = hwloc_bitmap_weight(logAccSet);
     CHK_ERR(numCPUsLogAcc > 0);
 #ifdef DEBUG
-    char buf[1024];
-    hwloc_bitmap_list_snprintf(buf, sizeof(buf), logAccSet);
-    _DBG_P("numCPUsLogAcc: %d logAccSet: %s", numCPUsLogAcc, buf);
+    {
+      char buf[1024];
+      hwloc_bitmap_list_snprintf(buf, sizeof(buf), logAccSet);
+      _DBG_P("numCPUsLogAcc: %d logAccSet: %s", numCPUsLogAcc, buf);
+    }
 #endif
     root = socket;
   }
 
-  char buf[1024];
-  hwloc_obj_type_snprintf(buf, sizeof(buf), root, 1);
-  fprintf(stderr, "XXX root type %s\n", buf);
+  char tbuf[1024];
+  hwloc_obj_type_snprintf(tbuf, sizeof(tbuf), root, 1);
+  fprintf(stderr, "XXX root type %s\n", tbuf);
 // accessible cores
 
 #define NEXT_PU(pu)                                                \
@@ -414,14 +416,18 @@ void chpl_topo_post_comm_init(void) {
     _DBG_P("numNumaDomains %d", numNumaDomains);
   }
 #ifdef DEBUG
-  char buf[1024];
-  _DBG_P("%d numCPUsLogAll: %d", getpid(), numCPUsLogAll);
-  hwloc_bitmap_list_snprintf(buf, sizeof(buf), logAccSet);
-  _DBG_P("%d numCPUsLogAcc: %d logAccSet: %s", getpid(), numCPUsLogAcc, buf);
+  {
+    char buf[1024];
+    _DBG_P("%d numCPUsLogAll: %d", getpid(), numCPUsLogAll);
+    hwloc_bitmap_list_snprintf(buf, sizeof(buf), logAccSet);
+    _DBG_P("%d numCPUsLogAcc: %d logAccSet: %s", getpid(), numCPUsLogAcc,
+           buf);
 
-  _DBG_P("%d numCPUsPhysAll: %d", getpid(), numCPUsPhysAll);
-  hwloc_bitmap_list_snprintf(buf, sizeof(buf), physAccSet);
-  _DBG_P("%d numCPUsPhysAcc: %d physAccSet: %s", getpid(), numCPUsPhysAcc, buf);
+    _DBG_P("%d numCPUsPhysAll: %d", getpid(), numCPUsPhysAll);
+    hwloc_bitmap_list_snprintf(buf, sizeof(buf), physAccSet);
+    _DBG_P("%d numCPUsPhysAcc: %d physAccSet: %s", getpid(), numCPUsPhysAcc,
+           buf);
+  }
 #endif
 }
 
