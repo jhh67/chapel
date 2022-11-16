@@ -1438,8 +1438,12 @@ struct fi_info* findProvInList(struct fi_info* info,
     if ((info->nic != NULL) && (info->nic->bus_attr != NULL) &&
         (info->nic->bus_attr->bus_type == FI_BUS_PCI)) {
       struct fi_pci_attr *pci = &info->nic->bus_attr->attr.pci;
-      if (!chpl_topo_okToUseNIC(pci->domain_id, pci->bus_id, pci->device_id,
-                                pci->function_id)) {
+      chpl_topo_pci_addr_t addr;
+      addr.domain = pci->domain_id;
+      addr.bus = pci->bus_id;
+      addr.device = pci->device_id;
+      addr.function = pci->function_id;
+      if (!chpl_topo_okToUseNIC(&addr)) {
         continue;
       }
     }

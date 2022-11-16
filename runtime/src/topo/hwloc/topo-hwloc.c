@@ -871,8 +871,7 @@ int chpl_topo_bindCPU(int id) {
   return status;
 }
 
-chpl_bool chpl_topo_okToUseNIC(uint16_t domain, uint8_t bus,
-                               uint8_t device, uint8_t function)
+chpl_bool chpl_topo_okToUseNIC(chpl_topo_pci_addr_t *addr)
 {
   // TODO: handle HWLOC_OBJ_OSDEV_OPENFABRICS objects
   chpl_bool result = false;
@@ -887,8 +886,8 @@ chpl_bool chpl_topo_okToUseNIC(uint16_t domain, uint8_t bus,
       hwloc_obj_t pobj = obj->parent;
       if (pobj->type == HWLOC_OBJ_PCI_DEVICE) {
           struct hwloc_pcidev_attr_s *attr = &(pobj->attr->pcidev);
-          if ((attr->domain == domain) && (attr->bus == bus) &&
-              (attr->dev == device) && (attr->func == function)) {
+          if ((attr->domain == addr->domain) && (attr->bus == attr->bus) &&
+              (attr->dev == addr->device) && (attr->func == addr->function)) {
             fprintf(stderr, "XXX PCI dev match\n");
             result = true;
             break;
