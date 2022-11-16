@@ -902,9 +902,9 @@ chpl_bool chpl_topo_okToUseNIC(chpl_topo_pci_addr_t *addr)
   }
   // find the PCI object corresponding to the NIC
   hwloc_obj_t nic = NULL;
-  for (hwloc_obj_t obj = hwloc_get_next_osdev(topology, NULL);
+  for (hwloc_obj_t obj = hwloc_get_next_pcidev(topology, NULL);
        obj != NULL;
-       obj = hwloc_get_next_osdev(topology, obj)) {
+       obj = hwloc_get_next_pcidev(topology, obj)) {
     char tbuf[1024];
     hwloc_obj_type_snprintf(tbuf, sizeof(tbuf), obj, 1);
     _DBG_P("object is of type %s", tbuf);
@@ -952,9 +952,9 @@ chpl_bool chpl_topo_okToUseNIC(chpl_topo_pci_addr_t *addr)
   snprintf(key, sizeof(key), "%04x:%04x", nattr->vendor_id, nattr->device_id);
 
   // Find all NICs of the same type and tag their sockets.
-  for (hwloc_obj_t obj = hwloc_get_next_osdev(topology, NULL);
+  for (hwloc_obj_t obj = hwloc_get_next_pcidev(topology, NULL);
        obj != NULL;
-       obj = hwloc_get_next_osdev(topology, obj)) {
+       obj = hwloc_get_next_pcidev(topology, obj)) {
     if (obj->type == HWLOC_OBJ_PCI_DEVICE) {
       struct hwloc_pcidev_attr_s *attr = &(obj->attr->pcidev);
       if ((attr->vendor_id == nattr->vendor_id) &&
