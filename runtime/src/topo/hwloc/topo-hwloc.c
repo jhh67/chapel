@@ -893,6 +893,8 @@ int chpl_topo_bindCPU(int id) {
 
 chpl_bool chpl_topo_okToUseNIC(chpl_topo_pci_addr_t *addr)
 {
+  _DBG_P("chpl_topo_okToUseNIC: %04x:%02x:%02x.%x\n", addr->domain, addr->bus,
+           addr->device, addr->function);
   chpl_bool result = true;
   if (root->type != HWLOC_OBJ_PACKAGE) {
     // We aren't running in a socket, ok to use the NIC.
@@ -905,6 +907,8 @@ chpl_bool chpl_topo_okToUseNIC(chpl_topo_pci_addr_t *addr)
        obj = hwloc_get_next_osdev(topology, obj)) {
     if (obj->type == HWLOC_OBJ_PCI_DEVICE) {
       struct hwloc_pcidev_attr_s *attr = &(obj->attr->pcidev);
+        _DBG_P("checking %04x:%02x:%02x.%x\n", attr->domain, attr->bus,
+           attr->device, attr->function);
       if ((attr->domain == addr->domain) && (attr->bus == addr->bus) &&
           (attr->dev == addr->device) && (attr->func == addr->function)) {
         fprintf(stderr, "XXX PCI dev match\n");
@@ -923,13 +927,19 @@ chpl_bool chpl_topo_okToUseNIC(chpl_topo_pci_addr_t *addr)
 
   // If the NIC is in our socket we can use it.
   struct hwloc_pcidev_attr_s *nattr = &(nic->attr->pcidev);
+    _DBG_P("Found NIC %04x:%02x:%02x.%x\n",
+           nattr->domain, nattr->bus, nattr->dev, nattr->func);
   hwloc_obj_t sobj = hwloc_get_ancestor_obj_by_type(topology, HWLOC_OBJ_PACKAGE, nic);
   if (sobj == NULL) {
     _DBG_P("Could not find socket for NIC %04x:%02x:%02x.%x\n",
            nattr->domain, nattr->bus, nattr->dev, nattr->func);
     goto done;
   }
+  _DBG_P("Found socket for NIC %04x:%02x:%02x.%x\n",
+           nattr->domain, nattr->bus, nattr->dev, nattr->func);
+
   if (sobj == root) {
+    _DBG_P("Socket is our root, returning\n");
     goto done;
   }
 
@@ -973,6 +983,7 @@ chpl_bool chpl_topo_okToUseNIC(chpl_topo_pci_addr_t *addr)
     if (tag == NULL) {
       // This socket doesn't have a NIC. Ok to use the NIC we were asked
       // about.
+      _DBG_P("Socket does not have a tag, returning");
       goto done;
     }
   }
