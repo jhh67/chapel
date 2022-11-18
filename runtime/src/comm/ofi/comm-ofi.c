@@ -309,6 +309,7 @@ static const char* mcmModeNames[] = { "undefined",
 
 static bool cxiHybridMRMode = false;
 
+
 ////////////////////////////////////////
 //
 // Forward decls
@@ -1046,6 +1047,7 @@ void chpl_comm_init(int *argc_p, char ***argv_p) {
   pthread_that_inited = pthread_self();
 }
 
+
 void chpl_comm_pre_mem_init(void) {
   //
   // Reserve cores for the AM handlers. This is done here because it has
@@ -1059,6 +1061,8 @@ void chpl_comm_pre_mem_init(void) {
 
 void chpl_comm_post_mem_init(void) {
   DBG_PRINTF(DBG_IFACE_SETUP, "%s()", __func__);
+
+
 
   chpl_comm_init_prv_bcast_tab();
   init_broadcast_private();
@@ -1074,6 +1078,7 @@ void chpl_comm_post_mem_init(void) {
   if (chpl_numNodes > 1) {
     init_ofiFabricDomain();
   }
+  init_ofiReserveCores();
 }
 
 
@@ -1104,8 +1109,8 @@ void chpl_comm_post_task_init(void) {
 
 static
 void init_ofi(void) {
-  if (verbosity >= 2) {
-    if (chpl_nodeID == 0) {
+  if (verbosity >= 2 || DBG_TEST_MASK(DBG_PROV)) {
+    if ((chpl_nodeID == 0) || DBG_TEST_MASK(DBG_PROV)) {
       void* start;
       size_t size;
       chpl_comm_regMemHeapInfo(&start, &size);
@@ -1435,6 +1440,20 @@ struct fi_info* findProvInList(struct fi_info* info,
     if (!isUseableProvider(info)) {
       continue;
     }
+
+    if ((info->nic != NULL) && (info->nic->bus_attr != NULL) &&
+        (info->nic->bus_attr->bus_type == FI_BUS_PCI)) {
+      struct fi_pci_attr *pci = &info->nic->bus_attr->attr.pci;
+      chpl_topo_pci_addr_t addr;
+      addr.domain = pci->domain_id;
+      addr.bus = pci->bus_id;
+      addr.device = pci->device_id;
+      addr.function = pci->function_id;
+      if (!chpl_topo_okToUseNIC(&addr)) {
+        continue;
+      }
+    }
+
     // got one
     break;
   }
@@ -2745,12 +2764,14 @@ void init_ofiForMem(void) {
     bufAcc |= FI_SEND | FI_READ | FI_WRITE;
   }
 
+  DBG_PRINTF(DBG_MR, "memTabCount %d", memTabCount);
   for (int i = 0; i < memTabCount; i++) {
     DBG_PRINTF(DBG_MR, "[%d] fi_mr_reg(%p, %#zx, %#" PRIx64 ")",
                i, memTab[i].addr, memTab[i].size, bufAcc);
     OFI_CHK(fi_mr_reg(ofi_domain,
                       memTab[i].addr, memTab[i].size,
                       bufAcc, 0, (prov_key ? 0 : i), 0, &ofiMrTab[i], NULL));
+    DBG_PRINTF(DBG_MR, "[%d] fi_mr_reg complete", i);
     if ((ofi_info->domain_attr->mr_mode & FI_MR_ENDPOINT) != 0) {
       OFI_CHK(fi_mr_bind(ofiMrTab[i], &ofi_rxEp->fid, 0));
       OFI_CHK(fi_mr_enable(ofiMrTab[i]));
@@ -2761,6 +2782,7 @@ void init_ofiForMem(void) {
                prov_key ? "(prov)" : "");
     CHK_TRUE(prov_key || memTab[i].key == i);
   }
+  DBG_PRINTF(DBG_MR, "memory registration complete");
 
   //
   // Unless we're doing scalable registration of the entire address
@@ -4662,6 +4684,7 @@ void init_amHandling(void) {
   // least one is running.
   //
   atomic_init_bool(&amHandlersExit, false);
+  
   PTHREAD_CHK(pthread_mutex_lock(&amStartStopMutex));
   for (int i = 0; i < numAmHandlers; i++) {
     CHK_TRUE(chpl_task_createCommTask(amHandler, NULL, reservedCPUs[i]) == 0);

@@ -109,6 +109,15 @@ static chpl_bool okToReserveCPU = true;
 static chpl_bool oversubscribed = false;
 
 //
+// Testing definitions.
+
+// Use this bitmap instead of hwloc_get_proc_cpubind. In list format.
+static const char *testProcCPUBind = NULL;
+
+// Fake support for hwloc_set_cpubind.
+static chpl_bool testCPUBind = false;
+
+//
 // Error reporting.
 //
 // CHK_ERR*() must evaluate 'expr' precisely once!
@@ -157,6 +166,10 @@ void chpl_topo_init(void) {
   // Allocate and initialize topology object.
   //
   CHK_ERR_ERRNO(hwloc_topology_init(&topology) == 0);
+
+  // Make sure we get everything including I/O devices.
+  int flags = HWLOC_TOPOLOGY_FLAG_WHOLE_IO | HWLOC_TOPOLOGY_FLAG_IO_BRIDGES | HWLOC_TOPOLOGY_FLAG_IO_DEVICES;
+  CHK_ERR_ERRNO(hwloc_topology_set_flags(topology, flags) == 0);
 
   //
   // Perform the topology detection.
@@ -282,6 +295,7 @@ void chpl_topo_post_comm_init(void) {
     // assume all PUs are accessible
     hwloc_bitmap_fill(logAccSet);
   }
+
   hwloc_bitmap_and(logAccSet, logAccSet,
                    hwloc_topology_get_online_cpuset(topology));
   numCPUsLogAcc = hwloc_bitmap_weight(logAccSet);
@@ -329,9 +343,11 @@ void chpl_topo_post_comm_init(void) {
       numCPUsLogAcc = hwloc_bitmap_weight(logAccSet);
       CHK_ERR(numCPUsLogAcc > 0);
 #ifdef DEBUG
+    {
       char buf[1024];
       hwloc_bitmap_list_snprintf(buf, sizeof(buf), logAccSet);
       _DBG_P("numCPUsLogAcc: %d logAccSet: %s", numCPUsLogAcc, buf);
+    }
 #endif
       root = socket;
     }
@@ -451,14 +467,18 @@ void chpl_topo_post_comm_init(void) {
     _DBG_P("numaSet: %s", buf);
   }
 #ifdef DEBUG
-  char buf[1024];
-  _DBG_P("%d numCPUsLogAll: %d", getpid(), numCPUsLogAll);
-  hwloc_bitmap_list_snprintf(buf, sizeof(buf), logAccSet);
-  _DBG_P("%d numCPUsLogAcc: %d logAccSet: %s", getpid(), numCPUsLogAcc, buf);
+  {
+    char buf[1024];
+    _DBG_P("%d numCPUsLogAll: %d", getpid(), numCPUsLogAll);
+    hwloc_bitmap_list_snprintf(buf, sizeof(buf), logAccSet);
+    _DBG_P("%d numCPUsLogAcc: %d logAccSet: %s", getpid(), numCPUsLogAcc,
+           buf);
 
-  _DBG_P("%d numCPUsPhysAll: %d", getpid(), numCPUsPhysAll);
-  hwloc_bitmap_list_snprintf(buf, sizeof(buf), physAccSet);
-  _DBG_P("%d numCPUsPhysAcc: %d physAccSet: %s", getpid(), numCPUsPhysAcc, buf);
+    _DBG_P("%d numCPUsPhysAll: %d", getpid(), numCPUsPhysAll);
+    hwloc_bitmap_list_snprintf(buf, sizeof(buf), physAccSet);
+    _DBG_P("%d numCPUsPhysAcc: %d physAccSet: %s", getpid(), numCPUsPhysAcc,
+           buf);
+  }
 #endif
     initialized = true;
 }
@@ -803,6 +823,29 @@ c_sublocid_t chpl_topo_getMemLocality(void* p) {
 }
 
 
+
+//
+// Binds the current thread to the specified physical CPU (core). The core must
+// have previously been reserved via chpl_topo_reserveCPUPhysical.
+//
+// Returns 0 on success, 1 otherwise
+//
+int chpl_topo_bindCPUPhysical(int id) {
+  int status = 1;
+  if (hwloc_bitmap_isset(physReservedSet, id)) {
+    int flags = HWLOC_CPUBIND_THREAD | HWLOC_CPUBIND_STRICT;
+    hwloc_cpuset_t cpuset;
+    CHK_ERR_ERRNO((cpuset = hwloc_bitmap_alloc()) != NULL);
+    hwloc_bitmap_set(cpuset, id);
+    CHK_ERR_ERRNO(hwloc_set_cpubind(topology, cpuset, flags) == 0);
+    hwloc_bitmap_free(cpuset);
+    status = 0;
+  }
+  _DBG_P("chpl_topo_bindCPUPhysical id: %d status: %d", id, status);
+  return status;
+}
+
+
 //
 // Reserves a physical CPU (core) and returns its hwloc OS index. The core and
 // its PUs will not be returned by chpl_topo_getCPUs,
@@ -900,6 +943,138 @@ chpl_bool chpl_topo_isOversubscribed(void) {
   _DBG_P("oversubscribed = %s", oversubscribed ? "True" : "False");
   return oversubscribed;
 }
+//
+// Determine whether or not it's ok to use the NIC specified by the PCI
+// address. It is *not* ok to use a NIC if the locale is running in its own
+// socket, every socket has a NIC, and we are asked about a NIC other than
+// the one in our socket. Otherwise it's ok to use the NIC. One complication
+// is that every socket might have a NIC but they might be of different
+// capabilities, e.g., one has a low-speed NIC and the other a high-speed.
+// In this case we should not use a NIC from a different socket if all
+// sockets have the same type of NIC.
+// TODO: handle HWLOC_OBJ_OSDEV_OPENFABRICS objects
+
+chpl_bool chpl_topo_okToUseNIC(chpl_topo_pci_addr_t *addr)
+{
+  _DBG_P("chpl_topo_okToUseNIC: %04x:%02x:%02x.%x", addr->domain, addr->bus,
+           addr->device, addr->function);
+  chpl_bool result = true;
+  hwloc_obj_t nic = NULL;
+  if (root->type != HWLOC_OBJ_PACKAGE) {
+    // We aren't running in a socket, ok to use the NIC.
+    goto done;
+  }
+  // find the PCI object corresponding to the NIC
+  for (hwloc_obj_t obj = hwloc_get_next_pcidev(topology, NULL);
+       obj != NULL;
+       obj = hwloc_get_next_pcidev(topology, obj)) {
+    if (obj->type == HWLOC_OBJ_PCI_DEVICE) {
+      struct hwloc_pcidev_attr_s *attr = &(obj->attr->pcidev);
+      if ((attr->domain == addr->domain) && (attr->bus == addr->bus) &&
+          (attr->dev == addr->device) && (attr->func == addr->function)) {
+        fprintf(stderr, "XXX PCI dev match\n");
+        nic = obj;
+        break;
+      }
+    }
+  }
+  // If we didn't find the NIC something is wrong but go ahead and use it
+  // anyway.
+  if (nic == NULL) {
+    _DBG_P("Could not find NIC %04x:%02x:%02x.%x", addr->domain, addr->bus,
+           addr->device, addr->function);
+    goto done;
+  }
+
+  // See if we already answered this question about this NIC.
+  const char *tag = hwloc_obj_get_info_by_name(nic, "OkToUse");
+  if (tag != NULL) {
+    _DBG_P("Already answered for this NIC: %s", tag);
+    if(!strcmp(tag, "False")) {
+      result = false;
+    }
+    goto done;
+  }
+
+
+  // If the NIC is in our socket we can use it.
+  struct hwloc_pcidev_attr_s *nattr = &(nic->attr->pcidev);
+    _DBG_P("Found NIC %04x:%02x:%02x.%x",
+           nattr->domain, nattr->bus, nattr->dev, nattr->func);
+  hwloc_obj_t sobj = hwloc_get_ancestor_obj_by_type(topology, HWLOC_OBJ_PACKAGE, nic);
+  if (sobj == NULL) {
+    _DBG_P("Could not find socket for NIC %04x:%02x:%02x.%x",
+           nattr->domain, nattr->bus, nattr->dev, nattr->func);
+    goto done;
+  }
+  _DBG_P("Found socket for NIC %04x:%02x:%02x.%x",
+           nattr->domain, nattr->bus, nattr->dev, nattr->func);
+
+  if (sobj == root) {
+    _DBG_P("Socket is our root, returning.");
+    goto done;
+  }
+
+  // Otherwise we can't use the NIC if every socket has the same type of NIC
+  // (same vendor and device).
+  char key[100];
+  snprintf(key, sizeof(key), "%04x:%04x", nattr->vendor_id, nattr->device_id);
+
+  // Find all NICs of the same type and tag their sockets.
+  for (hwloc_obj_t obj = hwloc_get_next_pcidev(topology, NULL);
+       obj != NULL;
+       obj = hwloc_get_next_pcidev(topology, obj)) {
+    if (obj->type == HWLOC_OBJ_PCI_DEVICE) {
+      struct hwloc_pcidev_attr_s *attr = &(obj->attr->pcidev);
+      if ((attr->vendor_id == nattr->vendor_id) &&
+          (attr->device_id == nattr->device_id)) {
+        sobj = hwloc_get_ancestor_obj_by_type(topology, HWLOC_OBJ_PACKAGE,
+                                              obj);
+        if (sobj == NULL) {
+          _DBG_P("Could not find socket for NIC %04x:%02x:%02x.%x",
+                 attr->domain, attr->bus, attr->dev, attr->func);
+          goto done;
+        }
+        _DBG_P("Found socket for NIC %04x:%02x:%02x.%x",
+                 attr->domain, attr->bus, attr->dev, attr->func);
+        char value[100];
+        snprintf(value, sizeof(value), "%04x:%02x:%02x.%x",
+           attr->domain, attr->bus, attr->dev, attr->func);
+        hwloc_obj_add_info(sobj, key, value);
+        _DBG_P("Tagged socket");
+      }
+    }
+  }
+
+  // See if all sockets are tagged.
+  for (hwloc_obj_t obj = hwloc_get_next_obj_inside_cpuset_by_type(topology,
+                                      hwloc_get_root_obj(topology)->cpuset,
+                                      HWLOC_OBJ_PACKAGE, NULL);
+       obj != NULL;
+       obj = hwloc_get_next_obj_inside_cpuset_by_type(topology,
+                                      hwloc_get_root_obj(topology)->cpuset,
+                                      HWLOC_OBJ_PACKAGE, obj)) {
+    const char *tag = hwloc_obj_get_info_by_name(obj, key);
+    if (tag == NULL) {
+      // This socket doesn't have a NIC. Ok to use the NIC we were asked
+      // about.
+      _DBG_P("Socket does not have a tag, returning");
+      goto done;
+    }
+  }
+
+  // If we get here all sockets have the same type of NIC, but we are trying
+  // to use one in a different socket. Don't use it.
+  _DBG_P("All sockets are tagged with this type of NIC, don't use it.");
+  result = false;
+done:
+  if (nic != NULL) {
+    hwloc_obj_add_info(nic, "OkToUse", result ? "True" : "False");
+  }
+  _DBG_P("Returning %s", result ? "True" : "False");
+  return result;
+}
+
 
 static
 void chk_err_fn(const char* file, int lineno, const char* what) {
