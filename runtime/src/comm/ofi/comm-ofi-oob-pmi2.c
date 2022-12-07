@@ -291,10 +291,15 @@ void decode_kvs(char* raw, const char* enc, size_t size) {
   }
 }
 
+int PMI_Get_clique_size(*count) {
+  *count = -1;
+  return PMI_SUCCESS;
+}
+
 int chpl_comm_ofi_oob_locales_on_node(void) {
   int count = 0;
-  if (PMI_Get_clique_size != NULL) {
-    PMI_CHK(PMI_Get_clique_size(&count));
+  PMI_CHK(PMI_Get_clique_size(&count));
+  if (count != -1) {
     DBG_PRINTF(DBG_OOB, "PMI_Get_clique_size returned %d", count);
   } else {
     // do an allgather of hostname hashes to determine the locales on the same node as us
