@@ -291,7 +291,7 @@ void decode_kvs(char* raw, const char* enc, size_t size) {
   }
 }
 
-int PMI_Get_clique_size(*count) {
+int PMI_Get_clique_size(int *count) {
   *count = -1;
   return PMI_SUCCESS;
 }
