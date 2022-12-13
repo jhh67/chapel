@@ -295,7 +295,6 @@ void chpl_topo_post_comm_init(void) {
     // assume all PUs are accessible
     hwloc_bitmap_fill(logAccSet);
   }
-
   hwloc_bitmap_and(logAccSet, logAccSet,
                    hwloc_topology_get_online_cpuset(topology));
   numCPUsLogAcc = hwloc_bitmap_weight(logAccSet);
@@ -307,51 +306,6 @@ void chpl_topo_post_comm_init(void) {
   numCPUsLogAll = hwloc_get_nbobjs_by_type(topology, HWLOC_OBJ_PU);
   CHK_ERR(numCPUsLogAll > 0);
 
-  int numLocalesOnNode = chpl_get_num_locales_on_node();
-  int rank = chpl_get_local_rank();
-  if ((numCPUsLogAcc == numCPUsLogAll) && (numLocalesOnNode > 1) &&
-      (rank != -1)) {
-    int numSockets = hwloc_get_nbobjs_inside_cpuset_by_type(topology,
-                          root->cpuset, HWLOC_OBJ_PACKAGE);
-    if (numSockets != numLocalesOnNode) {
-
-      // If CHPL_RT_LOCALES_PER_NODE is set then the number of locales
-      // must equal the number of sockets.
-      if (chpl_env_rt_get("LOCALES_PER_NODE", NULL) != NULL) {
-        char msg[100];
-        snprintf(msg, sizeof(msg), "The number of locales on the node does "
-                 "not equal the number of sockets (%d != %d).",
-                 numLocalesOnNode, numSockets);
-        chpl_error(msg, 0, 0);
-      } else {
-        // We are oversubscribed.
-        oversubscribed = true;
-      }
-    } else {
-
-      // Each locale gets its own socket.
-
-      hwloc_obj_t socket = hwloc_get_obj_inside_cpuset_by_type(topology,
-                                root->cpuset, HWLOC_OBJ_PACKAGE, rank);
-      CHK_ERR(socket != NULL);
-
-      _DBG_P("using socket %d", socket->logical_index);
-
-      // Limit the accessible PUs to those in our socket.
-
-      hwloc_bitmap_and(logAccSet, logAccSet, socket->cpuset);
-      numCPUsLogAcc = hwloc_bitmap_weight(logAccSet);
-      CHK_ERR(numCPUsLogAcc > 0);
-#ifdef DEBUG
-    {
-      char buf[1024];
-      hwloc_bitmap_list_snprintf(buf, sizeof(buf), logAccSet);
-      _DBG_P("numCPUsLogAcc: %d logAccSet: %s", numCPUsLogAcc, buf);
-    }
-#endif
-      root = socket;
-    }
-  }
 
   // accessible cores
 
@@ -466,22 +420,8 @@ void chpl_topo_post_comm_init(void) {
     hwloc_bitmap_list_snprintf(buf, sizeof(buf), numaSet);
     _DBG_P("numaSet: %s", buf);
   }
-#ifdef DEBUG
-  {
-    char buf[1024];
-    _DBG_P("%d numCPUsLogAll: %d", getpid(), numCPUsLogAll);
-    hwloc_bitmap_list_snprintf(buf, sizeof(buf), logAccSet);
-    _DBG_P("%d numCPUsLogAcc: %d logAccSet: %s", getpid(), numCPUsLogAcc,
-           buf);
-
-    _DBG_P("%d numCPUsPhysAll: %d", getpid(), numCPUsPhysAll);
-    hwloc_bitmap_list_snprintf(buf, sizeof(buf), physAccSet);
-    _DBG_P("%d numCPUsPhysAcc: %d physAccSet: %s", getpid(), numCPUsPhysAcc,
-           buf);
-  }
-#endif
-    initialized = true;
 }
+
 
 void chpl_topo_post_args_init(void) {
   if ((verbosity >= 2) && (socket != NULL)) {
