@@ -414,6 +414,25 @@ void chpl_topo_post_comm_init(void) {
            buf);
     hwloc_bitmap_list_snprintf(buf, sizeof(buf), numaSet);
     _DBG_P("numaSet: %s", buf);
+
+    hwloc_const_cpuset_t set;
+
+    set = hwloc_topology_get_allowed_cpuset(topology);
+    hwloc_bitmap_list_snprintf(buf, sizeof(buf), set);
+    _DBG_P("allowed cpuset: %s", buf);
+
+    set = hwloc_topology_get_complete_cpuset(topology);
+    hwloc_bitmap_list_snprintf(buf, sizeof(buf), set);
+    _DBG_P("complete cpuset: %s", buf);
+
+    set = hwloc_topology_get_online_cpuset(topology);
+    hwloc_bitmap_list_snprintf(buf, sizeof(buf), set);
+    _DBG_P("online cpuset: %s", buf);
+
+    set = hwloc_topology_get_topology_cpuset(topology);
+    hwloc_bitmap_list_snprintf(buf, sizeof(buf), set);
+    _DBG_P("topology cpuset: %s", buf);
+
   }
 }
 
