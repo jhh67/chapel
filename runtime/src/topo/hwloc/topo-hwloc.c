@@ -290,11 +290,12 @@ void chpl_topo_post_comm_init(void) {
   _DBG_P("numCPUsLogAcc = %d", numCPUsLogAcc);
 
   //
-  // all PUs
+  // all PUs. The online set doesn't include PUs that cannot be
+  // used, e.g., if hyperthreading is turned off
   //
-  hwloc_const_cpuset_t completeSet = hwloc_topology_get_complete_cpuset(
+  hwloc_const_cpuset_t onlineSet = hwloc_topology_get_online_cpuset(
                                                               topology);
-  numCPUsLogAll = hwloc_bitmap_weight(completeSet);
+  numCPUsLogAll = hwloc_bitmap_weight(onlineSet);
   CHK_ERR(numCPUsLogAll > 0);
   _DBG_P("numCPUsLogAll = %d", numCPUsLogAll);
 
@@ -330,7 +331,7 @@ void chpl_topo_post_comm_init(void) {
   // all cores
   //
   // Note: hwloc_get_nbobjs_inside_cpuset_by_type cannot be called on
-  // completeSet because inaccessible PUs and their cores do not have
+  // onlineSet because inaccessible PUs and their cores do not have
   // objects in the topology. pusPerCore might vary by core, but that is
   // checked above.
 
