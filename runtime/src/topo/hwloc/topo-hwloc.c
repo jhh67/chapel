@@ -97,6 +97,7 @@ static hwloc_obj_t root = NULL;
 
 // Our socket, if applicable.
 static hwloc_obj_t socket = NULL;
+static hwloc_obj_t otherSocket = NULL;
 
 
 static hwloc_obj_t getNumaObj(c_sublocid_t);
@@ -388,6 +389,9 @@ static void cpuInfoInit(void) {
           socket = hwloc_get_obj_inside_cpuset_by_type(topology,
                                     root->cpuset, HWLOC_OBJ_PACKAGE, rank);
           CHK_ERR(socket != NULL);
+          otherSocket = hwloc_get_obj_inside_cpuset_by_type(topology,
+                                    root->cpuset, HWLOC_OBJ_PACKAGE, 1-rank);
+          CHK_ERR(otherSocket != NULL);
 
           // Limit the accessible cores and PUs to those in our socket.
 
@@ -959,6 +963,11 @@ chpl_topo_pci_addr_t *chpl_topo_selectNicByType(chpl_topo_pci_addr_t *inAddr,
   chpl_topo_pci_addr_t *result = NULL;
   nic_info_t *nics = NULL;
   int *assignedNics = NULL;
+  chpl_bool shareNic = chpl_env_rt_get_bool("SHARE_NIC", false);
+
+  if (shareNic) {
+    goto done;
+  }
 
   if (root->type != HWLOC_OBJ_PACKAGE) {
     // We aren't running in a socket, so we don't care which NIC is used.
@@ -1019,11 +1028,32 @@ chpl_topo_pci_addr_t *chpl_topo_selectNicByType(chpl_topo_pci_addr_t *inAddr,
 
   // Use the first NIC in our socket if there is one.
 
-  for (int i = 0; i < numNics; i++) {
-    if (nics[i].socket == root->logical_index) {
-      nic = nics[i].obj;
-      goto done;
-    }
+  chpl_bool useOtherSocket = false;
+
+  if (chpl_env_rt_get_bool("USE_OTHER_SOCKET_LOWER", false) && (chpl_nodeID < 2)) {
+    useOtherSocket = true;
+  }
+  if (chpl_env_rt_get_bool("USE_OTHER_SOCKET_UPPER", false) && (chpl_nodeID  > 1)) {
+    useOtherSocket = true;
+  }
+  useOtherSocket = chpl_env_rt_get_bool("USE_OTHER_SOCKET", useOtherSocket);
+  if (useOtherSocket) {
+      printf("using NIC in other socket\n");
+  }
+  if (!useOtherSocket) {
+      for (int i = 0; i < numNics; i++) {
+        if (nics[i].socket == socket->logical_index) {
+          nic = nics[i].obj;
+          goto done;
+        }
+      }
+  } else {
+      for (int i = 0; i < numNics; i++) {
+        if (nics[i].socket == otherSocket->logical_index) {
+          nic = nics[i].obj;
+          goto done;
+        }
+      }
   }
 
   // There isn't a NIC in our socket. Use the nth unassigned NIC, where
