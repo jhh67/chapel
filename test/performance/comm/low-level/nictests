@@ -1,0 +1,51 @@
+#!/bin/tcsh -fx
+
+set op=opPut
+
+## Two locales
+
+## One locale per node
+
+# A Each locale uses both sockets and one NIC
+echo A
+./arrayTransfer --printTimings=true --xferMB=1024 --op=$op -nl 2
+
+# B Each locale uses one socket and its NIC
+echo B
+env CHPL_RT_USE_SOCKET=true ./arrayTransfer --printTimings=true --xferMB=1024 --op=$op -nl 2
+
+
+## Two locales per node
+
+# C Each locale uses one socket and share a NIC
+echo C
+env CHPL_RT_SHARE_NIC=true CHPL_RT_LOCALES_PER_NODE=2 ./arrayTransfer --printTimings=true --xferMB=1024 --op=$op -nl 2
+
+# D Each locale uses one socket and its NIC
+echo D
+env CHPL_RT_LOCALES_PER_NODE=2 ./arrayTransfer --printTimings=true --xferMB=1024 --op=$op -nl 2
+
+# E. Each locale uses one socket and the other NIC
+echo E
+env CHPL_RT_USE_OTHER_SOCKET=true CHPL_RT_LOCALES_PER_NODE=2 ./arrayTransfer --printTimings=true --xferMB=1024 --op=$op -nl 2
+
+## Four locales
+
+## One locale per node
+# F. Each locale use both sockets and one NIC
+echo F
+./arrayTransfer --printTimings=true --xferMB=1024 --op=$op -nl 4
+
+## Two locales per node
+
+# G. Each locale uses one socket and its NIC
+echo G
+env CHPL_RT_LOCALES_PER_NODE=2 ./arrayTransfer --printTimings=true --xferMB=1024 --op=$op -nl 4
+
+# H. Each locale uses one socket and shares a NIC
+echo H
+env CHPL_RT_SHARE_NIC=true CHPL_RT_LOCALES_PER_NODE=2 ./arrayTransfer --printTimings=true --xferMB=1024 --op=$op -nl 4
+
+# I. Each locale uses one socket and the other NIC
+echo I
+env CHPL_RT_USE_OTHER_SOCKET=true CHPL_RT_LOCALES_PER_NODE=2 ./arrayTransfer --printTimings=true --xferMB=1024 --op=$op -nl 4

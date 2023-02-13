@@ -466,6 +466,7 @@ static chpl_bool amDoLivenessChecks = false;
       do {                                                              \
         OFI_CHK_2(expr, _ret, -FI_EAGAIN);                              \
         if (_ret == -FI_EAGAIN) {                                       \
+          DBG_PRINTF(DBG_RMA, "%s EAGAIN", #expr);   \
           (*tcip->ensureProgressFn)(tcip);                              \
         }                                                               \
       } while (_ret == -FI_EAGAIN);                                     \
@@ -5886,6 +5887,7 @@ chpl_comm_nb_handle_t rmaPutFn_msgOrdFence(void* myAddr, void* mrDesc,
     }
 
     waitForTxnComplete(tcip, ctx);
+    DBG_PRINTF(DBG_RMA | DBG_RMA_WRITE, "txn complete");
     txCtxCleanup(ctx);
   }
 

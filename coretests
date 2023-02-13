@@ -1,0 +1,71 @@
+#!/bin/tcsh -f 
+
+# See https://github.com/Cray/chapel-private/issues/3593
+
+if ($#argv != 1) then
+    echo Usage: $0:t outputDir
+    exit 1
+endif
+
+setenv OUTDIR $1
+if (! -e $OUTDIR) mkdir $OUTDIR
+echo $OUTDIR
+cd $OUTDIR
+set compile=1
+
+if ($compile) then
+    echo Compiling tests
+    set echo
+    #chpl --fast ../test/release/examples/benchmarks/hpcc/stream.chpl &
+    #chpl --fast ../test/studies/prk/Stencil/optimized/stencil-opt.chpl -sorder="sqrt(16e9*numLocales / 8):int" &
+    #chpl --fast ../test/studies/isx/isx-hand-optimized.chpl -smode=scaling.weakISO &
+    chpl --fast ../test/studies/bale/aggregation/ig.chpl -sN=10000000 -suseBlockArr=true &
+    #chpl --fast ../test/release/examples/benchmarks/hpcc/ra.chpl -sverify=false -suseOn=false -sN_U="2**(n-12)" -o ra-rmo &
+    #chpl --fast ../test/release/examples/benchmarks/hpcc/ra.chpl -sverify=false -suseOn=true -sN_U="2**(n-12)" -o ra-on &
+    if ($?FFTW_DIR) then
+        chpl --fast ../test/npb/ft/npadmana/ft_transposed.chpl -I$FFTW_INC -L$FFTW_DIR -lfftw3 \
+            -schpl_serializeSlices -susePrimitiveComm=true -sNPBClass=NPB.D
+    endif
+    unset echo
+    wait
+endif
+
+if ($?NUMLOCALES) then
+    set nl = $NUMLOCALES
+else
+    set nl = 8
+endif 
+
+if ($?CHPL_RT_LOCALES_PER_NODE) then
+    #@ nl = $nl * $CHPL_RT_LOCALES_PER_NODE
+endif
+
+echo Running tests
+set echo
+#./stream --m=68719476736 -nl 16 > !#:0:t.out
+#./stencil-opt -nl 16 > !#:0:t.out
+#./isx-hand-optimized --n=33554432 -nl $nl > !#:0:t.out
+./ig -nl $nl > !#:0:t.out
+#./ra-rmo --n=37 -nl $nl > !#:0:t.out
+#./ra-on --n=37 -nl $nl > !#:0:t.out
+if (-e ft_transposed) then
+    ./ft_transposed -nl $nl > !#:0:t.out
+endif
+
+cp /dev/null summary.out
+#echo -n "Stream: " >> summary.out
+#grep "Performance (GB/s) =" stream.out >>& summary.out
+#echo -n "PRK-stencil: " >> summary.out
+#grep "Rate (MFlops/s):" stencil-opt.out >>& summary.out
+echo -n "ISx: " >> summary.out
+grep "total =" isx-hand-optimized.out >>& summary.out
+echo -n "Indexgather: " >> summary.out
+grep "GB/s/node" ig.out >>& summary.out
+echo -n "RA-RMO: " >> summary.out
+grep "Performance (GUPS) =" ra-rmo.out >>& summary.out
+echo -n "RA-ON: " >> summary.out
+grep "Performance (GUPS) =" ra-on.out >>& summary.out
+if ($?FFTW_DIR) then
+    echo -n "FFTW: " >> summary.out
+    grep "MFLOPS" ft_transposed.out >>& summary.out
+endif

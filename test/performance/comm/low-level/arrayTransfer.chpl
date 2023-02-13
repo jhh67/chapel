@@ -21,6 +21,8 @@ config var xferMem = xferMB * 2**20;
 
 config const verboseLimiting = false;
 
+config const debug = false;
+
 // apply limiting due to available memory
 if xferMem > maxMem {
   xferMem = maxMem;
@@ -52,48 +54,60 @@ config const minOpsPerTimerCheck = defaultNumOpsPerTimerCheck();
 config const printTimings = false;
 
 proc main() {
-  var A: [1..n] elemType;
-  [i in A.domain] A(i) = i:A.eltType;
+  var s = numLocales / 2;
+  //coforall loc in 0..<s {
+  for loc in 0..<s {
+    on Locales[loc] {
+      writeln(here.id, ": ", loc, " ", Locales[loc].name, " -> ", loc+s, " ",
+              Locales[loc+s].name);
+      var A: [1..n] elemType;
+      [i in A.domain] A(i) = i:A.eltType;
 
-  on Locales[numLocales - 1] {
-    var nopsAtCheck = minOpsPerTimerCheck;
-    var nops: int;
-    var t: stopwatch;
+      on Locales[loc + s] {
+        var nopsAtCheck = minOpsPerTimerCheck;
+        writeln(here.id, ": nopsAtCheck: ", nopsAtCheck);
+        var nops: int;
+        var t: stopwatch;
 
-    var B: [1..n] elemType;
-    [i in B.domain] B(i) = (n + 1 - i):B.eltType;
+        var B: [1..n] elemType;
+        [i in B.domain] B(i) = (n + 1 - i):B.eltType;
 
-    t.start();
+        t.start();
 
-    while true {
-      if nops == nopsAtCheck {
-        const tElapsed = t.elapsed();
-        if tElapsed >= runSecs then break;
-        nopsAtCheck += (0.99 * nops * (runSecs / tElapsed - 1)):int;
-        if nopsAtCheck - nops < minOpsPerTimerCheck then
-          nopsAtCheck = nops + minOpsPerTimerCheck;
+        while true {
+          writeln(here.id, ": elapsed: ", t.elapsed(), " ", nops, " ", nopsAtCheck);
+          if nops == nopsAtCheck {
+            const tElapsed = t.elapsed();
+            writeln(here.id, ": elapsed: ", tElapsed);
+            if tElapsed >= runSecs then break;
+            nopsAtCheck += (0.99 * nops * (runSecs / tElapsed - 1)):int;
+            if nopsAtCheck - nops < minOpsPerTimerCheck then
+              nopsAtCheck = nops + minOpsPerTimerCheck;
+          }
+
+          // do op
+          if op == opGet {
+            B = A;
+          } else if op == opPut {
+            A = B;
+          } else if op == opMisalignedGet {
+            B[2..n-1] = A[2..n-1];
+          } else if op == opMisalignedPut {
+            A[2..n-1] = B[2..n-1];
+          }
+
+          nops += 1;
+          if debug then break;
+        }
+
+        t.stop();
+
+        if printTimings {
+          writeln("Time: ", t.elapsed());
+          writeln("nops: ", nops);
+          writeln("GB/s: ", ((nops*xferMem):real / 2**30:real) / t.elapsed());
+        }
       }
-
-      // do op
-      if op == opGet {
-        B = A;
-      } else if op == opPut {
-        A = B;
-      } else if op == opMisalignedGet {
-        B[2..n-1] = A[2..n-1];
-      } else if op == opMisalignedPut {
-        A[2..n-1] = B[2..n-1];
-      }
-
-      nops += 1;
-    }
-
-    t.stop();
-
-    if printTimings {
-      writeln("Time: ", t.elapsed());
-      writeln("nops: ", nops);
-      writeln("MB/s: ", ((nops*xferMem):real / 2**20:real) / t.elapsed());
     }
   }
 }

@@ -431,9 +431,19 @@ static void cpuInfoInit(void) {
     printf("overscribed = %s\n", oversubscribed ? "True" : "False");
   }
 
-  // Find the NUMA nodes.
+  int useMemoryInSocket = chpl_env_rt_get_int("USE_MEMORY_IN_SOCKET", -1);
+  if (useMemoryInSocket >= 0) {
+    hwloc_obj_t tmp = hwloc_get_obj_inside_cpuset_by_type(topology,
+                                    root->cpuset, HWLOC_OBJ_PACKAGE,
+                                    useMemoryInSocket);
+    hwloc_cpuset_to_nodeset(topology, tmp->cpuset, numaSet);
+  } else {
 
-  hwloc_cpuset_to_nodeset(topology, logAccSet, numaSet);
+
+    // Find the NUMA nodes.
+
+    hwloc_cpuset_to_nodeset(topology, logAccSet, numaSet);
+  }
   numNumaDomains = hwloc_bitmap_weight(numaSet);
   _DBG_P("numNumaDomains %d", numNumaDomains);
   if (debug) {

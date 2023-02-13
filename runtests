@@ -1,0 +1,23 @@
+#!/bin/tcsh -fx
+
+setenv NUMLOCALES 16
+
+env -u CHPL_RT_LOCALES_PER_NODE CHPL_RT_USE_SOCKET=false ./coretests base16
+cat base16/ig.out
+
+setenv NUMLOCALES 8
+
+env -u CHPL_RT_LOCALES_PER_NODE CHPL_RT_USE_SOCKET=false ./coretests base8
+cat base8/ig.out
+
+env -u CHPL_RT_LOCALES_PER_NODE CHPL_RT_USE_SOCKET=true ./coretests single
+cat single/ig.out
+
+env CHPL_RT_LOCALES_PER_NODE=2 ./coretests ind
+cat ind/ig.out
+
+env CHPL_RT_LOCALES_PER_NODE=2 CHPL_RT_SHARE_NIC=true ./coretests shared
+cat shared/ig.out
+
+env CHPL_RT_LOCALES_PER_NODE=2 CHPL_RT_USE_OTHER_SOCKET=true ./coretests other
+cat other/ig.out
