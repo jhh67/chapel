@@ -472,7 +472,6 @@ static chpl_bool amDoLivenessChecks = false;
     }                                                                   \
   } while (0)
 
-
 ////////////////////////////////////////
 //
 // Providers
@@ -1565,10 +1564,11 @@ chpl_bool canBindTxCtxs(struct fi_info* info) {
   // we'll use bound tx contexts with this provider.
   //
   const struct fi_domain_attr* dom_attr = info->domain_attr;
+  int epCount = chpl_env_rt_get_int("COMM_OFI_EP_COUNT", dom_attr->ep_cnt);
   int numWorkerTxCtxs = ((envPreferScalableTxEp
                           && dom_attr->max_ep_tx_ctx > 1)
                          ? dom_attr->max_ep_tx_ctx
-                         : dom_attr->ep_cnt)
+                         : epCount)
                         - 1
                         - numAmHandlers;
   if (envCommConcurrency > 0 && envCommConcurrency < numWorkerTxCtxs) {
@@ -2418,7 +2418,6 @@ void init_ofiEp(void) {
       //
       // all scalable EP contexts share ofi_av
       //
-      DBG_PRINTF(DBG_TCIPS, "using scalable EP");
       OFI_CHK(fi_av_open(ofi_domain, &avAttr, &ofi_av, NULL));
     } else {
       //
@@ -2432,9 +2431,11 @@ void init_ofiEp(void) {
   }
 
   if (useScalEp) {
+    DBG_PRINTF(DBG_TCIPS, "using scalable EP");
     OFI_CHK(fi_scalable_ep(ofi_domain, ofi_info, &ofi_txEpScal, NULL));
     OFI_CHK(fi_scalable_ep_bind(ofi_txEpScal, &ofi_av->fid, 0));
   } else {
+    DBG_PRINTF(DBG_TCIPS, "using individual EPs");
     //
     // Use regular transmit endpoints; see below.
     //
