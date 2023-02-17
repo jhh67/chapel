@@ -3243,6 +3243,7 @@ void fini_ofi(void) {
     OFI_CHK(fi_close(&ofi_rxCntr->fid));
   }
 
+  uint64_t total = 0;
   fprintf(stderr, "Retries:\n");
   for (int i = 0; i < tciTabLen; i++) {
     OFI_CHK(fi_close(&tciTab[i].txCtx->fid));
@@ -3253,7 +3254,9 @@ void fini_ofi(void) {
       OFI_CHK(fi_close(&tciTab[i].txCQ->fid));
     }
     fprintf(stderr, "%d: %" PRIu64 "\n", i, tciTab[i].retries);
+    total += tciTab[i].retries;
   }
+  fprintf(stderr, "Total: %" PRIu64 "\n", total);
 
   if (ofi_txEpScal != NULL) {
     OFI_CHK(fi_close(&ofi_txEpScal->fid));
