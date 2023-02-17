@@ -201,6 +201,7 @@ struct perTxCtxInfo_t {
   void* putVisBitmap;           // nodes needing forced RMA store visibility
   void* amoVisBitmap;           // nodes needing forced AMO store visibility
   uint64_t retries;
+  uint64_t writes;
 };
 
 static int tciTabLen;
@@ -453,6 +454,28 @@ static chpl_bool amDoLivenessChecks = false;
 // well.
 //
 #define OFI_RIDE_OUT_EAGAIN(tcip, expr)                                 \
+  do {                                                                  \
+    ssize_t _ret;                                                       \
+    if (isAmHandler) {                                                  \
+      do {                                                              \
+        OFI_CHK_2(expr, _ret, -FI_EAGAIN);                              \
+        if (_ret == -FI_EAGAIN) {                                       \
+          (*tcip->ensureProgressFn)(tcip);                              \
+        }                                                               \
+      } while (_ret == -FI_EAGAIN                                       \
+               && !atomic_load_bool(&amHandlersExit));                  \
+    } else {                                                            \
+      do {                                                              \
+        OFI_CHK_2(expr, _ret, -FI_EAGAIN);                              \
+        if (_ret == -FI_EAGAIN) {                                       \
+          (*tcip->ensureProgressFn)(tcip);                              \
+        }                                                               \
+      } while (_ret == -FI_EAGAIN);                                     \
+    }                                                                   \
+  } while (0)
+
+
+#define OFI_RIDE_OUT_EAGAIN2(tcip, expr)                                 \
   do {                                                                  \
     ssize_t _ret;                                                       \
     if (isAmHandler) {                                                  \
@@ -3243,8 +3266,9 @@ void fini_ofi(void) {
     OFI_CHK(fi_close(&ofi_rxCntr->fid));
   }
 
-  uint64_t total = 0;
-  fprintf(stderr, "Retries:\n");
+  uint64_t retries = 0;
+  uint64_t writes = 0;
+  fprintf(stderr, "Retries Writes:\n");
   for (int i = 0; i < tciTabLen; i++) {
     OFI_CHK(fi_close(&tciTab[i].txCtx->fid));
     if (tciTab[i].txCntr != NULL) {
@@ -3253,10 +3277,12 @@ void fini_ofi(void) {
     if (tciTab[i].txCQ != NULL) {
       OFI_CHK(fi_close(&tciTab[i].txCQ->fid));
     }
-    fprintf(stderr, "%d: %" PRIu64 "\n", i, tciTab[i].retries);
-    total += tciTab[i].retries;
+    fprintf(stderr, "%d: %" PRIu64 "," PRIu64 "\n", i, tciTab[i].retries,
+            tciTab[i].writes);
+    retries += tciTab[i].retries;
+    writes += tciTab[i].writes;
   }
-  fprintf(stderr, "Total: %" PRIu64 "\n", total);
+  fprintf(stderr, "Total: %" PRIu64 "," PRIu64 "\n", retries, writes);
 
   if (ofi_txEpScal != NULL) {
     OFI_CHK(fi_close(&ofi_txEpScal->fid));
@@ -5975,11 +6001,12 @@ ssize_t wrap_fi_inject_write(const void* addr,
              "tx write inject: %d:%#" PRIx64 " <= %p, size %zd",
              (int) node, mrRaddr, addr, size);
   // TODO: How quickly/often does local resource throttling happen?
-  OFI_RIDE_OUT_EAGAIN(tcip,
+  OFI_RIDE_OUT_EAGAIN2(tcip,
                       fi_inject_write(tcip->txCtx, addr, size,
                                       rxAddr(tcip, node),
                                       mrRaddr, mrKey));
   tcip->numTxnsSent++;
+  tcip->writes++;
   return FI_SUCCESS;
 }
 
