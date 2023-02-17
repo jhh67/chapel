@@ -5991,7 +5991,7 @@ ssize_t wrap_fi_write(const void* addr, void* mrDesc,
   DBG_PRINTF(DBG_RMA | DBG_RMA_WRITE,
              "tx write: %d:%#" PRIx64 " <= %p, size %zd, ctx %p",
              (int) node, mrRaddr, addr, size, ctx);
-  OFI_RIDE_OUT_EAGAIN(tcip,
+  OFI_RIDE_OUT_EAGAIN2(tcip,
                       fi_write(tcip->txCtx, addr, size,
                                mrDesc, rxAddr(tcip, node),
                                mrRaddr, mrKey, ctx));
