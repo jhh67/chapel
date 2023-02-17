@@ -200,7 +200,7 @@ struct perTxCtxInfo_t {
   uint64_t numTxnsSent;         // number of transactions ever initiated
   void* putVisBitmap;           // nodes needing forced RMA store visibility
   void* amoVisBitmap;           // nodes needing forced AMO store visibility
-  uint64_t retries;
+  uint64_t tries;
   uint64_t writes;
 };
 
@@ -480,19 +480,19 @@ static chpl_bool amDoLivenessChecks = false;
     ssize_t _ret;                                                       \
     if (isAmHandler) {                                                  \
       do {                                                              \
+        tcip->tries++;                                                  \
         OFI_CHK_2(expr, _ret, -FI_EAGAIN);                              \
         if (_ret == -FI_EAGAIN) {                                       \
           (*tcip->ensureProgressFn)(tcip);                              \
-          tcip->retries++;                                              \
         }                                                               \
       } while (_ret == -FI_EAGAIN                                       \
                && !atomic_load_bool(&amHandlersExit));                  \
     } else {                                                            \
       do {                                                              \
+        tcip->tries++;                                              \
         OFI_CHK_2(expr, _ret, -FI_EAGAIN);                              \
         if (_ret == -FI_EAGAIN) {                                       \
           (*tcip->ensureProgressFn)(tcip);                              \
-          tcip->retries++;                                              \
         }                                                               \
       } while (_ret == -FI_EAGAIN);                                     \
     }                                                                   \
@@ -3266,7 +3266,7 @@ void fini_ofi(void) {
     OFI_CHK(fi_close(&ofi_rxCntr->fid));
   }
 
-  uint64_t retries = 0;
+  uint64_t tries = 0;
   uint64_t writes = 0;
   uint64_t ratio = 0;
   fprintf(stderr, "Retries Writes:\n");
@@ -3279,20 +3279,20 @@ void fini_ofi(void) {
       OFI_CHK(fi_close(&tciTab[i].txCQ->fid));
     }
     if (tciTab[i].writes != 0) {
-      ratio = tciTab[i].retries / tciTab[i].writes;
+      ratio = tciTab[i].tries / tciTab[i].writes;
     } else {
       ratio = 0;
     }
-    fprintf(stderr, "%d: %" PRIu64 ",%" PRIu64 ",%" PRIu64 "\n", i, tciTab[i].retries, tciTab[i].writes, ratio);
-    retries += tciTab[i].retries;
+    fprintf(stderr, "%d: %" PRIu64 ",%" PRIu64 ",%" PRIu64 "\n", i, tciTab[i].tries, tciTab[i].writes, ratio);
+    tries += tciTab[i].tries;
     writes += tciTab[i].writes;
   }
     if (writes != 0) {
-      ratio = retries / writes;
+      ratio = tries / writes;
     } else {
       ratio = 0;
     }
-  fprintf(stderr, "Total: %" PRIu64 ",%" PRIu64 ",%" PRIu64 "\n", retries, writes, ratio);
+  fprintf(stderr, "Total: %" PRIu64 ",%" PRIu64 ",%" PRIu64 "\n", tries, writes, ratio);
 
   if (ofi_txEpScal != NULL) {
     OFI_CHK(fi_close(&ofi_txEpScal->fid));
