@@ -3268,6 +3268,7 @@ void fini_ofi(void) {
 
   uint64_t retries = 0;
   uint64_t writes = 0;
+  uint64_t ratio = 0;
   fprintf(stderr, "Retries Writes:\n");
   for (int i = 0; i < tciTabLen; i++) {
     OFI_CHK(fi_close(&tciTab[i].txCtx->fid));
@@ -3277,11 +3278,21 @@ void fini_ofi(void) {
     if (tciTab[i].txCQ != NULL) {
       OFI_CHK(fi_close(&tciTab[i].txCQ->fid));
     }
-    fprintf(stderr, "%d: %" PRIu64 ",%" PRIu64 ",%" PRIu64 "\n", i, tciTab[i].retries, tciTab[i].writes, tciTab[i].retries / tciTab[i].writes);
+    if (tciTab[i].writes != 0) {
+      ratio = tciTab[i].retries / tciTab[i].writes;
+    } else {
+      ratio = 0;
+    }
+    fprintf(stderr, "%d: %" PRIu64 ",%" PRIu64 ",%" PRIu64 "\n", i, tciTab[i].retries, tciTab[i].writes, ratio);
     retries += tciTab[i].retries;
     writes += tciTab[i].writes;
   }
-  fprintf(stderr, "Total: %" PRIu64 ",%" PRIu64 ",%" PRIu64 "\n", retries, writes, retries / writes);
+    if (writes != 0) {
+      ratio = retries / writes;
+    } else {
+      ratio = 0;
+    }
+  fprintf(stderr, "Total: %" PRIu64 ",%" PRIu64 ",%" PRIu64 "\n", retries, writes, ratio);
 
   if (ofi_txEpScal != NULL) {
     OFI_CHK(fi_close(&ofi_txEpScal->fid));
