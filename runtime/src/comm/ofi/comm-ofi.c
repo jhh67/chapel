@@ -5997,6 +5997,7 @@ ssize_t wrap_fi_write(const void* addr, void* mrDesc,
                                mrRaddr, mrKey, ctx));
   tcip->numTxnsOut++;
   tcip->numTxnsSent++;
+  tcip->writes++;
   return FI_SUCCESS;
 }
 
