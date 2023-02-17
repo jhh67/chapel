@@ -3277,12 +3277,11 @@ void fini_ofi(void) {
     if (tciTab[i].txCQ != NULL) {
       OFI_CHK(fi_close(&tciTab[i].txCQ->fid));
     }
-    fprintf(stderr, "%d: %" PRIu64 ",%" PRIu64 "\n", i, tciTab[i].retries,
-            tciTab[i].writes);
+    fprintf(stderr, "%d: %" PRIu64 ",%" PRIu64 ",%" PRIu64 "\n", i, tciTab[i].retries, tciTab[i].writes, tciTab[i].retries / tciTab[i].writes);
     retries += tciTab[i].retries;
     writes += tciTab[i].writes;
   }
-  fprintf(stderr, "Total: %" PRIu64 ",%" PRIu64 "\n", retries, writes);
+  fprintf(stderr, "Total: %" PRIu64 ",%" PRIu64 ",%" PRIu64 "\n", retries, writes, retries / writes);
 
   if (ofi_txEpScal != NULL) {
     OFI_CHK(fi_close(&ofi_txEpScal->fid));
