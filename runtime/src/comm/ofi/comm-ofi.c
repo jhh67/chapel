@@ -3269,7 +3269,7 @@ void fini_ofi(void) {
   uint64_t tries = 0;
   uint64_t writes = 0;
   uint64_t ratio = 0;
-  fprintf(stderr, "Retries Writes:\n");
+  fprintf(stderr, "Tries Writes:\n");
   for (int i = 0; i < tciTabLen; i++) {
     OFI_CHK(fi_close(&tciTab[i].txCtx->fid));
     if (tciTab[i].txCntr != NULL) {
