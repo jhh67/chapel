@@ -200,6 +200,7 @@ struct perTxCtxInfo_t {
   uint64_t numTxnsSent;         // number of transactions ever initiated
   void* putVisBitmap;           // nodes needing forced RMA store visibility
   void* amoVisBitmap;           // nodes needing forced AMO store visibility
+  uint64_t retries;
 };
 
 static int tciTabLen;
@@ -459,6 +460,7 @@ static chpl_bool amDoLivenessChecks = false;
         OFI_CHK_2(expr, _ret, -FI_EAGAIN);                              \
         if (_ret == -FI_EAGAIN) {                                       \
           (*tcip->ensureProgressFn)(tcip);                              \
+          tcip->retries++;                                              \
         }                                                               \
       } while (_ret == -FI_EAGAIN                                       \
                && !atomic_load_bool(&amHandlersExit));                  \
@@ -467,6 +469,7 @@ static chpl_bool amDoLivenessChecks = false;
         OFI_CHK_2(expr, _ret, -FI_EAGAIN);                              \
         if (_ret == -FI_EAGAIN) {                                       \
           (*tcip->ensureProgressFn)(tcip);                              \
+          tcip->retries++;                                              \
         }                                                               \
       } while (_ret == -FI_EAGAIN);                                     \
     }                                                                   \
@@ -2069,7 +2072,7 @@ struct fi_info* getBaseProviderHints(chpl_bool* pTxAttrsForced) {
 
   hints->ep_attr->type = FI_EP_RDM;
 
-  hints->domain_attr->threading = FI_THREAD_DOMAIN;
+  hints->domain_attr->threading = FI_THREAD_SAFE;
   hints->domain_attr->resource_mgmt = FI_RM_ENABLED;
   hints->domain_attr->av_type = FI_AV_TABLE;
   hints->domain_attr->mr_mode = (  FI_MR_LOCAL
@@ -3240,6 +3243,7 @@ void fini_ofi(void) {
     OFI_CHK(fi_close(&ofi_rxCntr->fid));
   }
 
+  fprintf(stderr, "Retries:\n");
   for (int i = 0; i < tciTabLen; i++) {
     OFI_CHK(fi_close(&tciTab[i].txCtx->fid));
     if (tciTab[i].txCntr != NULL) {
@@ -3248,6 +3252,7 @@ void fini_ofi(void) {
     if (tciTab[i].txCQ != NULL) {
       OFI_CHK(fi_close(&tciTab[i].txCQ->fid));
     }
+    fprintf(stderr, "%d: %" PRIu64 "\n", i, tciTab[i].retries);
   }
 
   if (ofi_txEpScal != NULL) {
