@@ -320,6 +320,7 @@ static chpl_bool tciAllocTabEntry(struct perTxCtxInfo_t*);
 static void tciFree(struct perTxCtxInfo_t*);
 static void waitForCQSpace(struct perTxCtxInfo_t*, size_t);
 static chpl_comm_nb_handle_t ofi_put(const void*, c_nodeid_t, void*, size_t);
+static chpl_comm_nb_handle_t ofi_put2(const void*, c_nodeid_t, void*, size_t);
 static void ofi_put_lowLevel(const void*, void*, c_nodeid_t,
                              uint64_t, uint64_t, size_t, void*,
                              uint64_t, struct perTxCtxInfo_t*);
@@ -5376,6 +5377,44 @@ void chpl_comm_put(void* addr, c_nodeid_t node, void* raddr,
 }
 
 
+void chpl_comm_put2(void* addr, c_nodeid_t node, void* raddr,
+                   size_t size, int32_t commID, int ln, int32_t fn) {
+  DBG_PRINTF(DBG_IFACE,
+             "%s(%p, %d, %p, %zd, %d)", __func__,
+             addr, (int) node, raddr, size, (int) commID);
+
+  retireDelayedAmDone(false /*taskIsEnding*/);
+
+  //
+  // Sanity checks, self-communication.
+  //
+  CHK_TRUE(addr != NULL);
+  CHK_TRUE(raddr != NULL);
+
+  if (size == 0) {
+    return;
+  }
+
+  if (node == chpl_nodeID) {
+    memmove(raddr, addr, size);
+    return;
+  }
+
+  // Communications callback support
+  if (chpl_comm_have_callbacks(chpl_comm_cb_event_kind_put)) {
+      chpl_comm_cb_info_t cb_data =
+        {chpl_comm_cb_event_kind_put, chpl_nodeID, node,
+         .iu.comm={addr, raddr, size, commID, ln, fn}};
+      chpl_comm_do_callbacks (&cb_data);
+  }
+
+  chpl_comm_diags_verbose_rdma("put", node, size, ln, fn, commID);
+  chpl_comm_diags_incr(put);
+
+  (void) ofi_put2(addr, node, raddr, size);
+}
+
+
 void chpl_comm_get(void* addr, int32_t node, void* raddr,
                    size_t size, int32_t commID, int ln, int32_t fn) {
   DBG_PRINTF(DBG_IFACE,
@@ -5737,6 +5776,7 @@ typedef chpl_comm_nb_handle_t (rmaPutFn_t)(void* myAddr, void* mrDesc,
                                            struct perTxCtxInfo_t* tcip);
 
 static rmaPutFn_t rmaPutFn_selector;
+static rmaPutFn_t rmaPutFn_selector2;
 
 static inline
 chpl_comm_nb_handle_t ofi_put(const void* addr, c_nodeid_t node,
@@ -5796,7 +5836,65 @@ chpl_comm_nb_handle_t ofi_put(const void* addr, c_nodeid_t node,
 }
 
 
+static inline
+chpl_comm_nb_handle_t ofi_put2(const void* addr, c_nodeid_t node,
+                              void* raddr, size_t size) {
+  //
+  // Don't ask the provider to transfer more than it wants to.
+  //
+  if (size > ofi_info->ep_attr->max_msg_size) {
+    DBG_PRINTF(DBG_RMA | DBG_RMA_WRITE,
+               "splitting large PUT %d:%p <= %p, size %zd",
+               (int) node, raddr, addr, size);
+
+    size_t chunkSize = ofi_info->ep_attr->max_msg_size;
+    for (size_t i = 0; i < size; i += chunkSize) {
+      if (chunkSize > size - i) {
+        chunkSize = size - i;
+      }
+      (void) ofi_put(&((const char*) addr)[i], node, &((char*) raddr)[i],
+                     chunkSize);
+    }
+
+    return NULL;
+  }
+
+  DBG_PRINTF(DBG_RMA | DBG_RMA_WRITE,
+             "PUT %d:%p <= %p, size %zd",
+             (int) node, raddr, addr, size);
+
+  //
+  // If the remote address is directly accessible do an RMA from this
+  // side; otherwise do the opposite RMA from the other side.
+  //
+  chpl_comm_nb_handle_t ret;
+  uint64_t mrKey;
+  uint64_t mrRaddr;
+  if (mrGetKey(&mrKey, &mrRaddr, node, raddr, size)) {
+    struct perTxCtxInfo_t* tcip;
+    CHK_TRUE((tcip = tciAlloc()) != NULL);
+    if (tcip->txCntr == NULL) {
+      waitForCQSpace(tcip, 1);
+    }
+
+    void* mrDesc;
+    void* myAddr = mrLocalizeSource(&mrDesc, addr, size, "PUT src");
+
+    ret = rmaPutFn_selector2(myAddr, mrDesc, node, mrRaddr, mrKey, size,
+                            tcip);
+
+    mrUnLocalizeSource(myAddr, addr);
+    tciFree(tcip);
+  } else {
+    amRequestRmaPut(node, (void*) addr, raddr, size);
+    ret = NULL;
+  }
+
+  return ret;
+}
+
 static rmaPutFn_t rmaPutFn_msgOrdFence;
+static rmaPutFn_t rmaPutFn_msgOrdFence2;
 static rmaPutFn_t rmaPutFn_msgOrd;
 static rmaPutFn_t rmaPutFn_dlvrCmplt;
 
@@ -5829,6 +5927,35 @@ chpl_comm_nb_handle_t rmaPutFn_selector(void* myAddr, void* mrDesc,
   return ret;
 }
 
+
+static inline
+chpl_comm_nb_handle_t rmaPutFn_selector2(void* myAddr, void* mrDesc,
+                                        c_nodeid_t node,
+                                        uint64_t mrRaddr, uint64_t mrKey,
+                                        size_t size,
+                                        struct perTxCtxInfo_t* tcip) {
+  chpl_comm_nb_handle_t ret = NULL;
+
+  switch (mcmMode) {
+  case mcmm_msgOrdFence:
+    ret = rmaPutFn_msgOrdFence2(myAddr, mrDesc, node, mrRaddr, mrKey, size,
+                               tcip);
+    break;
+  case mcmm_msgOrd:
+    ret = rmaPutFn_msgOrd(myAddr, mrDesc, node, mrRaddr, mrKey, size,
+                          tcip);
+    break;
+  case mcmm_dlvrCmplt:
+    ret = rmaPutFn_dlvrCmplt(myAddr, mrDesc, node, mrRaddr, mrKey, size,
+                             tcip);
+    break;
+  default:
+    INTERNAL_ERROR_V("unexpected mcmMode %d", mcmMode);
+    break;
+  }
+
+  return ret;
+}
 
 static ssize_t wrap_fi_write(const void* addr, void* mrDesc,
                              c_nodeid_t node,
@@ -5916,6 +6043,78 @@ chpl_comm_nb_handle_t rmaPutFn_msgOrdFence(void* myAddr, void* mrDesc,
   return NULL;
 }
 
+
+//
+// Implements ofi_put() when MCM mode is message ordering with fences.
+//
+static
+chpl_comm_nb_handle_t rmaPutFn_msgOrdFence2(void* myAddr, void* mrDesc,
+                                           c_nodeid_t node,
+                                           uint64_t mrRaddr, uint64_t mrKey,
+                                           size_t size,
+                                           struct perTxCtxInfo_t* tcip) {
+  if (tcip->bound
+      && size <= ofi_info->tx_attr->inject_size
+      && (tcip->amoVisBitmap == NULL
+          || !bitmapTest(tcip->amoVisBitmap, node))
+      && envInjectRMA) {
+    //
+    // Special case: write injection has the least latency.  We can use
+    // that if this PUT doesn't need a fence, its size doesn't exceed
+    // the injection size limit, and we have a bound tx context so we
+    // can delay forcing the memory visibility until later.
+    //
+    //(void) wrap_fi_inject_write(myAddr, node, mrRaddr, mrKey, size, tcip);
+      uint64_t flags = FI_INJECT | FI_MORE;
+      (void) wrap_fi_writemsg(myAddr, mrDesc, node, mrRaddr, mrKey, size,
+                              txnTrkEncodeId(__LINE__), flags, tcip);
+
+  } else {
+    atomic_bool txnDone;
+    void *ctx = txCtxInit(tcip, __LINE__, &txnDone);
+
+    if (tcip->bound
+        && bitmapTest(tcip->amoVisBitmap, node)) {
+      //
+      // Special case: If our last operation was an AMO (which can only
+      // be true with a bound tx context) then we need to do a fenced
+      // PUT to force the AMO to complete before this PUT.  We may still
+      // be able to inject the PUT, though.
+      //
+      uint64_t flags = FI_FENCE;
+      if (size <= ofi_info->tx_attr->inject_size
+          && envInjectRMA) {
+        flags |= FI_INJECT;
+      }
+      (void) wrap_fi_writemsg(myAddr, mrDesc, node, mrRaddr, mrKey, size,
+                              ctx, flags, tcip);
+    } else {
+      //
+      // General case.
+      //
+      (void) wrap_fi_write(myAddr, mrDesc, node, mrRaddr, mrKey, size,
+                           ctx, tcip);
+    }
+
+    waitForTxnComplete(tcip, ctx);
+    txCtxCleanup(ctx);
+  }
+
+  //
+  // When using message ordering we have to do something after the PUT
+  // to force it into visibility, and on the same tx context as the PUT
+  // itself because libfabric message ordering is specific to endpoint
+  // pairs.  With a bound tx context we can do it later, when needed.
+  // Otherwise we have to do it here, before we release the tx context.
+  //
+  if (tcip->bound) {
+    bitmapSet(tcip->putVisBitmap, node);
+  } else {
+    mcmReleaseOneNode(node, tcip, "PUT");
+  }
+
+  return NULL;
+}
 
 //
 // Implements ofi_put() when MCM mode is message ordering.

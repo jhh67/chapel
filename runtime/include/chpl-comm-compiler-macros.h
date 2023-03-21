@@ -104,6 +104,21 @@ void chpl_gen_comm_put(void* addr, c_nodeid_t node, void* raddr,
 }
 
 static inline
+void chpl_gen_comm_put2(void* addr, c_nodeid_t node, void* raddr,
+                       size_t size, int32_t commID, int ln, int32_t fn)
+{
+  if (chpl_nodeID == node) {
+    chpl_memmove(raddr, addr, size);
+#ifdef HAS_CHPL_CACHE_FNS
+  } else if( chpl_cache_enabled() ) {
+    chpl_cache_comm_put(addr, node, raddr, size, commID, ln, fn);
+#endif
+  } else {
+    chpl_comm_put2(addr, node, raddr, size, commID, ln, fn);
+  }
+}
+
+static inline
 void chpl_gen_comm_get_strd(void *addr, void *dststr, c_nodeid_t node, void *raddr,
                        void *srcstr, void *count, int32_t strlevels,
                        size_t elemSize, int32_t commID, int ln, int32_t fn)

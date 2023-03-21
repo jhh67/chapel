@@ -467,6 +467,9 @@ void chpl_comm_exit(int all, int status);
 void chpl_comm_put(void* addr, c_nodeid_t node, void* raddr,
                    size_t size, int32_t commID, int ln, int32_t fn);
 
+void chpl_comm_put2(void* addr, c_nodeid_t node, void* raddr,
+                   size_t size, int32_t commID, int ln, int32_t fn);
+
 //
 // get 'size' bytes of remote data at 'raddr' on locale 'locale' to
 // local data at 'addr'
