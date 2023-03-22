@@ -64,7 +64,10 @@ proc test(op: OP) {
 
       // RMA
       when OP.GET    do for i in 0..<iters do bLoc = bRem;
-      when OP.PUT    do for i in 0..<iters do bRem = bLoc;
+      when OP.PUT {
+          for i in 0..<iters do bRem = bLoc;
+          bRem = bLoc;
+      }
       // AMO
       when OP.FAMO   do for i in 0..<iters do aRem.fetchAdd(1);
       when OP.NFAMO  do for i in 0..<iters do aRem.add(1);
