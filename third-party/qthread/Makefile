@@ -24,7 +24,8 @@ else ifneq (, $(filter cray-cs hpe-cray-ex,$(CHPL_MAKE_TARGET_PLATFORM)))
 CHPL_QTHREAD_CFG_OPTIONS += --host=$(CHPL_MAKE_TARGET_ARCH)-unknown-linux-gnu
 endif
 
-ifneq ($(CHPL_MAKE_HWLOC),none)
+#ifneq ($(CHPL_MAKE_HWLOC),none)
+ifeq ($(CHPL_MAKE_HWLOC),foo)
   # Have Qthreads get its hwloc topology from the Chapel runtime,
   # unless directed not to.
   TOPOLOGY=binders
