@@ -2777,10 +2777,19 @@ void init_ofiForMem(void) {
                        ofi_info->fabric_attr->prov_name);
     }
 
-    memTab[0].addr = fixedHeapStart;
-    memTab[0].base = 0;
-    memTab[0].size = fixedHeapSize;
-    memTabCount = 1;
+    void *s = fixedHeapStart;
+    ssize_t r = fixedHeapSize;
+    ssize_t mcs = 128 * 1024 * 1024 * 1024; // 128GB
+    memTabCount = 0;
+    while (r > 0) {
+      ssize_t sz = (r <= mcs) ? r : mcs;
+      memTab[memTabCount].addr = s;
+      memTab[memTabCount].base = 0;
+      memTab[memTabCount].size = sz;
+      memTabCount++;
+      s += sz;
+      r -= sz;
+    }
 
     findMoreMemoryRegions();
 
