@@ -2779,7 +2779,8 @@ void init_ofiForMem(void) {
 
     void *s = fixedHeapStart;
     ssize_t r = fixedHeapSize;
-    ssize_t mcs = 128 * 1024 * 1024 * 1024; // 128GB
+    //ssize_t mcs = (ssize_t) 128 * 1024 * 1024 * 1024; // 128GB
+    ssize_t mcs = (ssize_t) 64 * 1024 * 1024 * 1024; 
     memTabCount = 0;
     while (r > 0) {
       ssize_t sz = (r <= mcs) ? r : mcs;
@@ -2892,8 +2893,8 @@ void findMoreMemoryRegions(void) {
               && memTabCount > 0
               && (char*) addr == ((char*) memTab[memTabCount - 1].addr
                                   + memTab[memTabCount - 1].size))) {
-        DBG_PRINTF(DBG_MR, "record mem map region: %p %#zx \"%s\"",
-                   addr, size, path);
+        DBG_PRINTF(DBG_MR, "record mem map region: [%d] %p %#zx \"%s\"",
+                   memTabCount, addr, size, path);
         memTab[memTabCount].addr = addr;
         memTab[memTabCount].size = size;
         memTabCount++;
