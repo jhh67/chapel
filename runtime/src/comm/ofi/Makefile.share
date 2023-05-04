@@ -52,6 +52,8 @@ endif
 #
 ifneq (, $(findstring cray-x,$(CHPL_MAKE_TARGET_PLATFORM)))
   COMM_SRCS += comm-ofi-hugepages.c
+else ifneq (, $(findstring hpe-cray-ex,$(CHPL_MAKE_TARGET_PLATFORM)))
+  COMM_SRCS += comm-ofi-hugepages.c
 else
   COMM_SRCS += comm-ofi-no-hugepages.c
 endif
