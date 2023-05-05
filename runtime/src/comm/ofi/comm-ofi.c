@@ -221,7 +221,7 @@ struct memEntry {
   uint64_t key;     // returned by fi_mr_key
 };
 
-#define MAX_MEM_REGIONS 32
+#define MAX_MEM_REGIONS 512
 typedef struct memEntry (memTab_t)[MAX_MEM_REGIONS];
 
 static memTab_t memTab;
@@ -2781,7 +2781,7 @@ void init_ofiForMem(void) {
     ssize_t r = fixedHeapSize;
     //ssize_t mcs = (ssize_t) 128 * 1024 * 1024 * 1024; // 128GB
     //ssize_t mcs = (ssize_t) 64 * 1024 * 1024 * 1024; 
-    ssize_t mcs = (ssize_t) 32 * 1024 * 1024 * 1024; 
+    ssize_t mcs = (ssize_t) 1 * 1024 * 1024 * 1024; 
     memTabCount = 0;
     while (r > 0) {
       ssize_t sz = (r <= mcs) ? r : mcs;
