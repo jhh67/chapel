@@ -552,9 +552,11 @@ void chpl_topo_setThreadLocality(c_sublocid_t subloc) {
   flags = HWLOC_CPUBIND_THREAD | HWLOC_CPUBIND_STRICT;
   CHK_ERR_ERRNO(hwloc_set_cpubind(topology, cpuset, flags) == 0);
   if (debug) {
-    char buf[1024];
-    hwloc_bitmap_list_snprintf(buf, sizeof(buf), cpuset);
-    _DBG_P("chpl_topo_setThreadLocality(%d): %s", (int) subloc, buf);
+    char cpubuf[1024];
+    char nodebuf[1024];
+    hwloc_bitmap_list_snprintf(cpubuf, sizeof(cpubuf), cpuset);
+    hwloc_bitmap_list_snprintf(nodebuf, sizeof(nodebuf), getNumaObj(subloc)->allowed_nodeset);
+    _DBG_P("chpl_topo_setThreadLocality(%d): cpuset %s nodeset %s", (int) subloc, cpubuf, nodebuf);
   }
   hwloc_bitmap_free(cpuset);
 }
