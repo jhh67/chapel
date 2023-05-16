@@ -1,0 +1,88 @@
+#!/bin/tcsh -f
+
+# See https://github.com/Cray/chapel-private/issues/3593
+
+set temp=(`getopt -s tcsh -o CRn: -- $argv:q`)
+if ($? != 0) then 
+  echo "Terminating..." >/dev/stderr
+  exit 1
+endif
+
+eval set argv=\($temp:q\)
+
+set compile=1
+set run=1
+set nn = 16
+while(1)
+    switch($1:q)
+        case -C:
+            set compile=0
+            shift
+            breaksw
+        case -R:
+            set run=0
+            shift
+            breaksw
+        case -n:
+            set nn = $2:q; shift; shift
+            breaksw
+        case --:
+            shift
+            break
+        default:
+            echo "Internal error"
+            exit 1
+    endsw
+end
+
+if ($#argv == 0)  then
+    echo Usage: $0:t outputDir
+    exit 1
+endif
+
+setenv OUTDIR $1
+if (! -e $OUTDIR) mkdir -p $OUTDIR
+echo $OUTDIR
+
+if ($?CHPL_RT_LOCALES_PER_NODE) then
+    set lpn = $CHPL_RT_LOCALES_PER_NODE
+else
+    set lpn = 1
+endif
+
+set echo
+@ nl = $nn * $lpn
+
+if ($compile) then
+    echo Compiling tests
+    set echo
+    chpl --fast test/release/examples/benchmarks/hpcc/stream.chpl &
+    chpl --fast test/studies/prk/Stencil/optimized/stencil-opt.chpl -sorder="sqrt(16e9*numLocales / 8):int" &
+    chpl --fast test/studies/isx/isx-hand-optimized.chpl -smode=scaling.weakISO &
+    chpl --fast test/studies/bale/aggregation/ig.chpl -sN=10000000 -suseBlockArr=true &
+    chpl --fast test/release/examples/benchmarks/hpcc/ra.chpl -sverify=false -suseOn=false -sN_U="2**(n-12)" -o ra-rmo &
+    chpl --fast test/release/examples/benchmarks/hpcc/ra.chpl -sverify=false -suseOn=true -sN_U="2**(n-12)" -o ra-on &
+    if ($?FFTW_DIR) then
+        chpl --fast test/npb/ft/npadmana/ft_transposed.chpl -I$FFTW_INC -L$FFTW_DIR -lfftw3 \
+            -schpl_serializeSlices -susePrimitiveComm=true -sNPBClass=NPB.D
+    endif
+    unset echo
+    wait
+endif
+
+if ($run) then
+    echo Running tests
+    set echo
+    #./stream --m=`echo "($nn/2)*8*2^30" | bc` -v -nl $nl > $OUTDIR/!#:0:t.out
+    #./stencil-opt -v -nl $nl > $OUTDIR/!#:0:t.out
+    #./isx-hand-optimized --n=`echo '32*2^20' | bc` -v -nl $nl > $OUTDIR/!#:0:t.out
+    #./ig -v -nl $nl > $OUTDIR/!#:0:t.out
+    #./ra-rmo --n=34 -v -nl $nl > $OUTDIR/!#:0:t.out
+    ./ra-on --n=37 -v -nl $nl > $OUTDIR/!#:0:t.out
+    if (-e ft_transposed) then
+    #    ./ft_transposed -v -nl $nl > $OUTDIR/!#:0:t.out
+    endif
+    unset echo
+endif
+
+./summarize $OUTDIR

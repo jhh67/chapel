@@ -1,0 +1,3 @@
+stream.out:Performance (GB/s) = 3371.8
+ig.out:       AGG:	1.190 seconds	8.471 GB/s/node
+ra-on.out:Performance (GUPS) = 0.0338461

@@ -1,0 +1,8 @@
+#!/bin/tcsh -f
+
+foreach x (base amh lpn ss lpnsn amh-lpn)
+    echo
+    source $x-setup
+    ./prconfig
+    ./runtests $x
+end

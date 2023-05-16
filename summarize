@@ -1,0 +1,28 @@
+#!/bin/tcsh -f 
+
+if ($#argv != 1) then
+    echo Usage: $0:t outputDir
+    exit 1
+endif
+
+setenv OUTDIR $1
+echo $OUTDIR
+cd $OUTDIR
+set result=0
+grep -H "Performance (GB/s) =" stream.out > summary.out
+if ($?) echo "Result missing from stream.out"; set result=1
+grep -H "Rate (MFlops/s):" stencil-opt.out >> summary.out
+if ($?) echo "Result missing from stencil-opt.out"; set result=1
+grep -H "total =" isx-hand-optimized.out >> summary.out
+if ($?) echo "Result missing from isx-hand-optimized.out"; set result=1
+grep -H "GB/s/node" ig.out >> summary.out
+if ($?) echo "Result missing from ig.out"; set result=1
+grep -H "Performance (GUPS) =" ra-rmo.out >> summary.out
+if ($?) echo "Result missing from ra-rmo.out"; set result=1
+grep -H "Performance (GUPS) =" ra-on.out >> summary.out
+if ($?) echo "Result missing from ra-on.out"; set result=1
+if (-e ft_transposed.out) then
+    grep -H "MFLOPS" ft_transposed.out >> summary.out
+    if ($?) echo "Result missing from ft_transposed.out"; set result=1
+endif
+exit $result

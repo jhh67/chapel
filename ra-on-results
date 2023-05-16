@@ -1,0 +1,12 @@
+#!/bin/tcsh -f
+
+set prefix = ra-on
+
+foreach config (base amh lpn lpnsn amh-lpn)
+    rm -f $prefix-$config.dat
+    foreach n (2 4 8 16)
+        set bw = `grep $prefix $config/$n/summary.out | tr "\t" " " | tr -s " " | cut -d " " -f 4`
+        set bw = `echo "$bw * 1024" | bc`
+        echo $n $bw >> $prefix-$config.dat
+    end
+end

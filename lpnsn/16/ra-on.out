@@ -1,0 +1,173 @@
+PMI_MAX_KVS_ENTRIES=320 PMI_NO_PREINITIALIZE=y srun --job-name=CHPL-ra-on --quiet --nodes=16 --ntasks=32 --cpus-per-task=128 --cpu-bind=none --exclusive --mem=0 --kill-on-bad-exit --partition=epyc7763  /scratch2/hartman/git/chapel/perf/ra-on_real --n=37 -v -nl 32
+4: using socket 0
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 4 of 32 node(s): nid000023
+24: using socket 0
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 24 of 32 node(s): nid000033
+2: using socket 0
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 2 of 32 node(s): nid000022
+12: using socket 0
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 12 of 32 node(s): nid000027
+26: using socket 0
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 26 of 32 node(s): nid000034
+14: using socket 0
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 14 of 32 node(s): nid000028
+20: using socket 0
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 20 of 32 node(s): nid000031
+6: using socket 0
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 6 of 32 node(s): nid000024
+28: using socket 0
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 28 of 32 node(s): nid000035
+22: using socket 0
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 22 of 32 node(s): nid000032
+0: using socket 0
+oversubscribed = False
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+COMM=ofi: message-order-fence MCM mode, "cxi" provider, "cxi0" device, 100G fixed heap, bound endpoints
+executing on node 0 of 32 node(s): nid000021
+16: using socket 0
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 16 of 32 node(s): nid000029
+10: using socket 0
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 10 of 32 node(s): nid000026
+8: using socket 0
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 8 of 32 node(s): nid000025
+18: using socket 0
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 18 of 32 node(s): nid000030
+5: using socket 1
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 5 of 32 node(s): nid000023
+25: using socket 1
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 25 of 32 node(s): nid000033
+3: using socket 1
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 3 of 32 node(s): nid000022
+13: using socket 1
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 13 of 32 node(s): nid000027
+30: using socket 0
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 30 of 32 node(s): nid000036
+27: using socket 1
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 27 of 32 node(s): nid000034
+15: using socket 1
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 15 of 32 node(s): nid000028
+21: using socket 1
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 21 of 32 node(s): nid000031
+29: using socket 1
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 29 of 32 node(s): nid000035
+23: using socket 1
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 23 of 32 node(s): nid000032
+1: using socket 1
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 1 of 32 node(s): nid000021
+17: using socket 1
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 17 of 32 node(s): nid000029
+11: using socket 1
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 11 of 32 node(s): nid000026
+9: using socket 1
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 9 of 32 node(s): nid000025
+19: using socket 1
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 19 of 32 node(s): nid000030
+31: using socket 1
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 31 of 32 node(s): nid000036
+7: using socket 1
+QTHREADS: Using 64 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 7 of 32 node(s): nid000024
+Number of Locales = 32
+Tasks per locale = 0
+Problem size = 137438953472 (2**37)
+Bytes per array = 1099511627776
+Total memory required (GB) = 1024.0
+Number of updates = 33554432
+
+Validation: SUCCESS
+Execution time = 1.30598
+Performance (GUPS) = 0.0256929

@@ -1,0 +1,15 @@
+#!/bin/tcsh -f
+
+set prefix = ig
+
+foreach config (base amh lpn lpnsn amh-lpn)
+    rm -f $prefix-$config.dat
+    foreach n (2 4 8 16)
+        set bw = `grep $prefix $config/$n/summary.out | tr "\t" " " | tr -s " " | cut -d " " -f 5`
+        if ($config =~ "*lpn*") then
+            set bw = `echo "$bw * 2" | bc`
+        endif
+        set bw = `echo "$bw * $n" | bc`
+        echo $n $bw >> $prefix-$config.dat
+    end
+end

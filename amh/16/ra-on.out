@@ -1,0 +1,77 @@
+PMI_MAX_KVS_ENTRIES=160 PMI_NO_PREINITIALIZE=y srun --job-name=CHPL-ra-on --quiet --nodes=16 --ntasks=16 --cpus-per-task=256 --exclusive --mem=0 --kill-on-bad-exit --partition=epyc7763  /scratch2/hartman/git/chapel/perf/ra-on_real --n=37 -v -nl 16
+QTHREADS: Using 127 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 1 of 16 node(s): nid000022
+QTHREADS: Using 127 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 11 of 16 node(s): nid000032
+QTHREADS: Using 127 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 13 of 16 node(s): nid000034
+QTHREADS: Using 127 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 5 of 16 node(s): nid000026
+QTHREADS: Using 127 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 2 of 16 node(s): nid000023
+QTHREADS: Using 127 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 7 of 16 node(s): nid000028
+QTHREADS: Using 127 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 3 of 16 node(s): nid000024
+QTHREADS: Using 127 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 10 of 16 node(s): nid000031
+QTHREADS: Using 127 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 9 of 16 node(s): nid000030
+QTHREADS: Using 127 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 4 of 16 node(s): nid000025
+QTHREADS: Using 127 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 6 of 16 node(s): nid000027
+QTHREADS: Using 127 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 8 of 16 node(s): nid000029
+QTHREADS: Using 127 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 15 of 16 node(s): nid000036
+QTHREADS: Using 127 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 14 of 16 node(s): nid000035
+QTHREADS: Using 127 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+executing on node 12 of 16 node(s): nid000033
+oversubscribed = False
+QTHREADS: Using 127 Shepherds
+QTHREADS: Using 1 Workers per Shepherd
+QTHREADS: Using 8384512 byte stack size.
+COMM=ofi: message-order-fence MCM mode, "cxi" provider, "cxi0" device, 100G fixed heap, bound endpoints
+executing on node 0 of 16 node(s): nid000021
+Number of Locales = 16
+Tasks per locale = 0
+Problem size = 137438953472 (2**37)
+Bytes per array = 1099511627776
+Total memory required (GB) = 1024.0
+Number of updates = 33554432
+
+Validation: SUCCESS
+Execution time = 2.18705
+Performance (GUPS) = 0.0153423

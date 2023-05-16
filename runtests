@@ -1,0 +1,9 @@
+#!/bin/tcsh -f
+
+set base=$1
+
+foreach nn (2 4 8 16)
+foreach nn (16)
+    echo $nn
+    ./coretests -C -n $nn $base/$nn
+end
