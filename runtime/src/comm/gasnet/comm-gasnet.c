@@ -836,14 +836,29 @@ static void set_num_comm_domains() {
 #endif
 }
 
+int *g_argc_p;
+char ***g_argv_p;
+
 void chpl_comm_pre_topo_init(int *argc_p, char ***argv_p) {
   // Initialize gasnet so that we can call gex_System_QueryHostInfo and
   // set the number of locales on our node which allows the rest of the
   // runtime to determine which cores this locale will use. gasnet_attach
   // is called in chpl_comm_init which is called after the cores have been
   // determined.
+  g_argc_p = argc_p;
+  g_argv_p = argv_p;
+  chpl_set_num_locales_on_node(1);
   gex_Rank_t      infoCount;
   gex_Rank_t      myIndex;
+
+  // For configurations that register a fixed heap at startup use a gasnet hook
+  // to allow us to fault and interleave in the memory in parallel for faster
+  // startup and better NUMA affinity.
+#if defined(GASNET_CONDUIT_IBV) || defined(GASNET_CONDUIT_UCX) || defined(GASNET_CONDUIT_ARIES) || defined(GASNET_CONDUIT_OFI)
+#if defined(GASNET_SEGMENT_FAST)
+  gasnet_client_attach_hook = &chpl_comm_regMemHeapTouch;
+#endif
+#endif
 
   set_max_segsize();
   set_num_comm_domains();
@@ -857,18 +872,19 @@ void chpl_comm_pre_topo_init(int *argc_p, char ***argv_p) {
   chpl_numNodes = gasnet_nodes();
 
   // get information about locales on the same node
-  gex_System_QueryHostInfo(NULL, &infoCount, &myIndex);
-  chpl_set_num_locales_on_node((int32_t) infoCount);
-  chpl_set_local_rank(myIndex);
+  //gex_System_QueryHostInfo(NULL, &infoCount, &myIndex);
+  //chpl_set_num_locales_on_node((int32_t) infoCount);
+  chpl_set_num_locales_on_node(1);
+  //chpl_set_local_rank(myIndex);
+  //chpl_set_local_rank(0);
 }
 
 void chpl_comm_init(void) {
 
-  // gasnet was initialized in chpl_comm_pre_topo_init, attach it
-  // and finish our initialization
+  gex_Rank_t      infoCount;
+  gex_Rank_t      myIndex;
 
-  //  int status; // Some compilers complain about unused variable 'status'.
-
+#ifdef NOTDEF
   // For configurations that register a fixed heap at startup use a gasnet hook
   // to allow us to fault and interleave in the memory in parallel for faster
   // startup and better NUMA affinity.
@@ -877,6 +893,27 @@ void chpl_comm_init(void) {
   gasnet_client_attach_hook = &chpl_comm_regMemHeapTouch;
 #endif
 #endif
+
+  set_max_segsize();
+  set_num_comm_domains();
+  setup_ibv();
+  setup_polling();
+
+  assert(sizeof(gasnet_handlerarg_t)==sizeof(uint32_t));
+
+  gasnet_init(g_argc_p, g_argv_p);
+  chpl_nodeID = gasnet_mynode();
+  chpl_numNodes = gasnet_nodes();
+
+  // get information about locales on the same node
+  //gex_System_QueryHostInfo(NULL, &infoCount, &myIndex);
+  //chpl_set_num_locales_on_node((int32_t) infoCount);
+  //chpl_set_local_rank(myIndex);
+  //chpl_set_local_rank(0);
+  // gasnet was initialized in chpl_comm_pre_topo_init, attach it
+  // and finish our initialization
+#endif
+  //  int status; // Some compilers complain about unused variable 'status'.
 
   GASNET_Safe(gasnet_attach(ftable,
                             sizeof(ftable)/sizeof(gasnet_handlerentry_t),

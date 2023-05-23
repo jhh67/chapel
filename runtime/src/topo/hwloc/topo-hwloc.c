@@ -367,6 +367,8 @@ static void cpuInfoInit(void) {
   _DBG_P("numLocalesOnNode = %d", numLocalesOnNode);
   _DBG_P("expectedLocalesOnNode = %d", expectedLocalesOnNode);
   _DBG_P("rank = %d", rank);
+  _DBG_P("useSocket = %d", useSocket);
+  _DBG_P("cond = %d", (numLocalesOnNode > 1) || (expectedLocalesOnNode > 1) || useSocket);
   if ((numLocalesOnNode > 1) || (expectedLocalesOnNode > 1) || useSocket) {
     if (numLocalesOnNode > 1) {
       oversubscribed = true;
@@ -385,6 +387,7 @@ static void cpuInfoInit(void) {
     if (numCPUsPhysAcc == numCPUsPhysAll) {
       if (numLocalesOnNode <= numSockets) {
         if (rank != -1) {
+         _DBG_P("XXX using a socket");
           // Use the socket whose logical index corresponds to our local rank.
           // See getSocketNumber below if you change this.
           socket = hwloc_get_obj_inside_cpuset_by_type(topology,
