@@ -847,10 +847,10 @@ void chpl_comm_pre_topo_init(int *argc_p, char ***argv_p) {
   // determined.
   g_argc_p = argc_p;
   g_argv_p = argv_p;
-  chpl_set_num_locales_on_node(1);
   gex_Rank_t      infoCount;
   gex_Rank_t      myIndex;
 
+#ifdef NOTDEF
   // For configurations that register a fixed heap at startup use a gasnet hook
   // to allow us to fault and interleave in the memory in parallel for faster
   // startup and better NUMA affinity.
@@ -859,6 +859,8 @@ void chpl_comm_pre_topo_init(int *argc_p, char ***argv_p) {
   gasnet_client_attach_hook = &chpl_comm_regMemHeapTouch;
 #endif
 #endif
+#endif
+
 
   set_max_segsize();
   set_num_comm_domains();
@@ -872,10 +874,10 @@ void chpl_comm_pre_topo_init(int *argc_p, char ***argv_p) {
   chpl_numNodes = gasnet_nodes();
 
   // get information about locales on the same node
-  //gex_System_QueryHostInfo(NULL, &infoCount, &myIndex);
-  //chpl_set_num_locales_on_node((int32_t) infoCount);
-  chpl_set_num_locales_on_node(1);
-  //chpl_set_local_rank(myIndex);
+  gex_System_QueryHostInfo(NULL, &infoCount, &myIndex);
+  chpl_set_num_locales_on_node((int32_t) infoCount);
+  //chpl_set_num_locales_on_node(1);
+  chpl_set_local_rank(myIndex);
   //chpl_set_local_rank(0);
 }
 
@@ -884,7 +886,6 @@ void chpl_comm_init(void) {
   gex_Rank_t      infoCount;
   gex_Rank_t      myIndex;
 
-#ifdef NOTDEF
   // For configurations that register a fixed heap at startup use a gasnet hook
   // to allow us to fault and interleave in the memory in parallel for faster
   // startup and better NUMA affinity.
@@ -894,6 +895,8 @@ void chpl_comm_init(void) {
 #endif
 #endif
 
+
+#ifdef NOTDEF
   set_max_segsize();
   set_num_comm_domains();
   setup_ibv();
