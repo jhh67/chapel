@@ -9,4 +9,6 @@ source $CWD/common-hpe-cray-ex.bash
 
 export CHPL_NIGHTLY_TEST_CONFIG_NAME="hpe-cray-ex-ofi"
 
+nightly_args="${nightly_args} -no-buildcheck"
+
 $CWD/nightly -cron -examples ${nightly_args}
