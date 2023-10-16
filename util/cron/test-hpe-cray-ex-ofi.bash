@@ -7,6 +7,9 @@ source $CWD/common-ofi.bash || \
   ( echo "Could not set up comm=ofi testing." && exit 1 )
 source $CWD/common-hpe-cray-ex.bash
 
+export CHPL_COMM_DEBUG=1
+export CHPL_RT_COMM_OFI_DEBUG=cfg,cfg-av,prov,prov-all,prov-hints,slingshot
+
 export CHPL_NIGHTLY_TEST_CONFIG_NAME="hpe-cray-ex-ofi"
 
 nightly_args="${nightly_args} -no-buildcheck -multilocale"
