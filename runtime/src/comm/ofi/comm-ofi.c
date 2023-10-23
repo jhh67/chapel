@@ -635,10 +635,11 @@ static chpl_bool provCtl_readAmoNeedsOpnd; // READ AMO needs operand (RxD)
 typedef enum {
   txnTrkId,    // no tracking as such, context "ptr" is just an id value
   txnTrkDone,  // *ptr is atomic bool 'done' flag
+  txnTrkFree, // free ptr
   txnTrkTypeCount
 } txnTrkType_t;
 
-#define TXNTRK_TYPE_BITS 1
+#define TXNTRK_TYPE_BITS 2
 #define TXNTRK_ADDR_BITS (64 - TXNTRK_TYPE_BITS)
 #define TXNTRK_TYPE_MASK ((1UL << TXNTRK_TYPE_BITS) - 1UL)
 #define TXNTRK_ADDR_MASK (~(TXNTRK_TYPE_MASK << TXNTRK_ADDR_BITS))
@@ -664,6 +665,11 @@ void* txnTrkEncodeId(intptr_t id) {
 static inline
 void* txnTrkEncodeDone(void* pDone) {
   return txnTrkEncode(txnTrkDone, pDone);
+}
+
+static inline
+void* txnTrkEncodeFree(void *ptr) {
+  return txnTrkEncode(txnTrkFree, ptr);
 }
 
 static inline
@@ -5909,44 +5915,40 @@ chpl_comm_nb_handle_t rmaPutFn_msgOrdFence(void* myAddr, void* mrDesc,
                                            uint64_t mrRaddr, uint64_t mrKey,
                                            size_t size,
                                            struct perTxCtxInfo_t* tcip) {
+  uint64_t flags = 0;
+  void *ctx;
+  void *ptr = myAddr;
+  atomic_bool txnDone;
   if (tcip->bound
       && size <= ofi_info->tx_attr->inject_size
       && (tcip->amoVisBitmap == NULL
           || !bitmapTest(tcip->amoVisBitmap, node))
       && envInjectRMA) {
-    //
-    // Special case: write injection has the least latency.  We can use
-    // that if this PUT doesn't need a fence, its size doesn't exceed
-    // the injection size limit, and we have a bound tx context so we
-    // can delay forcing the memory visibility until later.
-    //
-    (void) wrap_fi_inject_write(myAddr, node, mrRaddr, mrKey, size, tcip);
+    void *buffer = malloc(size);
+    memcpy(buffer, ptr, size);
+    ctx = txnTrkEncodeFree(buffer);
   } else {
-    atomic_bool txnDone;
-    void *ctx = txCtxInit(tcip, __LINE__, &txnDone);
+    ctx = txCtxInit(tcip, __LINE__, &txnDone);
+  }
 
-    if (tcip->bound
-        && bitmapTest(tcip->amoVisBitmap, node)) {
-      //
-      // Special case: If our last operation was an AMO (which can only
-      // be true with a bound tx context) then we need to do a fenced
-      // PUT to force the AMO to complete before this PUT.  We may still
-      // be able to inject the PUT, though.
-      //
-      uint64_t flags = FI_FENCE;
-      if (size <= ofi_info->tx_attr->inject_size
-          && envInjectRMA) {
-        flags |= FI_INJECT;
-      }
-      (void) wrap_fi_writemsg(myAddr, mrDesc, node, mrRaddr, mrKey, size,
-                              ctx, flags, tcip);
-    } else {
-      //
-      // General case.
-      //
-      (void) wrap_fi_write(myAddr, mrDesc, node, mrRaddr, mrKey, size,
-                           ctx, tcip);
-    }
+  if (tcip->bound
+      && bitmapTest(tcip->amoVisBitmap, node)) {
+    //
+    // Special case: If our last operation was an AMO (which can only
+    // be true with a bound tx context) then we need to do a fenced
+    // PUT to force the AMO to complete before this PUT.  We may still
+    // be able to inject the PUT, though.
+    //
+    uint64_t flags = FI_FENCE;
+    (void) wrap_fi_writemsg(ptr, mrDesc, node, mrRaddr, mrKey, size,
+                            ctx, flags, tcip);
+  } else {
+    //
+    // General case.
+    //
+    (void) wrap_fi_write(myAddr, mrDesc, node, mrRaddr, mrKey, size,
+                         ctx, tcip);
+  }
 
     waitForTxnComplete(tcip, ctx);
     txCtxCleanup(ctx);
@@ -5986,27 +5988,21 @@ chpl_comm_nb_handle_t rmaPutFn_msgOrd(void* myAddr, void* mrDesc,
   // Otherwise we have to do it here, before we release the tx context.
   //
 
+  bool inject = false;
   if (tcip->bound
       && size <= ofi_info->tx_attr->inject_size
       && envInjectRMA) {
-    //
-    // Special case: write injection has the least latency.  We can use
-    // that if this PUT's size doesn't exceed the injection size limit
-    // and we have a bound tx context so we can delay forcing the
-    // memory visibility until later.
-    //
-    (void) wrap_fi_inject_write(myAddr, node, mrRaddr, mrKey, size, tcip);
-  } else {
-    //
-    // General case.
-    //
-    atomic_bool txnDone;
-    void *ctx = txCtxInit(tcip, __LINE__, &txnDone);
-    (void) wrap_fi_write(myAddr, mrDesc, node, mrRaddr, mrKey, size,
-                         ctx, tcip);
-    waitForTxnComplete(tcip, ctx);
-    txCtxCleanup(ctx);
+      inject = true;
   }
+  //
+  // General case.
+  //
+  atomic_bool txnDone;
+  void *ctx = txCtxInit(tcip, __LINE__, &txnDone);
+  (void) wrap_fi_write(myAddr, mrDesc, node, mrRaddr, mrKey, size,
+                       ctx, tcip);
+  waitForTxnComplete(tcip, ctx);
+  txCtxCleanup(ctx);
 
   if (tcip->bound) {
     bitmapSet(tcip->putVisBitmap, node);
@@ -7141,11 +7137,20 @@ void checkTxCmplsCQ(struct perTxCtxInfo_t* tcip) {
     const txnTrkCtx_t trk = txnTrkDecode(cqe->op_context);
     DBG_PRINTF(DBG_ACK, "CQ ack tx, flags %#" PRIx64 ", ctx %d:%p",
                cqe->flags, trk.typ, trk.ptr);
-    if (trk.typ == txnTrkDone) {
-      atomic_store_explicit_bool((atomic_bool*) trk.ptr, true,
+    switch(trk.typ) {
+      case txnTrkDone:
+        atomic_store_explicit_bool((atomic_bool*) trk.ptr, true,
                                  memory_order_release);
-    } else if (trk.typ != txnTrkId) {
-      INTERNAL_ERROR_V("unexpected trk.typ %d", trk.typ);
+        break;
+      case txnTrkFree: {
+        free(trk.ptr);
+        break;
+      }
+      case txnTrkId:
+        // do nothing
+        break;
+      default:
+        INTERNAL_ERROR_V("unexpected trk.typ %d", trk.typ);
     }
   }
 }
