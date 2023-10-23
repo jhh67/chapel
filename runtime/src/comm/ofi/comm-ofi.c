@@ -5915,10 +5915,10 @@ chpl_comm_nb_handle_t rmaPutFn_msgOrdFence(void* myAddr, void* mrDesc,
                                            uint64_t mrRaddr, uint64_t mrKey,
                                            size_t size,
                                            struct perTxCtxInfo_t* tcip) {
-  uint64_t flags = 0;
   void *ctx;
   void *ptr = myAddr;
   atomic_bool txnDone;
+  bool doWait = true;
   if (tcip->bound
       && size <= ofi_info->tx_attr->inject_size
       && (tcip->amoVisBitmap == NULL
@@ -5927,6 +5927,7 @@ chpl_comm_nb_handle_t rmaPutFn_msgOrdFence(void* myAddr, void* mrDesc,
     void *buffer = malloc(size);
     memcpy(buffer, ptr, size);
     ctx = txnTrkEncodeFree(buffer);
+    doWait = false;
   } else {
     ctx = txCtxInit(tcip, __LINE__, &txnDone);
   }
@@ -5950,6 +5951,7 @@ chpl_comm_nb_handle_t rmaPutFn_msgOrdFence(void* myAddr, void* mrDesc,
                          ctx, tcip);
   }
 
+  if (doWait) {
     waitForTxnComplete(tcip, ctx);
     txCtxCleanup(ctx);
   }
@@ -5988,21 +5990,27 @@ chpl_comm_nb_handle_t rmaPutFn_msgOrd(void* myAddr, void* mrDesc,
   // Otherwise we have to do it here, before we release the tx context.
   //
 
-  bool inject = false;
   if (tcip->bound
       && size <= ofi_info->tx_attr->inject_size
       && envInjectRMA) {
-      inject = true;
+    //
+    // Special case: write injection has the least latency.  We can use
+    // that if this PUT's size doesn't exceed the injection size limit
+    // and we have a bound tx context so we can delay forcing the
+    // memory visibility until later.
+    //
+    (void) wrap_fi_inject_write(myAddr, node, mrRaddr, mrKey, size, tcip);
+  } else {
+    //
+    // General case.
+    //
+    atomic_bool txnDone;
+    void *ctx = txCtxInit(tcip, __LINE__, &txnDone);
+    (void) wrap_fi_write(myAddr, mrDesc, node, mrRaddr, mrKey, size,
+                         ctx, tcip);
+    waitForTxnComplete(tcip, ctx);
+    txCtxCleanup(ctx);
   }
-  //
-  // General case.
-  //
-  atomic_bool txnDone;
-  void *ctx = txCtxInit(tcip, __LINE__, &txnDone);
-  (void) wrap_fi_write(myAddr, mrDesc, node, mrRaddr, mrKey, size,
-                       ctx, tcip);
-  waitForTxnComplete(tcip, ctx);
-  txCtxCleanup(ctx);
 
   if (tcip->bound) {
     bitmapSet(tcip->putVisBitmap, node);
@@ -6012,7 +6020,6 @@ chpl_comm_nb_handle_t rmaPutFn_msgOrd(void* myAddr, void* mrDesc,
 
   return NULL;
 }
-
 
 //
 // Implements ofi_put() when MCM mode is delivery complete.
