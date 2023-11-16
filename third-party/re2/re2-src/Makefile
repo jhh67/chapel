@@ -35,7 +35,7 @@ INSTALL_DATA=$(INSTALL) -m 644
 
 # Work around the weirdness of sed(1) on Darwin. :/
 ifeq ($(shell uname),Darwin)
-SED_INPLACE=sed -i ''
+SED_INPLACE=sed -i''
 else ifeq ($(shell uname),SunOS)
 SED_INPLACE=sed -i
 else
