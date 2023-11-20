@@ -1189,8 +1189,7 @@ chpl_topo_pci_addr_t *chpl_topo_selectNicByType(chpl_topo_pci_addr_t *inAddr,
               (attr->device_id == nicAttr->device_id)) {
               nics[numNics++] = obj;
           }
-        }
-      }
+        }}
       hwloc_obj_t locales[numLocales];
       hwloc_obj_t assigned[numLocales];
       int numAssigned = 0;
@@ -1198,6 +1197,8 @@ chpl_topo_pci_addr_t *chpl_topo_selectNicByType(chpl_topo_pci_addr_t *inAddr,
       int scratch[numNics][numLocales];
 
       for (int j = 0; j < numLocales; j++) {
+        CHK_ERR(locales[j] =  hwloc_get_obj_covering_cpuset(topology,
+                                                             logAccSets[j]));
         assigned[j] = NULL;
       }
 
