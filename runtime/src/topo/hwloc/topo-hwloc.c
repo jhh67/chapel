@@ -501,6 +501,7 @@ static void cpuInfoInit(void) {
 }
 
 //
+// XXX fix this
 // Partitions resources when running with co-locales. Currently, only
 // partitioning based on sockets is supported.
 //
@@ -568,7 +569,10 @@ static void partitionResources(void) {
     // to determine this accurately.
 
 
-    if ((numCPUsPhysAcc == numCPUsPhysAll) && (rank != -1)) {
+    int numCPUsPhysAccLimit = (numCPUsPhysAll / maxLocalesOnNode) *
+                              maxLocalesOnNode;
+    _DBG_P("numCPUsPhysAccLimit = %d", numCPUsPhysAccLimit);
+    if ((numCPUsPhysAcc == numCPUsPhysAccLimit) && (rank != -1)) {
       if ((maxLocalesOnNode <= numSockets) && !useNuma) {
         myRootType = HWLOC_OBJ_PACKAGE;
         _DBG_P("confining ourself to socket %d", rank);
