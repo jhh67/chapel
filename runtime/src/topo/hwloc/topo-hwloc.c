@@ -388,6 +388,11 @@ static void cpuInfoInit(void) {
   // accessible PUs
 
   logAccSet = hwloc_bitmap_dup(hwloc_topology_get_allowed_cpuset(topology));
+  if (debug) {
+    char buf[1024];
+    hwloc_bitmap_list_snprintf(buf, sizeof(buf), logAccSet);
+    _DBG_P("logAccSet before masking: %s", buf);
+  }
   if (logAccMask) {
     // Modify accessible PUs for testing purposes.
     hwloc_bitmap_and(logAccSet, logAccSet, logAccMask);
