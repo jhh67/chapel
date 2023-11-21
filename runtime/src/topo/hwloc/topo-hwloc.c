@@ -1189,73 +1189,76 @@ chpl_topo_pci_addr_t *chpl_topo_selectNicByType(chpl_topo_pci_addr_t *inAddr,
               (attr->device_id == nicAttr->device_id)) {
               nics[numNics++] = obj;
           }
-        }}
-      hwloc_obj_t locales[numLocales];
-      hwloc_obj_t assigned[numLocales];
-      int numAssigned = 0;
-      int distances[numNics][numLocales];
-      int scratch[numNics][numLocales];
-
-      for (int j = 0; j < numLocales; j++) {
-        CHK_ERR(locales[j] =  hwloc_get_obj_covering_cpuset(topology,
-                                                             logAccSets[j]));
-        assigned[j] = NULL;
-      }
-
-      // Compute the distances between locales and NICs.
-
-      for (int i = 0; i < numNics; i++) {
-        for (int j = 0; j < numLocales; j++) {
-            distances[i][j] = distance(topology, nics[i], locales[j]);
         }
       }
+      if (numNics > 1) {
+        hwloc_obj_t locales[numLocales];
+        hwloc_obj_t assigned[numLocales];
+        int numAssigned = 0;
+        int distances[numNics][numLocales];
+        int scratch[numNics][numLocales];
 
-      chpl_bool finished = false;
-      while (!finished && (numAssigned < numLocales)) {
+        for (int j = 0; j < numLocales; j++) {
+          CHK_ERR(locales[j] =  hwloc_get_obj_covering_cpuset(topology,
+                                                               logAccSets[j]));
+          assigned[j] = NULL;
+        }
 
-        // Initialize the scratch array for this iteration.
+        // Compute the distances between locales and NICs.
 
         for (int i = 0; i < numNics; i++) {
-            for (int j = 0; j < numLocales; j++) {
-                scratch[i][j] = distances[i][j];
-            }
+          for (int j = 0; j < numLocales; j++) {
+              distances[i][j] = distance(topology, nics[i], locales[j]);
+          }
         }
-        // Set distances for locales that already have a NIC to infinite
-        for (int j = 0; j < numLocales; j++) {
-            if (assigned[j] != NULL) {
-                for (int i = 0; i < numNics; i++) {
-                    scratch[i][j] = INT32_MAX;
-                }
-            }
-        }
-        // Find the minimum distance between a locale and a NIC and assign
-        // that NIC to that locale.
-        int numAvail = numNics;
-        while((numAvail > 0) && (numAssigned < numLocales)) {
-            int minimum = INT32_MAX;
-            int minNic, minLoc;
-            for (int i = 0; i < numNics; i++) {
-                for (int j = 0; j < numLocales; j++) {
-                    if (scratch[i][j] < minimum) {
-                        minimum = scratch[i][j];
-                        minNic = i;
-                        minLoc = j;
-                    }
-                }
-            }
-            assigned[minLoc] = nics[minNic];
-            if (minLoc == localRank) {
-              // We are done once we find our NIC.
-              nic = nics[minNic];
-              finished = true;
-              break;
-            }
-            // Don't assign this NIC to another locale in this iteration.
-            for (int j = 0; j < numLocales; j++) {
-                scratch[minNic][j] = INT32_MAX;
-            }
-            numAssigned++;
-            numAvail--;
+
+        chpl_bool finished = false;
+        while (!finished && (numAssigned < numLocales)) {
+
+          // Initialize the scratch array for this iteration.
+
+          for (int i = 0; i < numNics; i++) {
+              for (int j = 0; j < numLocales; j++) {
+                  scratch[i][j] = distances[i][j];
+              }
+          }
+          // Set distances for locales that already have a NIC to infinite
+          for (int j = 0; j < numLocales; j++) {
+              if (assigned[j] != NULL) {
+                  for (int i = 0; i < numNics; i++) {
+                      scratch[i][j] = INT32_MAX;
+                  }
+              }
+          }
+          // Find the minimum distance between a locale and a NIC and assign
+          // that NIC to that locale.
+          int numAvail = numNics;
+          while((numAvail > 0) && (numAssigned < numLocales)) {
+              int minimum = INT32_MAX;
+              int minNic, minLoc;
+              for (int i = 0; i < numNics; i++) {
+                  for (int j = 0; j < numLocales; j++) {
+                      if (scratch[i][j] < minimum) {
+                          minimum = scratch[i][j];
+                          minNic = i;
+                          minLoc = j;
+                      }
+                  }
+              }
+              assigned[minLoc] = nics[minNic];
+              if (minLoc == localRank) {
+                // We are done once we find our NIC.
+                nic = nics[minNic];
+                finished = true;
+                break;
+              }
+              // Don't assign this NIC to another locale in this iteration.
+              for (int j = 0; j < numLocales; j++) {
+                  scratch[minNic][j] = INT32_MAX;
+              }
+              numAssigned++;
+              numAvail--;
+          }
         }
       }
     } else {
