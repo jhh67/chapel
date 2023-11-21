@@ -557,22 +557,27 @@ static void partitionResources(void) {
 
   logAccSets = sys_calloc(numLocalesOnNode, sizeof(hwloc_cpuset_t));
   if ((maxLocalesOnNode > 1) || useSocket || useNuma) {
-    // XXX update this comment
-    // We get our own socket if all cores are accessible, we know our local
-    // rank, and the number of locales on the node is less than or equal to
-    // the number of sockets. It is an error if the number of locales on the
-    // node is greater than the number of sockets and CHPL_RT_LOCALES_PER_NODE
-    // is set, otherwise we are oversubscribed.
+    // We get our own socket or NUMA domain if we have exclusive access to the
+    // node, we know our local rank, and the number of locales on the node is
+    // less than or equal to the number of sockets or NUMA domains. It is an
+    // error if the number of locales on the node is greater than both of
+    // these and CHPL_RT_LOCALES_PER_NODE is set, otherwise we are
+    // oversubscribed.
 
     // TODO: The oversubscription determination is incorrect. A node is only
     // oversubscribed if locales are sharing cores. Need to figure out how
     // to determine this accurately.
 
+    // If the number of co-locales doesn't divide the number of cores evenly
+    // then not all cores will be accessible due to rounding. We should
+    // consider ourselves to have exclusive access to the node, even though
+    // this might not be true. TODO: find a better way to determine exclusive
+    // access
 
-    int numCPUsPhysAccLimit = (numCPUsPhysAll / maxLocalesOnNode) *
+    int numCPUsPhysRounded = (numCPUsPhysAll / maxLocalesOnNode) *
                               maxLocalesOnNode;
-    _DBG_P("numCPUsPhysAccLimit = %d", numCPUsPhysAccLimit);
-    if ((numCPUsPhysAcc == numCPUsPhysAccLimit) && (rank != -1)) {
+    _DBG_P("numCPUsPhysRounded = %d", numCPUsPhysRounded);
+    if ((numCPUsPhysAcc == numCPUsPhysRounded) && (rank != -1)) {
       if ((maxLocalesOnNode <= numSockets) && !useNuma) {
         myRootType = HWLOC_OBJ_PACKAGE;
         _DBG_P("confining ourself to socket %d", rank);
