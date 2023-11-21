@@ -268,9 +268,9 @@ void chpl_topo_exit(void) {
       if (logAccSets[i] != NULL) {
         hwloc_bitmap_free(logAccSets[i]);
       }
-      sys_free(logAccSets);
-      logAccSets = NULL;
     }
+    sys_free(logAccSets);
+    logAccSets = NULL;
   }
   hwloc_topology_destroy(topology);
 }
