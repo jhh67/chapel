@@ -513,8 +513,8 @@ static void partitionResources(void) {
 
   int numLocalesOnNode = chpl_get_num_locales_on_node();
   int maxLocalesOnNode = chpl_env_rt_get_int("LOCALES_PER_NODE", 1);
-  chpl_bool useSocket;
-  chpl_bool useNuma;
+  chpl_bool useSocket = false;
+  chpl_bool useNuma = false;
 
   const char *coloStr = chpl_env_rt_get("FORCE_COLOCALE", NULL);
   if (coloStr != NULL) {
