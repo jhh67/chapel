@@ -2224,7 +2224,32 @@ void heedSlingshotSettings(struct fi_info* info) {
       index++;
       s = NULL;
     }
-    CHK_TRUE(tok != NULL);
+    if (tok == NULL) {
+      extern char **environ;
+      char msg[2048];
+      char *p = msg;
+      size_t avail = sizeof(msg);
+      int n;
+      n = snprintf(p, avail,
+          "SS11 device \"%s\" not found in SLINGSHOT_DEVICES: %s\n",
+          ofi_info->domain_attr->name, getenv("SLINGSHOT_DEVICES"));
+      p += n;
+      avail = (avail > n) ? (avail - n) : 0;
+      n = snprintf(p, avail, "Environment:\n");
+      p += n;
+      avail = (avail > n) ? (avail - n) : 0;
+      n = snprintf(p, avail, "SLURMD_NODENAME: %s\n",
+                   getenv("SLURMD_NODENAME"));
+      p += n;
+      avail = (avail > n) ? (avail - n) : 0;
+      for (int i = 0; environ[i] != NULL; i++) {
+        if (!strncmp("SLINGSHOT", environ[i], strlen("SLINGSHOT"))) {
+          n = snprintf(p, avail, "%s: %s\n", environ[i], getenv(environ[i]));
+          p += n;
+          avail = (avail > n) ? (avail - n) : 0;
+        }
+      }
+    }
   }
 
 
