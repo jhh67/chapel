@@ -29,6 +29,8 @@ msgs = (
 """,
 """diff: .*/[.]module/PrgEnv-.*: No such file or directory
 """,
+"""libfabric:.*
+""",
 )
 
 outfname = sys.argv[2]
