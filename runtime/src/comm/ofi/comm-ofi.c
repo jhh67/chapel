@@ -2235,6 +2235,10 @@ void heedSlingshotSettings(struct fi_info* info) {
           ofi_info->domain_attr->name, getenv("SLINGSHOT_DEVICES"));
       p += n;
       avail = (avail > n) ? (avail - n) : 0;
+      n = snprintf(p, avail, "Provider: %s\n",
+                   ofi_info->fabric_attr->prov_name);
+      p += n;
+      avail = (avail > n) ? (avail - n) : 0;
       n = snprintf(p, avail, "Environment:\n");
       p += n;
       avail = (avail > n) ? (avail - n) : 0;
