@@ -2238,17 +2238,13 @@ void heedSlingshotSettings(struct fi_info* info) {
       n = snprintf(p, avail, "Environment:\n");
       p += n;
       avail = (avail > n) ? (avail - n) : 0;
-      n = snprintf(p, avail, "SLURMD_NODENAME: %s\n",
+      n = snprintf(p, avail, "SLURMD_NODENAME=%s\n",
                    getenv("SLURMD_NODENAME"));
-      p += n;
-      avail = (avail > n) ? (avail - n) : 0;
       for (int i = 0; environ[i] != NULL; i++) {
-        if (!strncmp("SLINGSHOT", environ[i], strlen("SLINGSHOT"))) {
-          n = snprintf(p, avail, "%s: %s\n", environ[i], getenv(environ[i]));
-          p += n;
-          avail = (avail > n) ? (avail - n) : 0;
-        }
+        strncat(msg, environ[i], sizeof(msg)-1);
+        strncat(msg, "\n", sizeof(msg)-1);
       }
+      chpl_error(msg, 0, 0);
     }
   }
 
