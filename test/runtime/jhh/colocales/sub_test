@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 
 echo XXX sub_test
+echo -n "XXX make: "
 which make
+echo -n "XXX pwd: "
 pwd
+echo -n "XXX chpl: "
+which chpl
 
 make
 
