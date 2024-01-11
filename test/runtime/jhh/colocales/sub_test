@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+echo XXX sub_test
+which make
+pwd
+
+make
+
 # Runs all *.py files in the current directory.
 
 dirs=$CHPL_HOME/util/chplenv:$CHPL_HOME/util/test
