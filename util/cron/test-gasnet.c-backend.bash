@@ -13,4 +13,6 @@ export CHPL_NIGHTLY_TEST_CONFIG_NAME="gasnet.c-backend"
 # distribution for this configuration.
 unset CHPL_NIGHTLY_TEST_DIRS
 
+export CHPL_NIGHTLY_TEST_DIRS=runtime/jhh/colocales
+
 $CWD/nightly -cron -multilocale ${nightly_args}
