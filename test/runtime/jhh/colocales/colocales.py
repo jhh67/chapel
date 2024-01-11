@@ -72,7 +72,7 @@ class TestCases(object):
         def runCmd(self, cmd, env=None):
             if env is None:
                 env = self.env
-            output = runCmd(cmd, env=env, check=False);
+            output = runCmd(cmd, env=env, check=True);
             return output
 
         # Returns a list of cores in the specified partition
