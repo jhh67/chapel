@@ -34,10 +34,10 @@ def runCmd(cmd, env=None, check=True):
         else:
             proc = subprocess.run(cmd, text=True, check=check, env=env,
                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    except CalledProcessError as e:
+    except subprocess.CalledProcessError as e:
         print(e.stdout)
         print(e.stderr)
-        
+
     return proc.stdout
 
 def skipif():
