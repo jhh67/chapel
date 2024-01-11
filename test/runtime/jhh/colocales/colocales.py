@@ -27,12 +27,17 @@ skipReason = None
 def runCmd(cmd, env=None, check=True):
     if type(cmd) is str:
         cmd = cmd.split()
-    if env is None:
-        proc = subprocess.run(cmd, text=True, check=check,
-            stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    else:
-        proc = subprocess.run(cmd, text=True, check=check, env=env,
-            stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    try:
+        if env is None:
+            proc = subprocess.run(cmd, text=True, check=check,
+                stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        else:
+            proc = subprocess.run(cmd, text=True, check=check, env=env,
+                stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    except CalledProcessError as e:
+        print(e.stdout)
+        print(e.stderr)
+        
     return proc.stdout
 
 def skipif():
