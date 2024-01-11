@@ -14,6 +14,7 @@ export CHPL_NIGHTLY_TEST_CONFIG_NAME="gasnet.c-backend"
 unset CHPL_NIGHTLY_TEST_DIRS
 
 export CHPL_NIGHTLY_TEST_DIRS=runtime/jhh/colocales
+echo XXX
 which make
 
 $CWD/nightly -cron -multilocale ${nightly_args}
