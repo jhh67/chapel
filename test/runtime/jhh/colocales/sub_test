@@ -6,10 +6,7 @@ which make
 echo -n "XXX pwd: "
 pwd
 echo -n "XXX chpl: "
-which chpl
-
-export CHPL_COMPILER=$1
-make
+echo $1
 
 # Runs all *.py files in the current directory.
 
