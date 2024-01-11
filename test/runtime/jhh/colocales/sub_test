@@ -8,6 +8,7 @@ pwd
 echo -n "XXX chpl: "
 which chpl
 
+export CHPL_COMPILER=$1
 make
 
 # Runs all *.py files in the current directory.
