@@ -569,6 +569,8 @@ static void partitionResources(void) {
                  "%d sockets and %d NUMA domains.",
                  numLocalesOnNode, numSockets, numNumas);
         chpl_error(msg, 0, 0);
+      } else {
+        chpl_exit_any(1);
       }
       // Use the socket/NUMA whose logical index corresponds to our local rank.
       CHK_ERR(myRoot = hwloc_get_obj_inside_cpuset_by_type(topology,
