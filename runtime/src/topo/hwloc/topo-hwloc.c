@@ -491,6 +491,19 @@ static void cpuInfoInit(void) {
   }
 }
 
+// Convert hwloc_obj_type_t into better names than hwloc_obj_type_string.
+const char *objTypeString(hwloc_obj_type_t t) {
+  const char *str = NULL;
+  switch(t) {
+    case HWLOC_OBJ_PACKAGE: str = "socket"; break;
+    case HWLOC_OBJ_NUMANODE: str = "NUMA domain"; break;
+    case HWLOC_OBJ_CORE: str = "core"; break;
+    case HWLOC_OBJ_L3CACHE: str = "L3 cache"; break;
+    default: str = "unknown"; break;
+  }
+  return str;
+}
+
 //
 // Partitions resources when running with co-locales. Currently, only
 // partitioning based on sockets or NUMA domains is supported.
@@ -508,26 +521,21 @@ static void partitionResources(void) {
   chpl_bool useSocket = false;
   chpl_bool useNuma = false;
 
-  const char *coloStr = chpl_env_rt_get("FORCE_COLOCALE", NULL);
-  if (coloStr != NULL) {
-    char msg[200];
-    if (numLocalesOnNode > 1) {
-      snprintf(msg, sizeof(msg),
-            "CHPL_RT_FORCE_COLOCALE ignored because there are %d co-locales",
-            numLocalesOnNode);
-      chpl_warning(msg, 0, 0);
+  const char *t = chpl_env_rt_get("COLOCALE_OBJ_TYPE", NULL);
+  if (t != NULL) {
+    if (!strcmp(t , "socket")) {
+      myRootType = HWLOC_OBJ_PACKAGE;
+    } else if (!strcmp(t , "numa")) {
+      myRootType = HWLOC_OBJ_NUMANODE;
+    } else if (!strcmp(t , "core")) {
+      myRootType = HWLOC_OBJ_CORE;
+    } else if (!strcmp(t , "cache")) {
+      myRootType = HWLOC_OBJ_L3CACHE;
     } else {
-      if (!strcasecmp(coloStr, "socket")) {
-        useSocket = true;
-      } else if (!strcasecmp(coloStr, "numa")) {
-        useNuma = true;
-      } else {
-        snprintf(msg, sizeof(msg),
-                 "\"%s\" is not a valid value for CHPL_RT_FORCE_COLOCALE.\n"
-                 "Must be either \"socket\" or \"numa\".",
-                 coloStr);
-        chpl_error(msg, 0, 0);
-      }
+      char msg[200];
+      snprintf(msg, sizeof(msg),
+               "CHPL_RT_COLOCALE_OBJ_TYPE is not a valid type: \"%s\"", t);
+      chpl_error(msg, 0, 0);
     }
   }
 
@@ -536,7 +544,8 @@ static void partitionResources(void) {
     oversubscribed = true;
   }
   logAccSets = sys_calloc(numLocalesOnNode, sizeof(hwloc_cpuset_t));
-  if ((numColocales > 0) || useSocket || useNuma) {
+  if (numColocales > 0) {
+    // XXX update this
     // We get our own socket or NUMA domain if we have exclusive access to the
     // node, we know our local rank, and the number of locales on the node is
     // less than or equal to the number of sockets or NUMA domains. It is an
@@ -549,15 +558,16 @@ static void partitionResources(void) {
     // to determine this accurately.
 
     if (rank != -1) {
-      if ((numColocales <= numSockets) && !useNuma) {
-        myRootType = HWLOC_OBJ_PACKAGE;
-        _DBG_P("confining ourself to socket %d", rank);
-      } else if (numColocales <= numNumas) {
-        myRootType = HWLOC_OBJ_NUMANODE;
-        _DBG_P("confining ourself to NUMA %d", rank);
-
-      }
       if (myRootType) {
+        int numObjs = hwloc_get_nbobjs_by_type(topology, myRootType);
+        if (numObjs < numLocalesOnNode) {
+          char msg[200];
+          snprintf(msg, sizeof(msg), "Node only has %d %s(s)", numObjs,
+                   objTypeString(myRootType));
+          chpl_error(msg, 0, 0);
+        }
+        _DBG_P("confining ourself to %s %d",
+               hwloc_obj_type_string(myRootType), rank);
         // Use the socket/NUMA whose logical index corresponds to our local rank.
         CHK_ERR(myRoot = hwloc_get_obj_inside_cpuset_by_type(topology,
                                   root->cpuset, myRootType, rank));
