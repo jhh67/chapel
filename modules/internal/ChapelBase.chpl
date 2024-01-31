@@ -2009,6 +2009,7 @@ module ChapelBase {
     }
     chpl_comm_task_end();
     // inform anybody waiting that we're done
+    writeln("_downEndCount: ", e.i);
     e.sub(1, memoryOrder.release);
   }
 
@@ -2024,6 +2025,7 @@ module ChapelBase {
     // re-added after the waitFor().
     here.runningTaskCntSub(1);
 
+    writeln("_waitEndCount: ", e.i);
     // Wait for all tasks to finish
     e.waitFor(0, memoryOrder.acquire);
 
@@ -2046,6 +2048,7 @@ module ChapelBase {
   pragma "task join impl fn"
   pragma "unchecked throws"
   proc _waitEndCount(e: _EndCount, param countRunningTasks=true, numTasks) throws {
+    writeln("_waitEndCount 2: ", e.i);
     // Wait for all tasks to finish
     e.waitFor(0, memoryOrder.acquire);
 

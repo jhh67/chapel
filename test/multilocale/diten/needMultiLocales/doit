@@ -1,0 +1,7 @@
+#!/bin/tcsh -f
+
+# chpl --preserve-inlined-line-numbers -g --savec=savec --no-inline --no-cpp-lines -s commDiagsTrackEndCounts=true --no-cache-remote DijkstraTermination.chpl
+while(1)
+    date +"%T.%6N" | tee out
+    ./DijkstraTermination -nl 2 -v >> out
+end

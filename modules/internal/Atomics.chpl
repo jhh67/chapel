@@ -606,11 +606,13 @@ module Atomics {
        integer and real atomic types.
     */
     inline proc ref add(val:valType, param order: memoryOrder = memoryOrder.seqCst): void {
+      //writeln(this,  " ", _v, " + ", val);
       pragma "local fn" pragma "fast-on safe extern function"
       extern externFunc("fetch_add", valType)
         proc atomic_fetch_add(ref obj:externT(valType), operand:valType, order:memory_order): valType;
 
       on this do atomic_fetch_add(_v, val, c_memory_order(order));
+      //writeln(this,  " _v = ", _v);
     }
 
     /*
@@ -634,11 +636,13 @@ module Atomics {
        for integer and real atomic types.
     */
     inline proc ref sub(val:valType, param order: memoryOrder = memoryOrder.seqCst): void {
+      //writeln(this,  " ", _v, " - ", val);
       pragma "local fn" pragma "fast-on safe extern function"
       extern externFunc("fetch_sub", valType)
         proc atomic_fetch_sub(ref obj:externT(valType), operand:valType, order:memory_order): valType;
 
       on this do atomic_fetch_sub(_v, val, c_memory_order(order));
+      //writeln(this,  " _v = ", _v);
     }
 
     /*
@@ -749,9 +753,17 @@ module Atomics {
     */
     inline proc const waitFor(val:valType, param order: memoryOrder = memoryOrder.seqCst): void {
       on this {
-        while (this.read(order=memoryOrder.relaxed) != val) {
+        var x = this.read(order=memoryOrder.relaxed);
+        var y = -1;
+        while (x != val) {
+          if (x != y) {
+              writeln("waitFor: x=", x, " val=", val);
+              y = x;
+          }
           currentTask.yieldExecution();
+          x = this.read(order=memoryOrder.relaxed);
         }
+        writeln("waitFor: x=", x, " val=", val);
         chpl_atomic_thread_fence(c_memory_order(order));
       }
     }
