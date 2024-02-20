@@ -101,8 +101,12 @@ proc decEndCount {
   endCount!.count.writeEF(endCount!.count.readFE() - 1);
   if debug then
     writeln(here, ": decEndCount: It is now: ", endCount!.count.readFF());
-  if endCount!.count.readFF() == 0 then
-    wakeup!.wakeup.writeEF(WakeupType.beginFinish);
+  if endCount!.count.readFF() == 0 {
+    endCount!.localColor.writeXF(TerminationColor.white);
+    if (here.id == 0) {
+      wakeup!.wakeup.writeEF(WakeupType.beginFinish);
+    }
+  }
 }
 
 proc incEndCount {
@@ -173,7 +177,7 @@ proc main {
   }
 
   decEndCount;
-  finishedProg.readFF();
+  finishedProg.readFE();
   write("program finished ");
   var aa = a.readFE();
   if aa == 5 then
