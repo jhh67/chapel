@@ -1,5 +1,4 @@
 config param debug: bool = false;
-use CommDiagnostics;
 
 //
 // Simple, stand-alone implementation of EWD840:
@@ -143,8 +142,6 @@ proc foo() {
 // detection.
 //
 proc main {
-    startCommDiagnostics();
-    startVerboseComm();
   setupTerminationDetection();
   incEndCount;
   begin {
@@ -183,15 +180,11 @@ proc main {
     writeln("successfully");
   else
     writeln("unsuccessfully: a is ", aa);
-  stopCommDiagnostics();
-  writeln(getCommDiagnostics());
 }
 
 proc deinit() {
-  writeln("deinit begin");
   for l in Locales do on l {
     delete wakeup;
     delete endCount;
   }
-  writeln("deinit done");
 }
