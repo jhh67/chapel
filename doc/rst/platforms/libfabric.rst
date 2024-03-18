@@ -184,7 +184,7 @@ communication layer.  There is no expectation that users or programmers
 should concern themselves with providers.  Providers are simply the
 mechanism of portability when using libfabric.
 
-
+.. _libfabric_heap:
 Memory Registration and the Heap
 ________________________________
 
