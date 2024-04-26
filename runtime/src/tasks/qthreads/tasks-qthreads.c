@@ -154,7 +154,10 @@ static aligned_t next_task_id = 1;
 static pthread_t initer;
 
 pthread_t chpl_qthread_process_pthread;
-pthread_t chpl_qthread_comm_pthread;
+
+int chpl_qthread_comm_num_pthreads = 0;
+int chpl_qthread_comm_max_pthreads = 0;
+pthread_t *chpl_qthread_comm_pthreads = NULL;
 
 chpl_task_bundle_t chpl_qthread_process_bundle = {
                                    .kind = CHPL_ARG_BUNDLE_KIND_TASK,
@@ -166,7 +169,7 @@ chpl_task_bundle_t chpl_qthread_process_bundle = {
                                    .requested_fn = NULL,
                                    .id = chpl_nullTaskID };
 
-chpl_task_bundle_t chpl_qthread_comm_task_bundle = {
+chpl_task_bundle_t chpl_qthread_comm_task_bundle_template = {
                                    .kind = CHPL_ARG_BUNDLE_KIND_TASK,
                                    .is_executeOn = false,
                                    .lineno = 0,
@@ -176,11 +179,12 @@ chpl_task_bundle_t chpl_qthread_comm_task_bundle = {
                                    .requested_fn = NULL,
                                    .id = chpl_nullTaskID };
 
+chpl_task_bundle_t *chpl_qthread_comm_task_bundles = NULL;
+
 chpl_qthread_tls_t chpl_qthread_process_tls = {
                                .bundle = &chpl_qthread_process_bundle };
 
-chpl_qthread_tls_t chpl_qthread_comm_task_tls = {
-                               .bundle = &chpl_qthread_comm_task_bundle };
+chpl_qthread_tls_t *chpl_qthread_comm_task_tls = NULL;
 
 //
 // chpl_qthread_get_tasklocal() is in chpl-tasks-impl.h
@@ -729,6 +733,46 @@ static void setupAffinity(void) {
   }
 }
 
+static pthread_t *initialize_comm_task(void) {
+    int newMax;
+    int oldMax = chpl_qthread_comm_max_pthreads;
+
+    if (chpl_qthread_comm_num_pthreads ==
+        chpl_qthread_comm_max_pthreads) {
+        if (oldMax == 0) {
+            newMax = 1;
+        } else {
+            newMax = oldMax * 2;
+        }
+        size_t newSize = newMax * sizeof(*chpl_qthread_comm_pthreads);
+        chpl_qthread_comm_pthreads = chpl_realloc(chpl_qthread_comm_pthreads,
+                                                  newSize);
+
+        newSize = newMax * sizeof(*chpl_qthread_comm_task_bundles);
+        chpl_qthread_comm_task_bundles =
+            chpl_realloc(chpl_qthread_comm_task_bundles, newSize);
+
+        newSize = newMax * sizeof(*chpl_qthread_comm_task_tls);
+        chpl_qthread_comm_task_tls = chpl_realloc(chpl_qthread_comm_task_tls,
+                                                  newSize);
+        for(int i = 0; i < chpl_qthread_comm_num_pthreads; i++) {
+            chpl_qthread_comm_task_tls[i].bundle =
+                    &chpl_qthread_comm_task_bundles[i];
+        }
+        chpl_qthread_comm_max_pthreads = newMax;
+    }
+    int i = chpl_qthread_comm_num_pthreads++;
+    assert(i < chpl_qthread_comm_max_pthreads);
+    chpl_qthread_comm_task_bundles[i] =
+            chpl_qthread_comm_task_bundle_template;
+    chpl_qthread_comm_task_tls[i].bundle =
+                    &chpl_qthread_comm_task_bundles[i];
+    return &chpl_qthread_comm_pthreads[i];
+}
+
+
+
+
 void chpl_task_init(void)
 {
     int32_t   commMaxThreads;
@@ -832,6 +876,7 @@ typedef struct {
 static void *comm_task_wrapper(void *arg)
 {
     comm_task_wrapper_info_t *rarg = arg;
+
     if (rarg->cpu >= 0) {
         int rc = chpl_topo_bindCPU(rarg->cpu);
         if (rc) {
@@ -850,7 +895,10 @@ static void *comm_task_wrapper(void *arg)
         }
         _DBG_P("comm task bound to accessible PUs");
     }
-    (*(chpl_fn_p)(rarg->fn))(rarg->arg);
+    chpl_fn_p fn = rarg->fn;
+    void *targ = rarg->arg;
+    chpl_free(rarg);
+    (*(chpl_fn_p)(fn))(targ);
     return 0;
 }
 
@@ -886,18 +934,14 @@ int chpl_task_createCommTask(chpl_fn_p fn,
                              void     *arg,
                              int      cpu)
 {
-    //
-    // The wrapper info must be static because it won't be referred to
-    // until the new pthread calls comm_task_wrapper().  And, it is
-    // safe for it to be static because we will be called at most once
-    // on each node.
-    //
-    static comm_task_wrapper_info_t wrapper_info;
-    wrapper_info.fn = fn;
-    wrapper_info.arg = arg;
-    wrapper_info.cpu = cpu;
-    return pthread_create(&chpl_qthread_comm_pthread,
-                          NULL, comm_task_wrapper, &wrapper_info);
+    comm_task_wrapper_info_t *wrapper_info;
+    wrapper_info = chpl_malloc(sizeof(*wrapper_info));
+    wrapper_info->fn = fn;
+    wrapper_info->arg = arg;
+    wrapper_info->cpu = cpu;
+    pthread_t *thread = initialize_comm_task();
+    return pthread_create(thread,
+                          NULL, comm_task_wrapper, wrapper_info);
 }
 
 void chpl_task_addTask(chpl_fn_int_t       fid,

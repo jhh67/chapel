@@ -786,6 +786,9 @@ void gasneti_leaf_finish(gex_Event_t *_opt_val) {
     #elif PLATFORM_ARCH_POWERPC && \
           PLATFORM_OS_LINUX
       #define GASNETI_THREADINFO_OPT    0
+    #elif PLATFORM_ARCH_AARCH64 && \
+          (PLATFORM_OS_LINUX || PLATFORM_OS_DARWIN)
+      #define GASNETI_THREADINFO_OPT    0
     #endif
   #endif
   #ifndef GASNETI_THREADINFO_OPT
@@ -1117,6 +1120,19 @@ extern int gasnete_maxthreadidx;
   #define GASNETI_CHECK_INJECT()        ((void)0)
   #define GASNETI_CHECK_INJECT_REPLY()  ((void)0)
   #define GASNETI_CHECK_INJECT_RESET()  ((void)0)
+#endif
+
+// ------------------------------------------------------------------------------------
+// Checks for legacy communication calls without legacy support
+//
+#if GASNET_DEBUG
+  #define _GASNETI_CHECK_LEGACY(fnname, tm, flags) do { \
+    if (((flags) & GASNETI_FLAG_G2EX_DEBUG) && !(tm)) { \
+      gasneti_fatalerror("gasnet_" fnname "*() calls require gasnet_attach() or gex_Client_Init(..., GEX_FLAG_USES_GASNET1)"); \
+    } \
+  } while (0)
+#else
+  #define _GASNETI_CHECK_LEGACY(fnname, tm, flags) ((void)0)
 #endif
 
 /* ------------------------------------------------------------------------------------ */
@@ -1619,8 +1635,18 @@ extern gasnet_nodeinfo_t *gasneti_nodeinfo;
   #define GASNETI_MK_CLASS_HIP_CONFIG nomk_class_hip
 #endif
 
+#if GASNET_HAVE_MK_CLASS_ZE
+  #undef GASNET_HAVE_MK_CLASS_ZE
+  #define GASNET_HAVE_MK_CLASS_ZE 1
+  #define GASNETI_MK_CLASS_ZE_CONFIG mk_class_ze
+#else
+  #undef GASNET_HAVE_MK_CLASS_ZE
+  #define GASNETI_MK_CLASS_ZE_CONFIG nomk_class_ze
+#endif
+
 #if GASNET_HAVE_MK_CLASS_CUDA_UVA || \
-    GASNET_HAVE_MK_CLASS_HIP   // || GASNET_HAVE_MK_CLASS_[FOO]
+    GASNET_HAVE_MK_CLASS_HIP || \
+    GASNET_HAVE_MK_CLASS_ZE   // || GASNET_HAVE_MK_CLASS_[FOO]
   #define GASNET_HAVE_MK_CLASS_MULTIPLE 1
 #endif
 

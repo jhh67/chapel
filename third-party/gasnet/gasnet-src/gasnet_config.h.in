@@ -224,6 +224,7 @@
 /* memory kinds support */
 #undef GASNETI_MK_CLASS_CUDA_UVA_ENABLED
 #undef GASNETI_MK_CLASS_HIP_ENABLED
+#undef GASNETI_MK_CLASS_ZE_ENABLED
 
 /* HIP platform */
 #undef GASNETI_HIP_PLATFORM_AMD
@@ -477,6 +478,7 @@
 #undef GASNETC_GNI_UDREG
 
 /* GASNet ofi-conduit settings */
+#undef GASNETC_OFI_SPAWNER_CONF
 #undef GASNETC_OFI_REFERENCE_EXTENDED
 #undef GASNETC_OFI_MAX_MEDIUM_DFLT
 #undef GASNETC_OFI_NUM_COMPLETIONS
@@ -491,11 +493,14 @@
 #undef GASNETC_HAVE_FI_MR_REG_ATTR
 #undef GASNETC_HAVE_FI_HMEM_CUDA
 #undef GASNETC_HAVE_FI_HMEM_ROCR
+#undef GASNETC_HAVE_FI_HMEM_ZE
 
 /* GASNet ucx-conduit settings */
+#undef GASNETC_UCX_SPAWNER_CONF
 #undef GASNETC_UCX_MAX_MEDIUM_DFLT
 
 /* GASNet ibv-conduit features and bug work-arounds */
+#undef GASNETC_IBV_SPAWNER_CONF
 #undef HAVE_IBV_SRQ
 #undef HAVE_IBV_TRANSPORT_TYPE
 #undef GASNETC_IBV_MAX_MEDIUM
@@ -504,6 +509,7 @@
 #undef GASNETC_IBV_ODP_CORE
 #undef GASNETC_IBV_ODP_DISABLED
 #undef GASNETC_IBV_RCV_THREAD
+#undef GASNETC_IBV_SND_THREAD
 #undef GASNETC_IBV_CONN_THREAD
 #undef GASNETC_IBV_MAX_HCAS_CONFIGURE
 #undef GASNETC_IBV_PHYSMEM_MAX_CONFIGURE
@@ -530,28 +536,22 @@
 #undef HAVE_PMI_CRAY_H
 
 
-/* Define to one of `_getb67', `GETB67', `getb67' for Cray-2 and Cray-YMP
-   systems. This function is required for `alloca.c' support on those systems.
-   */
-#undef CRAY_STACKSEG_END
-
-/* Define to 1 if using `alloca.c'. */
+/* Define to 1 if using 'alloca.c'. */
 #undef C_ALLOCA
 
 /* define to 1 if PMI2_KVS_fence() provides barrier functionality */
 #undef GASNETI_PMI2_FENCE_IS_BARRIER
 
-/* Define to 1 if you have `alloca', as a function or macro. */
+/* Define to 1 if you have 'alloca', as a function or macro. */
 #undef HAVE_ALLOCA
 
-/* Define to 1 if you have <alloca.h> and it should be used (not on Ultrix).
-   */
+/* Define to 1 if <alloca.h> works. */
 #undef HAVE_ALLOCA_H
 
-/* Define to 1 if you have the `backtrace' function. */
+/* Define to 1 if you have the 'backtrace' function. */
 #undef HAVE_BACKTRACE
 
-/* Define to 1 if you have the `backtrace_symbols' function. */
+/* Define to 1 if you have the 'backtrace_symbols' function. */
 #undef HAVE_BACKTRACE_SYMBOLS
 
 /* Define to 1 if you have the <execinfo.h> header file. */
@@ -560,28 +560,28 @@
 /* Define to 1 if you have the <features.h> header file. */
 #undef HAVE_FEATURES_H
 
-/* Define to 1 if you have the `ffs' function. */
+/* Define to 1 if you have the 'ffs' function. */
 #undef HAVE_FFS
 
-/* Define to 1 if you have the `fopen64' function. */
+/* Define to 1 if you have the 'fopen64' function. */
 #undef HAVE_FOPEN64
 
-/* Define to 1 if you have the `fork' function. */
+/* Define to 1 if you have the 'fork' function. */
 #undef HAVE_FORK
 
-/* Define to 1 if you have the `fstatvfs' function. */
+/* Define to 1 if you have the 'fstatvfs' function. */
 #undef HAVE_FSTATVFS
 
-/* Define to 1 if you have the `gethostid' function. */
+/* Define to 1 if you have the 'gethostid' function. */
 #undef HAVE_GETHOSTID
 
-/* Define to 1 if you have the `getifaddrs' function. */
+/* Define to 1 if you have the 'getifaddrs' function. */
 #undef HAVE_GETIFADDRS
 
-/* Define to 1 if you have the `getrlimit' function. */
+/* Define to 1 if you have the 'getrlimit' function. */
 #undef HAVE_GETRLIMIT
 
-/* Define to 1 if you have the `getrlimit64' function. */
+/* Define to 1 if you have the 'getrlimit64' function. */
 #undef HAVE_GETRLIMIT64
 
 /* Define to 1 if you have the <gni_pub.h> header file. */
@@ -590,16 +590,16 @@
 /* Define to 1 if you have the <hugetlbfs.h> header file. */
 #undef HAVE_HUGETLBFS_H
 
-/* Define to 1 if you have the `hugetlbfs_unlinked_fd' function. */
+/* Define to 1 if you have the 'hugetlbfs_unlinked_fd' function. */
 #undef HAVE_HUGETLBFS_UNLINKED_FD
 
-/* Define to 1 if you have the `ibv_cmd_open_xrcd' function. */
+/* Define to 1 if you have the 'ibv_cmd_open_xrcd' function. */
 #undef HAVE_IBV_CMD_OPEN_XRCD
 
-/* Define to 1 if you have the `ibv_open_xrc_domain' function. */
+/* Define to 1 if you have the 'ibv_open_xrc_domain' function. */
 #undef HAVE_IBV_OPEN_XRC_DOMAIN
 
-/* Define to 1 if you have the `ibv_wc_status_str' function. */
+/* Define to 1 if you have the 'ibv_wc_status_str' function. */
 #undef HAVE_IBV_WC_STATUS_STR
 
 /* Define to 1 if you have the <ifaddrs.h> header file. */
@@ -608,73 +608,70 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define to 1 if you have the `isascii' function. */
+/* Define to 1 if you have the 'isascii' function. */
 #undef HAVE_ISASCII
 
-/* Define to 1 if you have the `isblank' function. */
+/* Define to 1 if you have the 'isblank' function. */
 #undef HAVE_ISBLANK
 
 /* Define to 1 if you have the <malloc.h> header file. */
 #undef HAVE_MALLOC_H
 
-/* Define to 1 if you have the <memory.h> header file. */
-#undef HAVE_MEMORY_H
-
 /* Define to 1 if you have the <netinet/tcp.h> header file. */
 #undef HAVE_NETINET_TCP_H
 
-/* Define to 1 if you have the `on_exit' function. */
+/* Define to 1 if you have the 'on_exit' function. */
 #undef HAVE_ON_EXIT
 
-/* Define to 1 if you have the `PMI_Allgather' function. */
+/* Define to 1 if you have the 'PMI_Allgather' function. */
 #undef HAVE_PMI_ALLGATHER
 
-/* Define to 1 if you have the `PMI_Allgather_on_smp' function. */
+/* Define to 1 if you have the 'PMI_Allgather_on_smp' function. */
 #undef HAVE_PMI_ALLGATHER_ON_SMP
 
-/* Define to 1 if you have the `PMI_Bcast' function. */
+/* Define to 1 if you have the 'PMI_Bcast' function. */
 #undef HAVE_PMI_BCAST
 
-/* Define to 1 if you have the `PMI_Get_numpes_on_smp' function. */
+/* Define to 1 if you have the 'PMI_Get_numpes_on_smp' function. */
 #undef HAVE_PMI_GET_NUMPES_ON_SMP
 
-/* Define to 1 if you have the `popen' function. */
+/* Define to 1 if you have the 'popen' function. */
 #undef HAVE_POPEN
 
-/* Define to 1 if you have the `posix_memalign' function. */
+/* Define to 1 if you have the 'posix_memalign' function. */
 #undef HAVE_POSIX_MEMALIGN
 
 /* Define to 1 if you have the <pthread.h> header file. */
 #undef HAVE_PTHREAD_H
 
-/* Define to 1 if you have the `putenv' function. */
+/* Define to 1 if you have the 'putenv' function. */
 #undef HAVE_PUTENV
 
-/* Define to 1 if you have the `setenv' function. */
+/* Define to 1 if you have the 'setenv' function. */
 #undef HAVE_SETENV
 
-/* Define to 1 if you have the `setpgid' function. */
+/* Define to 1 if you have the 'setpgid' function. */
 #undef HAVE_SETPGID
 
-/* Define to 1 if you have the `setpgrp' function. */
+/* Define to 1 if you have the 'setpgrp' function. */
 #undef HAVE_SETPGRP
 
-/* Define to 1 if you have the `setrlimit' function. */
+/* Define to 1 if you have the 'setrlimit' function. */
 #undef HAVE_SETRLIMIT
 
-/* Define to 1 if you have the `setrlimit64' function. */
+/* Define to 1 if you have the 'setrlimit64' function. */
 #undef HAVE_SETRLIMIT64
 
 /* Define to 1 if you have the <sgidefs.h> header file. */
 #undef HAVE_SGIDEFS_H
 
-/* Define to 1 if you have the `sigprocmask' function. */
+/* Define to 1 if you have the 'sigprocmask' function. */
 #undef HAVE_SIGPROCMASK
 
 /* Define to 1 if you have the <sn/xpmem.h> header file. */
 #undef HAVE_SN_XPMEM_H
 
-/* Define to 1 if you have the `srand_deterministic' function. */
+/* Define to 1 if you have the 'srand_deterministic' function. */
 #undef HAVE_SRAND_DETERMINISTIC
 
 /* Define to 1 if you have the <stdbool.h> header file. */
@@ -686,6 +683,9 @@
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 
+/* Define to 1 if you have the <stdio.h> header file. */
+#undef HAVE_STDIO_H
+
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
 
@@ -695,7 +695,7 @@
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
 
-/* Define to 1 if you have the `system' function. */
+/* Define to 1 if you have the 'system' function. */
 #undef HAVE_SYSTEM
 
 /* Define to 1 if you have the <sys/param.h> header file. */
@@ -722,7 +722,7 @@
 /* Define to 1 if you have the <sys/uio.h> header file. */
 #undef HAVE_SYS_UIO_H
 
-/* Define to 1 if you have the `toascii' function. */
+/* Define to 1 if you have the 'toascii' function. */
 #undef HAVE_TOASCII
 
 /* Define to 1 if you have the <ucontext.h> header file. */
@@ -734,13 +734,13 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define to 1 if you have the `unsetenv' function. */
+/* Define to 1 if you have the 'unsetenv' function. */
 #undef HAVE_UNSETENV
 
 /* Define to 1 if you have the <xpmem.h> header file. */
 #undef HAVE_XPMEM_H
 
-/* Define to 1 if you have the `xpmem_make_2' function. */
+/* Define to 1 if you have the 'xpmem_make_2' function. */
 #undef HAVE_XPMEM_MAKE_2
 
 /* Define to the address where bug reports for this package should be sent. */
@@ -764,46 +764,46 @@
 /* The PLPA symbol prefix */
 #undef PLPA_SYM_PREFIX
 
-/* Define to 1 if the `setpgrp' function takes no argument. */
+/* Define to 1 if the 'setpgrp' function requires zero arguments. */
 #undef SETPGRP_VOID
 
-/* The size of `char', as computed by sizeof. */
+/* The size of 'char', as computed by sizeof. */
 #undef SIZEOF_CHAR
 
-/* The size of `double', as computed by sizeof. */
+/* The size of 'double', as computed by sizeof. */
 #undef SIZEOF_DOUBLE
 
-/* The size of `float', as computed by sizeof. */
+/* The size of 'float', as computed by sizeof. */
 #undef SIZEOF_FLOAT
 
-/* The size of `float _Complex', as computed by sizeof. */
+/* The size of 'float _Complex', as computed by sizeof. */
 #undef SIZEOF_FLOAT__COMPLEX
 
-/* The size of `int', as computed by sizeof. */
+/* The size of 'int', as computed by sizeof. */
 #undef SIZEOF_INT
 
-/* The size of `long', as computed by sizeof. */
+/* The size of 'long', as computed by sizeof. */
 #undef SIZEOF_LONG
 
-/* The size of `long double', as computed by sizeof. */
+/* The size of 'long double', as computed by sizeof. */
 #undef SIZEOF_LONG_DOUBLE
 
-/* The size of `long long', as computed by sizeof. */
+/* The size of 'long long', as computed by sizeof. */
 #undef SIZEOF_LONG_LONG
 
-/* The size of `ptrdiff_t', as computed by sizeof. */
+/* The size of 'ptrdiff_t', as computed by sizeof. */
 #undef SIZEOF_PTRDIFF_T
 
-/* The size of `short', as computed by sizeof. */
+/* The size of 'short', as computed by sizeof. */
 #undef SIZEOF_SHORT
 
-/* The size of `size_t', as computed by sizeof. */
+/* The size of 'size_t', as computed by sizeof. */
 #undef SIZEOF_SIZE_T
 
-/* The size of `void *', as computed by sizeof. */
+/* The size of 'void *', as computed by sizeof. */
 #undef SIZEOF_VOID_P
 
-/* The size of `_Bool', as computed by sizeof. */
+/* The size of '_Bool', as computed by sizeof. */
 #undef SIZEOF__BOOL
 
 /* If using the C implementation of alloca, define if you know the
@@ -814,13 +814,15 @@
 	STACK_DIRECTION = 0 => direction of growth unknown */
 #undef STACK_DIRECTION
 
-/* Define to 1 if you have the ANSI C header files. */
+/* Define to 1 if all of the C89 standard headers exist (not just the ones
+   required in a freestanding environment). This macro is provided for
+   backward compatibility; new code need not use it. */
 #undef STDC_HEADERS
 
 /* whether byteorder is bigendian */
 #undef WORDS_BIGENDIAN
 
-/* Define to `unsigned int' if <sys/types.h> does not define. */
+/* Define as 'unsigned int' if <stddef.h> doesn't define. */
 #undef size_t
 
 /* these get us 64-bit file declarations under several Unixen */

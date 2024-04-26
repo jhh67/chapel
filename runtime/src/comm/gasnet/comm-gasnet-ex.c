@@ -52,6 +52,8 @@
 #include <assert.h>
 #include <time.h>
 
+static int reservedCore = -1;
+
 #define GEX_NO_FLAGS 0
 
 static gasnet_seginfo_t* seginfo_table = NULL;
@@ -723,7 +725,7 @@ int32_t chpl_comm_getMaxThreads(void) {
 //
 static volatile int pollingRunning;
 static volatile int pollingQuit;
-static chpl_bool pollingRequired;
+static chpl_bool pollingRequired = false;
 static atomic_spinlock_t pollingLock;
 
 static inline void am_poll_try(void) {
@@ -751,8 +753,13 @@ static void polling(void* x) {
   pollingRunning = 0;
 }
 
-static void setup_polling(void) {
+static void setup_polling1(void) {
   atomic_init_spinlock_t(&pollingLock);
+#if defined(GASNET_CONDUIT_IBV)
+  chpl_env_set("GASNET_RCV_THREAD", "1", 1);
+#endif
+}
+static void setup_polling2(void) {
 #if defined(GASNET_CONDUIT_IBV)
   // The GASNET_RCV_THREAD blocks for incoming AMs on the IB channel,
   // but does not progress AMs arriving via the shared-memory PSHM channel
@@ -761,11 +768,13 @@ static void setup_polling(void) {
   // and conditionally enable our polling thread to ensure progress of PSHM AMs.
   gex_Rank_t nbrhd_size;
   gex_System_QueryNbrhdInfo(NULL, &nbrhd_size, NULL);
-  pollingRequired = (nbrhd_size > 1);
-  chpl_env_set("GASNET_RCV_THREAD", "1", 1);
+  fprintf(stderr, "nbrhd_size = %d\n", nbrhd_size);
+  pollingRequired = chpl_env_rt_get_bool("COMM_GASNET_DO_POLLING",
+                                         nbrhd_size > 1);
 #else
   pollingRequired = true;
 #endif
+  fprintf(stderr, "pollingRequired = %d\n", pollingRequired);
 }
 
 static void start_polling(void) {
@@ -774,8 +783,8 @@ static void start_polling(void) {
   pollingRunning = 0;
   pollingQuit = 0;
 
-  if (chpl_task_createCommTask(polling, NULL, -1)) {
-    chpl_internal_error("unable to start polling task for gasnet");
+  if (chpl_task_createCommTask(polling, NULL, reservedCore)) {
+    chpl_internal_error("unable to start external GASNet progress thread");
   }
 
   while (!pollingRunning) {
@@ -869,10 +878,12 @@ void chpl_comm_init(int *argc_p, char ***argv_p) {
   set_max_segsize();
   set_num_comm_domains();
   setup_ibv();
-  setup_polling();
+  setup_polling1();
+  GASNET_Safe(gex_Client_Init(&myclient, &myep, &myteam, "chapel",
+                              argc_p, argv_p,
+                              GEX_FLAG_USES_GASNET1 | GEX_FLAG_DEFER_THREADS));
 
-  GASNET_Safe(gex_Client_Init(&myclient, &myep, &myteam, "chapel", argc_p, argv_p, GEX_FLAG_USES_GASNET1));
-
+  setup_polling2();
   chpl_nodeID = gasnet_mynode();
   chpl_numNodes = gasnet_nodes();
 
@@ -883,6 +894,10 @@ void chpl_comm_init(int *argc_p, char ***argv_p) {
 }
 
 void chpl_comm_pre_mem_init(void) {
+
+  if (chpl_env_rt_get_bool("COMM_GASNET_DEDICATED_PROGRESS_CORE", false)) {
+    reservedCore = chpl_topo_reserveCPUPhysical();
+  }
   GASNET_Safe(gex_Segment_Attach(&mysegment, myteam, gasnet_getMaxLocalSegmentSize()));
   GASNET_Safe(gex_EP_RegisterHandlers(myep, ftable, sizeof(ftable)/sizeof(gex_AM_Entry_t)));
 
@@ -931,7 +946,6 @@ void chpl_comm_pre_mem_init(void) {
   gex_Event_Wait(gex_Coll_BroadcastNB(myteam, 0, seginfo_table, seginfo_table, sizeof(gasnet_seginfo_t), GEX_NO_FLAGS));
   chpl_comm_barrier("making sure everyone's done with the broadcast");
 #endif
-
   gasnet_set_waitmode(GASNET_WAIT_BLOCK);
 }
 
@@ -953,8 +967,28 @@ int chpl_comm_run_in_lldb(int argc, char* argv[], int lldbArgnum, int* status) {
   return 0;
 }
 
+static void start_gasnet_progress_threads(void) {
+  unsigned int count;
+  const gex_ProgressThreadInfo_t *info;
+  GASNET_Safe(gex_System_QueryProgressThreads(myclient, &count, &info, 0) );
+  for (int i = 0; i < count; i++) {
+    // don't create a receive thread if we have our own progress thread
+    if (pollingRequired &&
+        (info[i].gex_thread_roles == GEX_THREAD_ROLE_RCV)) {
+      continue;
+    }
+    fprintf(stderr, "XXX creating GASNet progress thread %d core %d\n", i,
+            reservedCore);
+    if (chpl_task_createCommTask((chpl_fn_p) info[i].gex_progress_fn,
+                                 info[i].gex_progress_arg, reservedCore)) {
+      chpl_internal_error("unable to start internal GASNet progress thread");
+    }
+  }
+}
+
 void chpl_comm_post_task_init(void) {
   start_polling();
+  start_gasnet_progress_threads();
 }
 
 void chpl_comm_rollcall(void) {

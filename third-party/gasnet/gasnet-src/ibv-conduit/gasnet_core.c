@@ -55,8 +55,15 @@ GASNETI_IDENT(gasnetc_IdentString_MaxHCAs, "$GASNetIbvMaxHCAs: " _STRINGIFY(GASN
 #if GASNETC_USE_RCV_THREAD
   GASNETI_IDENT(gasnetc_IdentString_RcvThread, "$GASNetIbvRcvThread: 1 $");
 #endif
+#if GASNETC_USE_SND_THREAD
+  GASNETI_IDENT(gasnetc_IdentString_SndThread, "$GASNetIbvSndThread: 1 $");
+#endif
 #if GASNETC_USE_CONN_THREAD
   GASNETI_IDENT(gasnetc_IdentString_ConnThread, "$GASNetIbvConnThread: 1 $");
+#endif
+
+#if GASNETC_SERIALIZE_POLL_CQ
+  GASNETI_IDENT(gasnetc_IdentString_SerializeCqPoll, "$GASNetIbvSerializeCqPoll: 1 $");
 #endif
 
 int gex_System_QueryHiddenAMConcurrencyLevel(void) {
@@ -173,7 +180,11 @@ static unsigned int gasnetc_fh_maxsize    = 131072;
 
 /* ------------------------------------------------------------------------------------ */
 
+#if (GASNETC_IB_MAX_HCAS > 1)
 int		gasnetc_num_hcas = 1;
+int             gasnetc_snd_poll_multi_hcas;
+int             gasnetc_rcv_poll_multi_hcas;
+#endif
 gasnetc_hca_t	gasnetc_hca[GASNETC_IB_MAX_HCAS];
 uintptr_t	gasnetc_max_msg_sz;
 int		gasnetc_qp_rd_atom;
@@ -741,6 +752,34 @@ enum gasnetc_segreg {
   gasnetc_segreg_create
 };
 
+#if GASNET_HAVE_MK_CLASS_CUDA_UVA
+  // Returns non-zero if should suggest missing driver as a reason for failure.
+  static int gasnetc_check_cuda_uva_driver(void) {
+  #if !PLATFORM_OS_LINUX
+    return 0;
+  #else
+    // Look for GDR support.
+    // Adapted from the GDR checking logic in Open MPI.
+    return access("/sys/kernel/mm/memory_peers/nv_mem/version", F_OK);
+  #endif
+  }
+#endif
+
+#if GASNET_HAVE_MK_CLASS_HIP
+  // Returns non-zero if should suggest missing driver as a reason for failure.
+  static int gasnetc_check_hip_driver(void) {
+  #if !PLATFORM_OS_LINUX
+    return 0;
+  #elif GASNETI_HIP_PLATFORM_NVIDIA
+    // Look for GDR support.
+    return access("/sys/kernel/mm/memory_peers/nv_mem/version", F_OK);
+  #else
+    // Look for AMD ROCmRDMA support (AMD Kernel Fusion Driver == amdkfd).
+    return access("/sys/kernel/mm/memory_peers/amdkfd/version", F_OK);
+  #endif
+  }
+#endif
+
 static const char *gasnetc_segreg_failed(size_t size, enum gasnetc_segreg which, int why, gex_MK_Class_t mk_class)
 {
   const char *descr = "";
@@ -776,7 +815,11 @@ static const char *gasnetc_segreg_failed(size_t size, enum gasnetc_segreg which,
     case GEX_MK_CLASS_CUDA_UVA:
       descr = " CUDA_UVA";
       if (why == EFAULT) {
-        hint1 = "\n        This could be caused by exhaustion of BAR1 resources.  See memory_kinds.md release notes.";
+        if (gasnetc_check_cuda_uva_driver()) {
+          hint1 = "\n        This could be caused by lack of required driver support or by exhaustion of BAR1 resources.  See memory_kinds.md release notes.";
+        } else {
+          hint1 = "\n        This could be caused by exhaustion of BAR1 resources.  See memory_kinds.md release notes.";
+        }
       }
       break;
     #endif
@@ -785,7 +828,11 @@ static const char *gasnetc_segreg_failed(size_t size, enum gasnetc_segreg which,
     case GEX_MK_CLASS_HIP:
       descr = " HIP";
       if (why == EFAULT) {
-        hint1 = "\n        This could be caused by exhaustion of BAR resources.  See memory_kinds.md release notes.";
+        if (gasnetc_check_hip_driver()) {
+          hint1 = "\n        This could be caused by lack of required driver support or by exhaustion of BAR1 resources.  See memory_kinds.md release notes.";
+        } else {
+          hint1 = "\n        This could be caused by exhaustion of BAR1 resources.  See memory_kinds.md release notes.";
+        }
       }
       break;
     #endif
@@ -918,10 +965,31 @@ static int gasnetc_load_settings(void) {
     }
   }
 #endif
+  gasnetc_use_snd_thread = gasneti_getenv_yesno_withdefault("GASNET_SND_THREAD", 0);
+#if GASNETC_USE_SND_THREAD && GASNETC_SERIALIZE_POLL_CQ
+  if (gasnetc_use_snd_thread) {
+    tmp = gasneti_getenv_withdefault("GASNET_SND_THREAD_POLL_MODE", "SERIALIZED");
+    if (! gasneti_strcasecmp(tmp, "EXCLUSIVE")) {
+      gasnetc_snd_thread_poll_serialize = 0;
+      gasnetc_snd_thread_poll_exclusive = 1;
+    } else if (! gasneti_strcasecmp(tmp, "UNSERIALIZED")) {
+      gasnetc_snd_thread_poll_serialize = 0;
+      gasnetc_snd_thread_poll_exclusive = 0;
+    } else if (! gasneti_strcasecmp(tmp, "SERIALIZED")) {
+      gasnetc_snd_thread_poll_serialize = 1;
+      gasnetc_snd_thread_poll_exclusive = 0;
+    } else {
+      gasneti_fatalerror("GASNET_RCV_THREAD_POLL_MODE \"%s\" is not valid", tmp);
+    }
+  }
+#endif
 
   /* Verify correctness/sanity of values */
   if (gasnetc_use_rcv_thread && !GASNETC_USE_RCV_THREAD) {
     gasneti_fatalerror("AM receive thread enabled by environment variable GASNET_RCV_THREAD, but was disabled at GASNet build time");
+  }
+  if (gasnetc_use_snd_thread && !GASNETC_USE_SND_THREAD) {
+    gasneti_fatalerror("send progress thread enabled by environment variable GASNET_SND_THREAD, but was disabled at GASNet build time");
   }
 #if GASNETC_FH_OPTIONAL
   gasnetc_use_firehose = gasneti_getenv_yesno_withdefault("GASNET_USE_FIREHOSE", 1);
@@ -1484,7 +1552,11 @@ static void gasnetc_probe_ports(int max_ports) {
   gasnetc_clear_ports();
   ibv_free_device_list(hca_list);
 
+#if (GASNETC_IB_MAX_HCAS > 1)
   gasnetc_num_hcas = hca_count;
+  gasnetc_snd_poll_multi_hcas = (gasnetc_num_hcas > 1); // snd thread may override later
+  gasnetc_rcv_poll_multi_hcas = (gasnetc_num_hcas > 1); // rcv thread may override later
+#endif
   gasnetc_num_ports = port_count;
   gasnetc_port_tbl  = gasneti_realloc(port_tbl, port_count * sizeof(gasnetc_port_info_t));
   gasneti_leak(gasnetc_port_tbl);
@@ -1906,6 +1978,11 @@ static int gasnetc_init( gex_Client_t            *client_p,
 
   /* report hca/port properties */
   gasnetc_hca_report();
+
+  // Attempt to maximize pinned memory limit (if any) before allocating any IBV resources
+#ifdef RLIMIT_MEMLOCK
+  gasnett_maximize_rlimit(RLIMIT_MEMLOCK, "RLIMIT_MEMLOCK");
+#endif
 
   /* get a pd for the QPs, SRQ and memory registration */
   GASNETC_FOR_ALL_HCA(hca) {
@@ -2455,8 +2532,8 @@ extern int gasnetc_attach_primary(void) {
   /* ensure extended API is initialized across nodes */
   gasneti_bootstrapBarrier_am();
 
-#if GASNETC_USE_RCV_THREAD
-  /* Start AM receive thread, if applicable */
+#if GASNETC_USE_RCV_THREAD || GASNETC_USE_SND_THREAD
+  /* Start progress thread(s), if applicable */
   gasnetc_sndrcv_start_thread();
 #endif
 
@@ -2835,7 +2912,7 @@ gasnetc_shutdown(void) {
 
 gasneti_atomic_t gasnetc_exit_running = gasneti_atomic_init(0);		/* boolean used by GASNETC_IS_EXITING */
 
-static gasneti_atomic_t gasnetc_exit_code = gasneti_atomic_init(0);	/* value to _exit() with */
+                     /* gasneti_exit_code holds value to _exit() with */
 static gasneti_atomic_t gasnetc_exit_reds = gasneti_atomic_init(0);	/* count of reduce requests */
 static gasneti_atomic_t gasnetc_exit_dist = gasneti_atomic_init(0);	/* OR of reduce distances */
 static gasneti_atomic_t gasnetc_exit_reqs = gasneti_atomic_init(0);	/* count of remote exit requests */
@@ -2930,7 +3007,7 @@ static int gasnetc_exit_reduce(int exitcode, int64_t timeout_us)
       gasnetc_sndrcv_poll(0);
       if (gasneti_atomic_read(&gasnetc_exit_reqs, 0)) return -1;
     }
-    exitcode = gasneti_atomic_read(&gasnetc_exit_code, GASNETI_ATOMIC_RMB_PRE);
+    exitcode = gasneti_atomic_read(&gasneti_exit_code, GASNETI_ATOMIC_RMB_PRE);
   }
 #endif
 
@@ -2946,7 +3023,7 @@ static int gasnetc_exit_reduce(int exitcode, int64_t timeout_us)
       gasnetc_sndrcv_poll(0); 
       if (gasneti_atomic_read(&gasnetc_exit_reqs, 0)) return -1;
     } while (!(distance & gasneti_atomic_read(&gasnetc_exit_dist, 0)));
-    exitcode = gasneti_atomic_read(&gasnetc_exit_code, GASNETI_ATOMIC_RMB_PRE);
+    exitcode = gasneti_atomic_read(&gasneti_exit_code, GASNETI_ATOMIC_RMB_PRE);
   }
 
 #if GASNET_PSHM
@@ -2973,9 +3050,9 @@ static void gasnetc_exit_reduce_reqh(gex_Token_t token,
   gasneti_atomic_val_t distance = arg1;
   gasneti_atomic_val_t prevcode;
   do {
-    prevcode = gasneti_atomic_read(&gasnetc_exit_code, 0);
+    prevcode = gasneti_atomic_read(&gasneti_exit_code, 0);
   } while ((exitcode > prevcode) &&
-           !gasneti_atomic_compare_and_swap(&gasnetc_exit_code, prevcode, exitcode, 0));
+           !gasneti_atomic_compare_and_swap(&gasneti_exit_code, prevcode, exitcode, 0));
   if (distance) {
   #if defined(GASNETI_HAVE_ATOMIC_ADD_SUB)
     /* atomic OR via ADD since no bit will be set more than once */
@@ -3087,7 +3164,7 @@ static int gasnetc_get_exit_role(int64_t timeout_us)
 /* gasnetc_exit_head
  *
  * All exit paths pass through here as the first step.
- * This function ensures that gasnetc_exit_code is written only once
+ * This function ensures that gasneti_exit_code is written only once
  * by the first call.
  * It also lets the handler for remote exit requests know if a local
  * request has already begun.
@@ -3105,7 +3182,7 @@ static int gasnetc_exit_head(int exitcode) {
 
   if (retval) {
     /* Store the exit code for later use */
-    gasneti_atomic_set(&gasnetc_exit_code, exitcode, GASNETI_ATOMIC_WMB_POST);
+    gasneti_atomic_set(&gasneti_exit_code, exitcode, GASNETI_ATOMIC_WMB_POST);
   }
 
   return retval;
@@ -3146,7 +3223,7 @@ static void gasnetc_exit_now(int exitcode) {
  */
 static void gasnetc_exit_tail(void) GASNETI_NORETURN;
 static void gasnetc_exit_tail(void) {
-  gasnetc_exit_now((int)gasneti_atomic_read(&gasnetc_exit_code, GASNETI_ATOMIC_RMB_PRE));
+  gasnetc_exit_now((int)gasneti_atomic_read(&gasneti_exit_code, GASNETI_ATOMIC_RMB_PRE));
   /* NOT REACHED */
 }
 
@@ -3160,7 +3237,7 @@ static void gasnetc_exit_tail(void) {
  * DOES NOT RETURN
  */
 static void gasnetc_exit_sighandler(int sig) {
-  int exitcode = (int)gasneti_atomic_read(&gasnetc_exit_code, GASNETI_ATOMIC_RMB_PRE);
+  int exitcode = (int)gasneti_atomic_read(&gasneti_exit_code, GASNETI_ATOMIC_RMB_PRE);
   static gasneti_atomic_t once = gasneti_atomic_init(1);
   gasnetc_exit_in_signal = 1;
 
@@ -3339,7 +3416,7 @@ static void gasnetc_exit_body(void) {
 #endif
 
   /* read exit code, stored by first caller to gasnetc_exit_head() */
-  exitcode = gasneti_atomic_read(&gasnetc_exit_code, GASNETI_ATOMIC_RMB_PRE);
+  exitcode = gasneti_atomic_read(&gasneti_exit_code, GASNETI_ATOMIC_RMB_PRE);
 
   /* Establish a last-ditch signal handler in case of failure. */
   alarm(0);
@@ -3414,7 +3491,7 @@ static void gasnetc_exit_body(void) {
   // Timed reduction failed. So make a second attempt at a coordinated shutdown.
   // This has two global communication steps each with their own timeout interval
 
-  exitcode = gasneti_atomic_read(&gasnetc_exit_code, GASNETI_ATOMIC_RMB_PRE);
+  exitcode = gasneti_atomic_read(&gasneti_exit_code, GASNETI_ATOMIC_RMB_PRE);
   GASNETC_EXIT_STATE("Exitcode reduction timed-out");
 
   /* Determine our role (leader or member) in the coordination of this shutdown */
