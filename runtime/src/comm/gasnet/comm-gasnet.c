@@ -758,8 +758,12 @@ static void polling(void* x) {
 static void setup_polling(void) {
   atomic_init_spinlock_t(&pollingLock);
 #if defined(GASNET_CONDUIT_IBV)
-  pollingRequired = false;
-  chpl_env_set("GASNET_RCV_THREAD", "1", 1);
+  pollingRequired = chpl_env_rt_get_bool("COMM_GASNET_USE_BUILTIN_THREADS",
+                                         false);
+  if (pollingRequired) {
+    chpl_env_set("GASNET_RCV_THREAD", "1", 1);
+    chpl_env_set("GASNET_SND_THREAD", "1", 1);
+  }
 #else
   pollingRequired = true;
 #endif
