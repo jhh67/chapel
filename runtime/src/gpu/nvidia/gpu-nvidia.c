@@ -136,8 +136,28 @@ void chpl_gpu_impl_init(int* num_devices) {
   CUDA_CALL(cuDeviceGetCount(&count));
   CUdevice *allDevices = chpl_malloc(sizeof(*allDevices) * count);
 
+  XXX topology;
+
   for (int i=0 ; i < count ; i++) {
     CUDA_CALL(cuDeviceGet(&allDevices[i], i));
+    int domain, bus, device;
+    int rc = hwloc_cuda_get_device_pci_ids(topology, allDevices[i], &domain, &bus,
+                                           &device);
+    if (rc == 0) {
+      fprintf(stderr, "GPU %d: domain 0x%x bus 0x%x device 0x%x\n",
+              i, domain, bus, device);
+      hwloc_cpuset_t cpuset;
+      rc = hwloc_cuda_get_device_cpuset(topology, allDevices[i], cpuset);
+      if (rc == 0) {
+        char buf[1024];
+        hwloc_bitmap_list_snprintf(buf, sizeof(buf), cpuset);
+        fprintf(stderr, "GPU %d: cpuset %s\n", buf);
+      } else {
+        fprintf(stderr, "hwloc_cuda_get_device_cpuset on %d failed: %d\n", i, rc);
+      }
+    } else {
+      fprintf(stderr, "hwloc_cuda_get_device_pci_ids on %d failed: %d\n", i, rc);
+    }
   }
 
   chpl_topo_pci_addr_t *addrs = chpl_malloc(sizeof(*addrs) * count);
