@@ -167,11 +167,14 @@ void chpl_gpu_impl_init(int* num_devices) {
   chpl_topo_pci_addr_t *addrs = chpl_malloc(sizeof(*addrs) * count);
 
   for (int i = 0; i < count; i++) {
+    int bus, device;
     addrs[i].domain = 0;
-    cuDeviceGetAttribute(&addrs[i].bus, CU_DEVICE_ATTRIBUTE_PCI_BUS_ID,
+    cuDeviceGetAttribute(&bus, CU_DEVICE_ATTRIBUTE_PCI_BUS_ID,
                          allDevices[i]);
-    cuDeviceGetAttribute(&addrs[i].device, CU_DEVICE_ATTRIBUTE_PCI_DEVICE_ID,
+    addr[i].bus = (uint8_t) bus;
+    cuDeviceGetAttribute(&device, CU_DEVICE_ATTRIBUTE_PCI_DEVICE_ID,
                          allDevices[i]);
+    addr[i].device = (uint8_t) device;
     addrs[i].function = 0;
   }
 
