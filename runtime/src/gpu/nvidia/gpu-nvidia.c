@@ -40,6 +40,7 @@
 #include <stdbool.h>
 
 #include "hwloc.h"
+#include "hwloc/cuda.h"
 #include "chpl-topo.h"
 
 // this is compiler-generated
@@ -154,7 +155,7 @@ void chpl_gpu_impl_init(int* num_devices) {
       if (rc == 0) {
         char buf[1024];
         hwloc_bitmap_list_snprintf(buf, sizeof(buf), cpuset);
-        fprintf(stderr, "GPU %d: cpuset %s\n", buf);
+        fprintf(stderr, "GPU %d: cpuset %s\n", i, buf);
       } else {
         fprintf(stderr, "hwloc_cuda_get_device_cpuset on %d failed: %d\n", i, rc);
       }
