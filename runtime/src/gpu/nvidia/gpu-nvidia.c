@@ -159,6 +159,7 @@ void chpl_gpu_impl_init(int* num_devices) {
       } else {
         fprintf(stderr, "hwloc_cuda_get_device_cpuset on %d failed: %d\n", i, rc);
       }
+      hwloc_bitmap_free(cpuset);
     } else {
       fprintf(stderr, "hwloc_cuda_get_device_pci_ids on %d failed: %d\n", i, rc);
     }
@@ -178,35 +179,51 @@ void chpl_gpu_impl_init(int* num_devices) {
     addrs[i].function = 0;
   }
 
-  const int loc_num_devices = *num_devices;
+  chpl_topo_pci_addr_t *myAddrs = chpl_malloc(sizeof(*addrs) * count);
+  int myCount = count;
+
+  int rc = chpl_topo_selectMyDevices(addrs, myAddrs, &myCount);
+
+  if (rc) {
+    chpl_warning("error selecting the GPUs for this locale, using them all",
+                 0, 0);
+    myCount = count;
+  }
+
+  const int loc_num_devices = myCount;
   chpl_gpu_primary_ctx = chpl_malloc(sizeof(CUcontext)*loc_num_devices);
   chpl_gpu_devices = chpl_malloc(sizeof(CUdevice)*loc_num_devices);
   chpl_gpu_cuda_modules = chpl_malloc(sizeof(CUmodule)*loc_num_devices);
   deviceClockRates = chpl_malloc(sizeof(int)*loc_num_devices);
 
-  int i;
-  for (i=0 ; i<loc_num_devices ; i++) {
-    CUdevice device;
-    CUcontext context;
+  int j = 0;
+  for (int i = 0; i < loc_num_devices; i++ ) {
+    for (; j < count; j++) {
+      if (CHPL_TOPO_PCI_ADDR_EQUAL(&myAddrs[i], &addrs[j])) {
+        CUdevice device = allDevices[j];
+        CUDA_CALL(cuDevicePrimaryCtxSetFlags(device, CU_CTX_SCHED_BLOCKING_SYNC));
+        CUDA_CALL(cuDevicePrimaryCtxRetain(&context, device));
 
-    CUDA_CALL(cuDeviceGet(&device, i));
-    CUDA_CALL(cuDevicePrimaryCtxSetFlags(device, CU_CTX_SCHED_BLOCKING_SYNC));
-    CUDA_CALL(cuDevicePrimaryCtxRetain(&context, device));
+        CUDA_CALL(cuCtxSetCurrent(context));
+        // load the module and setup globals within
+        CUmodule module = chpl_gpu_load_module(chpl_gpuBinary);
+        chpl_gpu_cuda_modules[i] = module;
 
-    CUDA_CALL(cuCtxSetCurrent(context));
-    // load the module and setup globals within
-    CUmodule module = chpl_gpu_load_module(chpl_gpuBinary);
-    chpl_gpu_cuda_modules[i] = module;
+        cuDeviceGetAttribute(&deviceClockRates[i], CU_DEVICE_ATTRIBUTE_CLOCK_RATE, device);
 
-    cuDeviceGetAttribute(&deviceClockRates[i], CU_DEVICE_ATTRIBUTE_CLOCK_RATE, device);
+        chpl_gpu_devices[i] = device;
+        chpl_gpu_primary_ctx[i] = context;
 
-    chpl_gpu_devices[i] = device;
-    chpl_gpu_primary_ctx[i] = context;
-
-    // TODO can we refactor some of this to chpl-gpu to avoid duplication
-    // between runtime layers?
-    chpl_gpu_impl_set_globals(i, module);
+        // TODO can we refactor some of this to chpl-gpu to avoid duplication
+        // between runtime layers?
+        chpl_gpu_impl_set_globals(i, module);
+      }
+    }
   }
+  chpl_free(allDevices);
+  chpl_free(addrs);
+  chpl_free(myAddrs);
+  *num_devices = loc_num_devices;
 }
 
 bool chpl_gpu_impl_stream_supported(void) {

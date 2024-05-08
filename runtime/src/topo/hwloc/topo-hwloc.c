@@ -1437,6 +1437,21 @@ chpl_topo_pci_addr_t *chpl_topo_selectNicByType(chpl_topo_pci_addr_t *inAddr,
   return result;
 }
 
+
+int chpl_topo_selectMyDevices(chpl_topo_pci_addr_t *inAddrs,
+                              chpl_topo_pci_addr_t *outAddrs,
+                              int *count)
+{
+  int result = -1;
+  int numLocales = chpl_get_num_locales_on_node();
+  if (numLocales == 1) {
+    memcpy(outAddrs, inAddrs, sizeof(*inAddrs) * count);
+    result = count;
+  }
+  return result;
+}
+
+
 static
 void chk_err_fn(const char* file, int lineno, const char* what) {
   chpl_internal_error_v("%s: %d: !(%s)", file, lineno, what);
