@@ -150,7 +150,7 @@ void chpl_gpu_impl_init(int* num_devices) {
     if (rc == 0) {
       fprintf(stderr, "GPU %d: domain 0x%x bus 0x%x device 0x%x\n",
               i, domain, bus, device);
-      hwloc_cpuset_t cpuset;
+      hwloc_cpuset_t cpuset = hwloc_bitmap_alloc();
       rc = hwloc_cuda_get_device_cpuset(topology, allDevices[i], cpuset);
       if (rc == 0) {
         char buf[1024];
