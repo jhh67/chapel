@@ -39,6 +39,9 @@
 #include <assert.h>
 #include <stdbool.h>
 
+#include "hwloc.h"
+#include "chpl-topo.h"
+
 // this is compiler-generated
 extern const char* chpl_gpuBinary;
 
@@ -136,7 +139,7 @@ void chpl_gpu_impl_init(int* num_devices) {
   CUDA_CALL(cuDeviceGetCount(&count));
   CUdevice *allDevices = chpl_malloc(sizeof(*allDevices) * count);
 
-  XXX topology;
+  hwloc_topology_t topology = chpl_topo_getHwlocTopology();
 
   for (int i=0 ; i < count ; i++) {
     CUDA_CALL(cuDeviceGet(&allDevices[i], i));
