@@ -171,10 +171,10 @@ void chpl_gpu_impl_init(int* num_devices) {
     addrs[i].domain = 0;
     cuDeviceGetAttribute(&bus, CU_DEVICE_ATTRIBUTE_PCI_BUS_ID,
                          allDevices[i]);
-    addr[i].bus = (uint8_t) bus;
+    addrs[i].bus = (uint8_t) bus;
     cuDeviceGetAttribute(&device, CU_DEVICE_ATTRIBUTE_PCI_DEVICE_ID,
                          allDevices[i]);
-    addr[i].device = (uint8_t) device;
+    addrs[i].device = (uint8_t) device;
     addrs[i].function = 0;
   }
 
