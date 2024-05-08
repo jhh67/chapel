@@ -132,7 +132,24 @@ void chpl_gpu_impl_use_device(c_sublocid_t dev_id) {
 void chpl_gpu_impl_init(int* num_devices) {
   CUDA_CALL(cuInit(0));
 
-  CUDA_CALL(cuDeviceGetCount(num_devices));
+  int count;
+  CUDA_CALL(cuDeviceGetCount(&count));
+  CUdevice *allDevices = chpl_malloc(sizeof(*allDevices) * count);
+
+  for (int i=0 ; i < count ; i++) {
+    CUDA_CALL(cuDeviceGet(&allDevices[i], i));
+  }
+
+  chpl_topo_pci_addr_t *addrs = chpl_malloc(sizeof(*addrs) * count);
+
+  for (int i = 0; i < count; i++) {
+    addrs[i].domain = 0;
+    cuDeviceGetAttribute(&addrs[i].bus, CU_DEVICE_ATTRIBUTE_PCI_BUS_ID,
+                         allDevices[i]);
+    cuDeviceGetAttribute(&addrs[i].device, CU_DEVICE_ATTRIBUTE_PCI_DEVICE_ID,
+                         allDevices[i]);
+    addrs[i].function = 0;
+  }
 
   const int loc_num_devices = *num_devices;
   chpl_gpu_primary_ctx = chpl_malloc(sizeof(CUcontext)*loc_num_devices);
