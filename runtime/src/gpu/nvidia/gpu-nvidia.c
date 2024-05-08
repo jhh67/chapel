@@ -201,6 +201,8 @@ void chpl_gpu_impl_init(int* num_devices) {
     for (; j < count; j++) {
       if (CHPL_TOPO_PCI_ADDR_EQUAL(&myAddrs[i], &addrs[j])) {
         CUdevice device = allDevices[j];
+        CUcontext context;
+        
         CUDA_CALL(cuDevicePrimaryCtxSetFlags(device, CU_CTX_SCHED_BLOCKING_SYNC));
         CUDA_CALL(cuDevicePrimaryCtxRetain(&context, device));
 
