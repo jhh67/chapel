@@ -201,6 +201,7 @@ void chpl_gpu_impl_init(int* num_devices) {
   for (int i = 0; i < loc_num_devices; i++ ) {
     for (; j < count; j++) {
       if (CHPL_TOPO_PCI_ADDR_EQUAL(&myAddrs[i], &addrs[j])) {
+        fprintf(stderr, "PCI match i = %d j = %d\n", i, j);
         CUdevice device = allDevices[j];
         CUcontext context;
 
