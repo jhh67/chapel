@@ -228,6 +228,7 @@ void chpl_gpu_impl_init(int* num_devices) {
         // TODO can we refactor some of this to chpl-gpu to avoid duplication
         // between runtime layers?
         chpl_gpu_impl_set_globals(i, module);
+        break;
       }
     }
   }
