@@ -199,7 +199,12 @@ void chpl_gpu_impl_init(int* num_devices) {
 
   int j = 0;
   for (int i = 0; i < loc_num_devices; i++ ) {
+    fprintf(stderr, "myAddrs[%d]: bus = %d device = %d\n", i, myAddrs[i].bus,
+            myAddrs[i].device);
     for (; j < count; j++) {
+
+      fprintf(stderr, "addrs[%d]: bus = %d device = %d\n", j, addrs[j].bus,
+            addrs[j].device);
       if (CHPL_TOPO_PCI_ADDR_EQUAL(&myAddrs[i], &addrs[j])) {
         fprintf(stderr, "PCI match i = %d j = %d\n", i, j);
         CUdevice device = allDevices[j];
