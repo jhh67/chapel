@@ -138,6 +138,7 @@ void chpl_gpu_impl_init(int* num_devices) {
 
   int count;
   CUDA_CALL(cuDeviceGetCount(&count));
+  fprintf(stderr, "cuDeviceGetCount = %d", count);
   CUdevice *allDevices = chpl_malloc(sizeof(*allDevices) * count);
 
   hwloc_topology_t topology = chpl_topo_getHwlocTopology();
@@ -202,7 +203,7 @@ void chpl_gpu_impl_init(int* num_devices) {
       if (CHPL_TOPO_PCI_ADDR_EQUAL(&myAddrs[i], &addrs[j])) {
         CUdevice device = allDevices[j];
         CUcontext context;
-        
+
         CUDA_CALL(cuDevicePrimaryCtxSetFlags(device, CU_CTX_SCHED_BLOCKING_SYNC));
         CUDA_CALL(cuDevicePrimaryCtxRetain(&context, device));
 
