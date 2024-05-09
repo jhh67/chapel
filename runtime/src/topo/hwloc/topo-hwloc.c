@@ -1442,15 +1442,14 @@ int chpl_topo_selectMyDevices(chpl_topo_pci_addr_t *inAddrs,
                               chpl_topo_pci_addr_t *outAddrs,
                               int *count)
 {
-  int result = -1;
+  int result = 0;
   int numLocales = chpl_get_num_locales_on_node();
-  _DBG_P("count = %d", *count); 
-  _DBG_P("numLocales = %d", numLocales); 
+  _DBG_P("count = %d", *count);
+  _DBG_P("numLocales = %d", numLocales);
   if (numLocales == 1) {
     memcpy(outAddrs, inAddrs, sizeof(*inAddrs) * (*count));
-    result = *count;
   }
-  *count = result;
+  _DBG_P("returning %d", result);
   return result;
 }
 
