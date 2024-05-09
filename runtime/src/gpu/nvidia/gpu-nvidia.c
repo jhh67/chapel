@@ -138,7 +138,7 @@ void chpl_gpu_impl_init(int* num_devices) {
 
   int count;
   CUDA_CALL(cuDeviceGetCount(&count));
-  fprintf(stderr, "cuDeviceGetCount = %d", count);
+  fprintf(stderr, "cuDeviceGetCount = %d\n", count);
   CUdevice *allDevices = chpl_malloc(sizeof(*allDevices) * count);
 
   hwloc_topology_t topology = chpl_topo_getHwlocTopology();
