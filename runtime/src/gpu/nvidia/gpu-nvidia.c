@@ -224,8 +224,8 @@ void chpl_gpu_impl_init(int* num_devices) {
     }
   }
   chpl_free(allDevices);
+  chpl_free(allAddrs);
   chpl_free(addrs);
-  chpl_free(myAddrs);
   *num_devices = loc_num_devices;
 }
 
