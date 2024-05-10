@@ -175,8 +175,7 @@ chpl_topo_pci_addr_t *chpl_topo_selectNicByType(chpl_topo_pci_addr_t *inAddr,
                                                 chpl_topo_pci_addr_t *outAddr);
 
 int chpl_topo_selectMyDevices(chpl_topo_pci_addr_t *inAddrs,
-                              chpl_topo_pci_addr_t *outAddrs,
-                              int *count);
+                              chpl_topo_pci_addr_t *outAddrs, int *count);
 //
 // Returns True if the node is oversubscribed (locales are sharing
 // cores).

@@ -140,6 +140,7 @@ void chpl_gpu_impl_init(int* num_devices) {
   CUDA_CALL(cuDeviceGetCount(&count));
   fprintf(stderr, "cuDeviceGetCount = %d\n", count);
   CUdevice *allDevices = chpl_malloc(sizeof(*allDevices) * count);
+  chpl_topo_pci_addr_t *allAddrs = chpl_malloc(sizeof(*allAddrs) * count);
 
   hwloc_topology_t topology = chpl_topo_getHwlocTopology();
 
@@ -164,34 +165,28 @@ void chpl_gpu_impl_init(int* num_devices) {
     } else {
       fprintf(stderr, "hwloc_cuda_get_device_pci_ids on %d failed: %d\n", i, rc);
     }
-  }
-
-  chpl_topo_pci_addr_t *addrs = chpl_malloc(sizeof(*addrs) * count);
-
-  for (int i = 0; i < count; i++) {
-    int bus, device;
-    addrs[i].domain = 0;
+    allAddrs[i].domain = 0;
     cuDeviceGetAttribute(&bus, CU_DEVICE_ATTRIBUTE_PCI_BUS_ID,
                          allDevices[i]);
-    addrs[i].bus = (uint8_t) bus;
+    allAddrs[i].bus = (uint8_t) bus;
     cuDeviceGetAttribute(&device, CU_DEVICE_ATTRIBUTE_PCI_DEVICE_ID,
                          allDevices[i]);
-    addrs[i].device = (uint8_t) device;
-    addrs[i].function = 0;
+    allAddrs[i].device = (uint8_t) device;
+    allAddrs[i].function = 0;
   }
 
-  chpl_topo_pci_addr_t *myAddrs = chpl_malloc(sizeof(*addrs) * count);
-  int myCount = count;
+  int numAddrs = count;
+  chpl_topo_pci_addr_t *addrs = chpl_malloc(sizeof(*addrs) * numAddrs);
 
-  int rc = chpl_topo_selectMyDevices(addrs, myAddrs, &myCount);
+  int rc = chpl_topo_selectMyDevices(allAddrs, addrs, &numAddrs);
 
   if (rc) {
     chpl_warning("error selecting the GPUs for this locale, using them all",
                  0, 0);
-    myCount = count;
+    numAddrs = count;
   }
 
-  const int loc_num_devices = myCount;
+  const int loc_num_devices = numAddrs;
   chpl_gpu_primary_ctx = chpl_malloc(sizeof(CUcontext)*loc_num_devices);
   chpl_gpu_devices = chpl_malloc(sizeof(CUdevice)*loc_num_devices);
   chpl_gpu_cuda_modules = chpl_malloc(sizeof(CUmodule)*loc_num_devices);
@@ -199,15 +194,11 @@ void chpl_gpu_impl_init(int* num_devices) {
 
   int j = 0;
   for (int i = 0; i < loc_num_devices; i++ ) {
-    fprintf(stderr, "myAddrs[%d]: domain = %d bus = %d device = %d function = %d\n", i,
-            myAddrs[i].domain, myAddrs[i].bus,
-            myAddrs[i].device, myAddrs[i].function);
+    fprintf(stderr, "addrs[%d]: domain = %d bus = %d device = %d function = %d\n", i,
+            addrs[i].domain, addrs[i].bus,
+            addrs[i].device, addrs[i].function);
     for (; j < count; j++) {
-
-      fprintf(stderr, "addrs[%d]: domain = %d bus = %d device = %d function = %d\n", j,
-              addrs[j].domain, addrs[j].bus,
-            addrs[j].device, addrs[j].function);
-      if (CHPL_TOPO_PCI_ADDR_EQUAL(&myAddrs[i], &addrs[j])) {
+      if (CHPL_TOPO_PCI_ADDR_EQUAL(&addrs[i], &allAddrs[j])) {
         fprintf(stderr, "PCI match i = %d j = %d\n", i, j);
         CUdevice device = allDevices[j];
         CUcontext context;
