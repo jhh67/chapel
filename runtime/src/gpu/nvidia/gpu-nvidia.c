@@ -179,11 +179,17 @@ void chpl_gpu_impl_init(int* num_devices) {
   chpl_topo_pci_addr_t *addrs = chpl_malloc(sizeof(*addrs) * numAddrs);
 
   int rc = chpl_topo_selectMyDevices(allAddrs, addrs, &numAddrs);
-
   if (rc) {
     chpl_warning("error selecting the GPUs for this locale, using them all",
                  0, 0);
     numAddrs = count;
+  }
+
+  fprintf(stderr, "After GPU selection.\n");
+  for (int i = 0; i < numAddrs; i++) {
+    fprintf(stderr, "GPU %d: domain 0x%x bus 0x%x device 0x%x function 0x%x\n",
+              i, addrs[i].domain, addrs[i].bus, addrs[i]. device,
+              addrs[i].function);
   }
 
   const int loc_num_devices = numAddrs;
