@@ -1284,7 +1284,7 @@ static void fillDistanceMatrix(int numObjs, hwloc_obj_t *objs,
 
   int numLocales = chpl_get_num_locales_on_node();
   _DBG_P("numLocales = %d numObjs = %d", numLocales, numObjs);
-  
+
   hwloc_obj_t locales[numLocales];
 
   for (int i = 0; i < numLocales; i++) {
@@ -1422,12 +1422,17 @@ chpl_topo_pci_addr_t *chpl_topo_selectNicByType(chpl_topo_pci_addr_t *inAddr,
           // iteration ("used") and assign that NIC to that locale.
           int numAvail = numNics;
           while((numAvail > 0) && (numAssigned < numLocales)) {
+            _DBG_P("inner loop: numAssigned %d numAvail %d", numAssigned, numAvail);
               int minimum = INT32_MAX;
               int minNic = -1;
               int minLoc = -1;
               for (int i = 0; i < numLocales; i++) {
+                _DBG_P("assigned[%d] = %d", i, assigned[i]);
+                _DBG_P("minimum = %d", minimum);
                 if (!assigned[i]) {
                   for (int j = 0; j < numNics; j++) {
+                    _DBG_P("used[%d] = %d, distances[%d][%d] = %d",
+                           j, used[j], i, j, distances[i][j]);
                     if ((!used[j]) && (distances[i][j] < minimum)) {
                       minimum = distances[i][j];
                       minLoc = i;
