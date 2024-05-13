@@ -1404,8 +1404,10 @@ chpl_topo_pci_addr_t *chpl_topo_selectNicByType(chpl_topo_pci_addr_t *inAddr,
         hwloc_obj_t assigned[numLocales]; // NIC assigned to the locale
         int numAssigned = 0;
 
-        memset(locales, 0, numLocales);
-        memset(assigned, 0, numLocales);
+        for (int i = 0; i < numLocales; i++) {
+          locales[i] = NULL;
+          assigned[i] = NULL;
+        }
 
         chpl_bool finished = false;
         while (!finished && (numAssigned < numLocales)) {
@@ -1490,9 +1492,14 @@ int chpl_topo_selectMyDevices(chpl_topo_pci_addr_t *inAddrs,
     int devsPerLocale = numDevs / numLocales;
     int owned[numLocales]; // number of devices each locale owns
 
-    memset(owners, -1, numDevs);
-    memset(objs, 0, numDevs);
-    memset(owned, 0, numLocales);
+    for (int i = 0; i < numDevs; i++) {
+      owners[i] = -1;
+      objs[i] = NULL;
+    }
+
+    for (int i = 0; i < numLocales; i++) {
+      owned[i] = 0;
+    }
 
     int rank = chpl_get_local_rank();
     if (rank >= 0) {
