@@ -1427,7 +1427,7 @@ chpl_topo_pci_addr_t *chpl_topo_selectNicByType(chpl_topo_pci_addr_t *inAddr,
               int minNic = -1;
               int minLoc = -1;
               for (int i = 0; i < numLocales; i++) {
-                _DBG_P("assigned[%d] = %d", i, assigned[i]);
+                _DBG_P("assigned[%d] = %p", i, assigned[i]);
                 _DBG_P("minimum = %d", minimum);
                 if (!assigned[i]) {
                   for (int j = 0; j < numNics; j++) {
