@@ -699,6 +699,13 @@ static void partitionResources(void) {
     // so just set our own.
     logAccSets[0] = hwloc_bitmap_dup(logAccSet);
   }
+  if (debug) {
+    for (int i = 0; i < numLocalesOnNode; i++) {
+      char buf[1024];
+      hwloc_bitmap_list_snprintf(buf, sizeof(buf), logAccSets[i]);
+      _DBG_P("logAccSets[%d]: %s", i, buf);
+    }
+  }
 
   // CHPL_RT_OVERSUBSCRIBED overrides oversubscription determination
 
