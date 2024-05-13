@@ -1285,15 +1285,24 @@ static void fillDistanceMatrix(int numObjs, hwloc_obj_t *objs,
   int numLocales = chpl_get_num_locales_on_node();
   hwloc_obj_t locales[numLocales];
 
-  for (int j = 0; j < numLocales; j++) {
-    if (logAccSets[j] != NULL) {
-      CHK_ERR(locales[j] =  hwloc_get_obj_covering_cpuset(topology,
-                                                        logAccSets[j]));
+  for (int i = 0; i < numLocales; i++) {
+    if (logAccSets[i] != NULL) {
+      CHK_ERR(locales[i] =  hwloc_get_obj_covering_cpuset(topology,
+                                                        logAccSets[i]));
+      char buf[1024];
+      hwloc_obj_attr_snprintf(buf, sizeof(buf), locales[i], ",", 1);
+      _DBG_P("locales[%d]: %s", i, buf);
     } else {
-      locales[j] = NULL;
+      locales[i] = NULL;
     }
   }
 
+  for (int i = 0; i < numObjs; i++) {
+    char buf[1024];
+    hwloc_obj_attr_snprintf(buf, sizeof(buf), objs[i], ",", 1);
+    _DBG_P("objs[%d]: %s", i, buf);
+  }
+  
   // Compute the distances between locales and objects. If locales[j]
   // is NULL then we don't know which PUs that locale is using, so
   // we ignore it by setting its distances to infinite.
