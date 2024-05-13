@@ -1291,10 +1291,10 @@ static void fillDistanceMatrix(int numObjs, hwloc_obj_t *objs,
   // is NULL then we don't know which PUs that locale is using, so
   // we ignore it by setting its distances to infinite.
 
-  for (int i = 0; i < numObjs; i++) {
-    for (int j = 0; j < numLocales; j++) {
-      if (locales[j] != NULL) {
-        distances[i][j] = distance(topology, objs[i], locales[j]);
+  for (int i = 0; i < numLocales; i++) {
+    for (int j = 0; j < numObjs; j++) {
+      if (locales[i] != NULL) {
+        distances[i][j] = distance(topology, objs[j], locales[i]);
       } else {
         distances[i][j] = INT32_MAX;
       }
@@ -1302,8 +1302,8 @@ static void fillDistanceMatrix(int numObjs, hwloc_obj_t *objs,
   }
   if (debug) {
     fprintf(stderr, "distances:\n");
-    for (int i = 0; i < numObjs; i++) {
-      for (int j = 0; j < numLocales; j++) {
+    for (int i = 0; i < numLocales; i++) {
+      for (int j = 0; j < numObjs; j++) {
         fprintf(stderr, "%02d ", distances[i][j]);
       }
       fprintf(stderr, "\n");
