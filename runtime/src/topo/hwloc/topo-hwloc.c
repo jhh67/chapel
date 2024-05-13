@@ -1283,6 +1283,8 @@ static void fillDistanceMatrix(int numObjs, hwloc_obj_t *objs,
   // Build a distance matrix between locales and objects.
 
   int numLocales = chpl_get_num_locales_on_node();
+  _DBG_P("numLocales = %d numObjs = %d", numLocales, numObjs);
+  
   hwloc_obj_t locales[numLocales];
 
   for (int i = 0; i < numLocales; i++) {
@@ -1302,7 +1304,7 @@ static void fillDistanceMatrix(int numObjs, hwloc_obj_t *objs,
     hwloc_obj_attr_snprintf(buf, sizeof(buf), objs[i], ",", 1);
     _DBG_P("objs[%d]: %s", i, buf);
   }
-  
+
   // Compute the distances between locales and objects. If locales[j]
   // is NULL then we don't know which PUs that locale is using, so
   // we ignore it by setting its distances to infinite.
