@@ -1561,7 +1561,7 @@ int chpl_topo_selectMyDevices(chpl_topo_pci_addr_t *inAddrs,
     }
   }
 done:
-  _DBG_P("returning %d", result);
+  _DBG_P("returning %d, count = %d", result, *count);
   return result;
 }
 
