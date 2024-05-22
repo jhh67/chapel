@@ -753,28 +753,34 @@ static void polling(void* x) {
   pollingRunning = 0;
 }
 
-static void setup_polling1(void) {
+static void setup_polling_pre_init(void) {
   atomic_init_spinlock_t(&pollingLock);
 #if defined(GASNET_CONDUIT_IBV)
-  chpl_env_set("GASNET_RCV_THREAD", "1", 1);
+  // We might want a GASNet receive progress thread. Note that in
+  // start_gasnet_progress_threads we may decide not to create it.
+  chpl_env_set("GASNET_RCV_THREAD", "1", 1 /*overwrite*/);
+
+  // By default we want a GASNet send progress thread. Note that we do
+  // not override any existing value, so the user can disable it if desired.
+  chpl_env_set("GASNET_SND_THREAD", "1", 0 /*overwrite*/);
+
+  // If there is a send thread give it exclusive access to the NIC. This
+  // has no effect if there isn't a send thread.
+  chpl_env_set("GASNET_SND_THREAD_POLL_MODE", "exclusive", 1 /*overwrite*/);
 #endif
 }
-static void setup_polling2(void) {
+
+static void setup_polling_post_init(void) {
 #if defined(GASNET_CONDUIT_IBV)
-  // The GASNET_RCV_THREAD blocks for incoming AMs on the IB channel,
-  // but does not progress AMs arriving via the shared-memory PSHM channel
-  // that might be active when running with co-locales.
-  // Therefore we ask GASNet whether this PSHM domain contains any co-locales,
-  // and conditionally enable our polling thread to ensure progress of PSHM AMs.
-  gex_Rank_t nbrhd_size;
-  gex_System_QueryNbrhdInfo(NULL, &nbrhd_size, NULL);
-  fprintf(stderr, "nbrhd_size = %d\n", nbrhd_size);
-  pollingRequired = chpl_env_rt_get_bool("COMM_GASNET_DO_POLLING",
-                                         nbrhd_size > 1);
+
+  // Co-locales use PSHM to communicate, which requires an external progress
+  // thread.
+  gex_Rank_t numColocales;
+  gex_System_QueryNbrhdInfo(NULL, &numColocales, NULL);
+  pollingRequired = numColocales > 1;
 #else
   pollingRequired = true;
 #endif
-  fprintf(stderr, "pollingRequired = %d\n", pollingRequired);
 }
 
 static void start_polling(void) {
@@ -878,16 +884,17 @@ void chpl_comm_init(int *argc_p, char ***argv_p) {
   set_max_segsize();
   set_num_comm_domains();
   setup_ibv();
-  setup_polling1();
+  setup_polling_pre_init();
   GASNET_Safe(gex_Client_Init(&myclient, &myep, &myteam, "chapel",
                               argc_p, argv_p,
-                              GEX_FLAG_USES_GASNET1 | GEX_FLAG_DEFER_THREADS));
+                              GEX_FLAG_USES_GASNET1 |
+                              GEX_FLAG_DEFER_THREADS));
 
-  setup_polling2();
+  setup_polling_post_init();
   chpl_nodeID = gasnet_mynode();
   chpl_numNodes = gasnet_nodes();
 
-  // get information about locales on the same node
+  // get information about co-locales
   gex_System_QueryHostInfo(NULL, &infoCount, &myIndex);
   chpl_set_num_locales_on_node((int32_t) infoCount);
   chpl_set_local_rank(myIndex);
@@ -972,13 +979,12 @@ static void start_gasnet_progress_threads(void) {
   const gex_ProgressThreadInfo_t *info;
   GASNET_Safe(gex_System_QueryProgressThreads(myclient, &count, &info, 0) );
   for (int i = 0; i < count; i++) {
-    // don't create a receive thread if we have our own progress thread
+
+    // Don't create an internal receive thread if there is an external one
     if (pollingRequired &&
         (info[i].gex_thread_roles == GEX_THREAD_ROLE_RCV)) {
       continue;
     }
-    fprintf(stderr, "XXX creating GASNet progress thread %d core %d\n", i,
-            reservedCore);
     if (chpl_task_createCommTask((chpl_fn_p) info[i].gex_progress_fn,
                                  info[i].gex_progress_arg, reservedCore)) {
       chpl_internal_error("unable to start internal GASNet progress thread");

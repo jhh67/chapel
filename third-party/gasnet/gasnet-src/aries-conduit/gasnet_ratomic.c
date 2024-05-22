@@ -660,15 +660,7 @@ void gasnete_gniratomic_init_hook(gasneti_AD_t real_ad)
             goto use_am;
         }
     #if GASNET_PSHM
-        // TODO-EX: once atomics are supported on non-primordial endpoints,
-        // this closed form could incorrectly enable tools-based atomic ops
-        // in the initator (bypassing AM) on memory which is not cross-mapped.
-        // TODO-EX: this closed form misses an optimization opportunity for
-        // cases in which the primordial team spans multiple neighborhoods, but
-        // the AD's team only includes EPs within a single nbrhd (bound to
-        // primordial segments).  In this case the reference implementation can
-        // always bypass AM and operate directly on cross-mapped shared segments
-        // (without concerns for attentiveness).
+        // TODO-EX: this closed form does not generalize for multi-EP nor TM_Split
         else if (gasneti_mysupernode.node_count == gasneti_nodes) {
 	    // Single-neighborhood case favors AM-based *if* the datatype is
 	    // "tools safe" (and thus not actually using AM).  Otherwise, we

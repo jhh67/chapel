@@ -733,17 +733,13 @@ static void setupAffinity(void) {
   }
 }
 
-static pthread_t *initialize_comm_task(void) {
+static pthread_t *allocate_comm_task(void) {
     int newMax;
     int oldMax = chpl_qthread_comm_max_pthreads;
 
     if (chpl_qthread_comm_num_pthreads ==
         chpl_qthread_comm_max_pthreads) {
-        if (oldMax == 0) {
-            newMax = 1;
-        } else {
-            newMax = oldMax * 2;
-        }
+        newMax = (oldMax == 0) ? 1 : oldMax * 2;
         size_t newSize = newMax * sizeof(*chpl_qthread_comm_pthreads);
         chpl_qthread_comm_pthreads = chpl_realloc(chpl_qthread_comm_pthreads,
                                                   newSize);
@@ -753,7 +749,8 @@ static pthread_t *initialize_comm_task(void) {
             chpl_realloc(chpl_qthread_comm_task_bundles, newSize);
 
         newSize = newMax * sizeof(*chpl_qthread_comm_task_tls);
-        chpl_qthread_comm_task_tls = chpl_realloc(chpl_qthread_comm_task_tls,
+        chpl_free(chpl_qthread_comm_task_tls);
+        chpl_qthread_comm_task_tls = chpl_malloc(chpl_qthread_comm_task_tls,
                                                   newSize);
         for(int i = 0; i < chpl_qthread_comm_num_pthreads; i++) {
             chpl_qthread_comm_task_tls[i].bundle =
@@ -871,9 +868,29 @@ typedef struct {
     chpl_fn_p fn;
     void *arg;
     int cpu;
+    pthread_t *thread;
 } comm_task_wrapper_info_t;
 
 static void *comm_task_wrapper(void *arg)
+{
+    comm_task_wrapper_info_t *rarg = arg;
+
+    void *targ = rarg->arg;
+    chpl_free(rarg);
+    (*(chpl_fn_p)(fn))(targ);
+    return NULL;
+
+// Communication threads indirect through this function to set CPU and
+// memory affinity properly. chpl_task_createCommTask creates a thread
+// running this function. This thread binds itself to the proper CPU(s),
+// but before it does that it has been using its stack and as a result its
+// stack may be in a NUMA domain not associated with the CPU(s). So this
+// thread creates another thread which inherits this thread's CPU affinity
+// so its stack is in the proper NUMA domain(s). This thread then exits
+// and the new thread calls comm_task_wrapper to invoke communication
+// function.
+
+static void *comm_task_trampoline(void *arg)
 {
     comm_task_wrapper_info_t *rarg = arg;
 
@@ -895,11 +912,12 @@ static void *comm_task_wrapper(void *arg)
         }
         _DBG_P("comm task bound to accessible PUs");
     }
-    chpl_fn_p fn = rarg->fn;
-    void *targ = rarg->arg;
-    chpl_free(rarg);
-    (*(chpl_fn_p)(fn))(targ);
-    return 0;
+    int rc = pthread_create(rarg->thread,
+                          NULL, comm_task_wrapper, wrapper_info);
+    if (rc) {
+        chpl_error("pthread_create of comm_task_wrapper failed", 0, 0);
+    }
+    return NULL;
 }
 
 // Start the main task.
@@ -939,9 +957,9 @@ int chpl_task_createCommTask(chpl_fn_p fn,
     wrapper_info->fn = fn;
     wrapper_info->arg = arg;
     wrapper_info->cpu = cpu;
-    pthread_t *thread = initialize_comm_task();
-    return pthread_create(thread,
-                          NULL, comm_task_wrapper, wrapper_info);
+    wrapper_info->thread = allocate_comm_task();
+    pthread_t dummy;
+    return pthread_create(&dummy, NULL, comm_task_trampoline, wrapper_info);
 }
 
 void chpl_task_addTask(chpl_fn_int_t       fid,

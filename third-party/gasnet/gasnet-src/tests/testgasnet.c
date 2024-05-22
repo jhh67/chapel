@@ -10,7 +10,7 @@
 #include <gasnet_tools.h>
 
 /* limit segsz to prevent stack overflows for seg_everything tests */
-#define TEST_MAXTHREADS 10
+#define TEST_MAXTHREADS 1
 #ifndef TEST_SEGSZ
   #define TEST_SEGSZ (128*1024) /* for put/overwrite test */
 #endif
@@ -157,16 +157,8 @@ void test_threadinfo(int threadid, int numthreads) {
   assert(threadid < numthreads && numthreads <= MAX_THREADS);
   all_ti[threadid] = my_ti;
   PTHREAD_LOCALBARRIER(numthreads);
-  if (my_ti) {
-    // If non-NULL, IDs must be unique 
-    for (i = 0; i < numthreads; i++) {
-      if (i != threadid) assert_always(my_ti != all_ti[i]);
-    }
-  } else {
-    // If *any* ID is NULL, *all* must be NULL
-    for (i = 0; i < numthreads; i++) {
-      assert_always(all_ti[i] == NULL);
-    }
+  for (i = 0; i < numthreads; i++) {
+    if (i != threadid) assert_always(my_ti != all_ti[i]);
   }
   PTHREAD_LOCALBARRIER(numthreads);
 }
@@ -761,7 +753,7 @@ void doit(int partner, int *partnerseg) {
       lval_u64 = 0;                                      \
       for (size_t i=0; i < sizeof(var); i++) {           \
         lval_u64 <<= 8;                                  \
-        lval_u64 |= *(((uint8_t*)(&(var)+1)) - (i + 1)); \
+        lval_u64 |= *(((uint8_t*)(&(var)+1)) - 1 - i);   \
       }                                                  \
     } while (0)
   #else

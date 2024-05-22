@@ -411,21 +411,17 @@ static int AMMPI_SPMDShutdown(int exitcode) {
 
   AMX_sched_yield();
 
-  int isfini = 0;
-  MPI_SAFE(MPI_Finalized(&isfini));
-  if (!isfini) {
-    if (AM_Terminate() != AM_OK) 
-      AMX_Err("failed to AM_Terminate() in AMMPI_SPMDExit()");
+  if (AM_Terminate() != AM_OK) 
+    AMX_Err("failed to AM_Terminate() in AMMPI_SPMDExit()");
 
-    #if 0
-      MPI_SAFE(MPI_Abort(AMMPI_SPMDMPIComm, exitcode));
-    #endif
+  #if 0
+    MPI_SAFE(MPI_Abort(AMMPI_SPMDMPIComm, exitcode));
+  #endif
 
-    MPI_SAFE(MPI_Comm_free(&AMMPI_SPMDMPIComm));
-    AMMPI_SPMDMPIComm = MPI_COMM_WORLD;
+  MPI_SAFE(MPI_Comm_free(&AMMPI_SPMDMPIComm));
+  AMMPI_SPMDMPIComm = MPI_COMM_WORLD;
 
-    MPI_SAFE(MPI_Finalize());
-  }
+  MPI_SAFE(MPI_Finalize());
 
   AMMPI_SPMDStartupCalled = 0;
   DEBUG_MSG("exiting..");
@@ -444,19 +440,13 @@ extern int AMMPI_SPMDExit(int exitcode) {
     exitInProgress = TRUE;
   }
 
-  int isfini = 0;
-  MPI_SAFE(MPI_Finalized(&isfini));
-  if (isfini) {
-    AMX_DEBUG_WARN(("MPI finalized by client, skipping exit signal broadcast and resource reclamation"));
-  } else {
-    /* tell others to exit */
-    for (i = 0; i < AMMPI_SPMDNUMPROCS; i++) {
-      en_t remoteName;
-      if (AM_GetTranslationName(AMMPI_SPMDEndpoint, i, &remoteName) == AM_OK &&
-          !AMMPI_enEqual(remoteName, AMMPI_SPMDName)) {
-        if (AMMPI_SendControlMessage(AMMPI_SPMDEndpoint, remoteName, 2, (int32_t)'E', (int32_t)exitcode) != AM_OK)
-          AMX_Err("Failed to AMMPI_SendControlMessage in AMMPI_SPMDExit()");
-      }
+  /* tell others to exit */
+  for (i = 0; i < AMMPI_SPMDNUMPROCS; i++) {
+    en_t remoteName;
+    if (AM_GetTranslationName(AMMPI_SPMDEndpoint, i, &remoteName) == AM_OK &&
+        !AMMPI_enEqual(remoteName, AMMPI_SPMDName)) {
+      if (AMMPI_SendControlMessage(AMMPI_SPMDEndpoint, remoteName, 2, (int32_t)'E', (int32_t)exitcode) != AM_OK)
+        AMX_Err("Failed to AMMPI_SendControlMessage in AMMPI_SPMDExit()");
     }
   }
 

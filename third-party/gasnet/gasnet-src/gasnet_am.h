@@ -13,11 +13,8 @@
 
 // TODO-EX: GASNETI_CHECK_ERRR should *not* be returning the error code - need error handling callback instead
 
-#define GASNETI_CHECK_LEGACY_REQUEST(tm,flags) _GASNETI_CHECK_LEGACY("AMRequest",tm,flags)
-
 #define GASNETI_COMMON_AMREQUESTSHORT(tm,rank,handler,flags,numargs) do {      \
     GASNETI_CHECKATTACH();                                                     \
-    GASNETI_CHECK_LEGACY_REQUEST(tm,flags);                                    \
     gasneti_assert(! (flags & GEX_FLAG_AM_PREPARE_LEAST_CLIENT));              \
     gasneti_assert(! (flags & GEX_FLAG_AM_PREPARE_LEAST_ALLOC));               \
     gasneti_assert_int(numargs ,>=, 0);                                        \
@@ -28,7 +25,6 @@
   } while (0)
 #define GASNETI_COMMON_AMREQUESTMEDIUM(tm,rank,handler,source_addr,nbytes,lc_opt,flags,numargs) do { \
     GASNETI_CHECKATTACH();                                                           \
-    GASNETI_CHECK_LEGACY_REQUEST(tm,flags);                                          \
     gasneti_assert(! (flags & GEX_FLAG_AM_PREPARE_LEAST_CLIENT));                    \
     gasneti_assert(! (flags & GEX_FLAG_AM_PREPARE_LEAST_ALLOC));                     \
     gasneti_assert_int(numargs ,>=, 0);                                        \
@@ -43,7 +39,6 @@
   } while (0)
 #define GASNETI_COMMON_AMREQUESTLONG(tm,rank,handler,source_addr,nbytes,dest_addr,lc_opt,flags,numargs) do { \
     GASNETI_CHECKATTACH();                                                                   \
-    GASNETI_CHECK_LEGACY_REQUEST(tm,flags);                                                  \
     gasneti_assert(! (flags & GEX_FLAG_AM_PREPARE_LEAST_CLIENT));                            \
     gasneti_assert(! (flags & GEX_FLAG_AM_PREPARE_LEAST_ALLOC));                             \
     gasneti_assert_int(numargs ,>=, 0);                                                      \
