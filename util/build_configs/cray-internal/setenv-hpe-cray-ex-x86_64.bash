@@ -127,13 +127,17 @@ if [ -z "$BUILD_CONFIGS_CALLBACK" ]; then
     ( *runtime* )
         log_info "Building Chapel component: runtime"
 
-        compilers=gnu,llvm,cray
-        comms=none,ofi
-        launchers=none,pals,slurm-srun
+        #compilers=gnu,llvm,cray
+        #comms=none,ofi
+        #launchers=none,pals,slurm-srun
+        compilers=gnu
+        comms=ofi
+        launchers=pals
         substrates=none
         locale_models=flat
         auxfs=none
-        libpics=none,pic
+        #libpics=none,pic
+        libpics=none
 
         log_info "Start build_configs $dry_run $verbose # no make target"
 
