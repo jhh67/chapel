@@ -72,11 +72,14 @@ hwloc-config: FORCE
 #
 # Then configure
 #
+	printenv | sort
 	mkdir -p $(HWLOC_BUILD_DIR)
 	cd $(HWLOC_BUILD_DIR) && $(HWLOC_SUBDIR)/configure CC='$(CC)' \
 		CFLAGS='$(CFLAGS)' CXX='$(CXX)' CXXFLAGS='$(CFLAGS)' \
 		LDFLAGS='$(RUNTIME_LFLAGS)' --prefix=$(HWLOC_INSTALL_DIR) \
-		$(CHPL_HWLOC_CFG_OPTIONS)
+		$(CHPL_HWLOC_CFG_OPTIONS) || \
+		(echo $(HWLOC_BUILD_DIR)/config.log: && \
+		 cat $(HWLOC_BUILD_DIR)/config.log && false)
 
 hwloc-build: FORCE
 	cd $(HWLOC_BUILD_DIR) && $(MAKE)
