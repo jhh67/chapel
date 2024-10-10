@@ -1251,7 +1251,8 @@ int chpl_topo_bindLogAccCPUs(void) {
 int chpl_topo_getBindingLogCPUs(int *cpus, int count) {
   hwloc_cpuset_t cpuset;
   CHK_ERR_ERRNO((cpuset = hwloc_bitmap_alloc()) != NULL);
-  CHK_ERR_ERRNO(hwloc_get_cpubind(topology, cpuset, HWLOC_CPUBIND_THREAD));
+  CHK_ERR_ERRNO(hwloc_get_cpubind(topology, cpuset, HWLOC_CPUBIND_THREAD)
+                == 0);
   count = getCPUs(cpuset, cpus, count);
   hwloc_bitmap_free(cpuset);
   return count;
