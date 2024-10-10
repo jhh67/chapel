@@ -897,7 +897,7 @@ static void *comm_task_wrapper(void *arg)
       buf[offset-1] = '\0';
     }
     // tell binders which PUs to use
-    _DBP_P("comm task bound to CPU(s): %s\n", buf);
+    _DBG_P("comm task bound to CPU(s): %s\n", buf);
     chpl_free(buf);
 #endif
 
