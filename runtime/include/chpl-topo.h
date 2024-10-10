@@ -91,6 +91,10 @@ int chpl_topo_bindCPU(int id);
 //
 int chpl_topo_bindLogAccCPUs(void);
 
+// Fills the "cpus" array with up to "count" physical OS indices of the
+// PUs to which the calling thread is bound.
+// Returns the number of entries returned in "cpus".
+int chpl_topo_getBindingLogCPUs(int *cpus, int count);
 //
 // how many NUMA domains are there?
 //

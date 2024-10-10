@@ -1248,6 +1248,15 @@ int chpl_topo_bindLogAccCPUs(void) {
   return status;
 }
 
+int chpl_topo_getBindingLogCPUs(int *cpus, int count) {
+  hwloc_cpuset_t cpuset;
+  CHK_ERR_ERRNO((cpuset = hwloc_bitmap_alloc()) != NULL);
+  CHK_ERR_ERRNO(hwloc_get_cpubind(topology, cpuset, HWLOC_CPUBIND_THREAD));
+  count = getCPUs(cpuset, cpus, count);
+  hwloc_bitmap_free(cpuset);
+  return count;
+}
+
 chpl_bool chpl_topo_isOversubscribed(void) {
   _DBG_P("oversubscribed = %s", oversubscribed ? "True" : "False");
   return oversubscribed;

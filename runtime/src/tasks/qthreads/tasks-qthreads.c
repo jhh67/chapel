@@ -875,6 +875,32 @@ static void *comm_task_wrapper(void *arg)
 {
     comm_task_wrapper_info_t *rarg = arg;
 
+#ifdef DEBUG
+    int cpus[1024];
+    int count = 1024;
+    count = chpl_topo_getBindingLogCPUs(cpus, count);
+
+    // Determine how much space we need for the string of CPU IDs.
+    // Note: last ',' will be replaced with NULL.
+    int bufSize = 0;
+    for (int i = 0; i < count; i++) {
+        bufSize +=  snprintf(NULL, 0, "%d,", cpus[i]);
+    }
+    char *buf = chpl_malloc(bufSize);
+    int offset = 0;
+    buf[0] = '\0';
+    for (int i = 0; i < count; i++) {
+      offset += snprintf(buf+offset, bufSize - offset, "%d,", cpus[i]);
+    }
+    if (offset > 0) {
+      // remove trailing ','
+      buf[offset-1] = '\0';
+    }
+    // tell binders which PUs to use
+    _DBP_P("comm task bound to CPU(s): %s\n", buf);
+    chpl_free(buf);
+#endif
+
     void *targ = rarg->arg;
     chpl_fn_p fn = rarg->fn;
     chpl_free(rarg);
