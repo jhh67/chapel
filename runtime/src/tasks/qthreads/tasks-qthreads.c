@@ -876,8 +876,8 @@ static void *comm_task_wrapper(void *arg)
     comm_task_wrapper_info_t *rarg = arg;
 
 #ifdef DEBUG
-    int cpus[1024];
-    int count = 1024;
+    int cpus[512];
+    int count = 512;
     count = chpl_topo_getBindingLogCPUs(cpus, count);
 
     // Determine how much space we need for the string of CPU IDs.
