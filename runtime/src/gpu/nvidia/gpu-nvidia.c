@@ -189,6 +189,8 @@ void chpl_gpu_impl_init(int* num_devices) {
   deviceClockRates = chpl_malloc(sizeof(int)*numDevices);
   deviceIDToIndex = chpl_malloc(sizeof(int) * numAllDevices);
 
+  fprintf(stderr, "numAllDevices %d\n", numAllDevices);
+
   // Go through the PCI bus addresses returned by chpl_topo_selectMyDevices
   // and find the corresponding GPUs. Initialize each GPU and its array
   // entries.
@@ -216,6 +218,7 @@ void chpl_gpu_impl_init(int* num_devices) {
         chpl_gpu_devices[i] = device;
         chpl_gpu_primary_ctx[i] = context;
         deviceIDToIndex[j] = i; // map device ID to array index
+        fprintf(stderr, "deviceIDToIndex[%d] = %d\n", j, i);
 
         // TODO can we refactor some of this to chpl-gpu to avoid duplication
         // between runtime layers?
@@ -358,8 +361,9 @@ void chpl_gpu_impl_mem_free(void* memAlloc) {
     CUDA_CALL(cuPointerGetAttribute((void*)&dev_id,
                                     CU_POINTER_ATTRIBUTE_DEVICE_ORDINAL,
                                     (CUdeviceptr)memAlloc));
+    fprintf(stderr, "chpl_gpu_impl_mem_free dev_id %ld\n", dev_id);
     int index = deviceIDToIndex[dev_id];
-    fprintf(stderr, "chpl_gpu_impl_mem_free dev_id %d index %d\n", dev_id, index);
+    fprintf(stderr, "chpl_gpu_impl_mem_free dev_id %ld index %d\n", dev_id, index);
     switch_context(index);
 
 #ifdef CHPL_GPU_MEM_STRATEGY_ARRAY_ON_DEVICE
