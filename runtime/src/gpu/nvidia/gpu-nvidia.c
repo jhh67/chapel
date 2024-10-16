@@ -358,6 +358,7 @@ void chpl_gpu_impl_mem_free(void* memAlloc) {
     CUDA_CALL(cuPointerGetAttribute((void*)&dev_id,
                                     CU_POINTER_ATTRIBUTE_DEVICE_ORDINAL,
                                     (CUdeviceptr)memAlloc));
+    fprintf(stderr, "chpl_gpu_impl_mem_free %d\n", dev_id);
     switch_context(dev_id);
 
 #ifdef CHPL_GPU_MEM_STRATEGY_ARRAY_ON_DEVICE
