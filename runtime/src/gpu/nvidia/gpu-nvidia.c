@@ -359,8 +359,8 @@ void chpl_gpu_impl_mem_free(void* memAlloc) {
                                     CU_POINTER_ATTRIBUTE_DEVICE_ORDINAL,
                                     (CUdeviceptr)memAlloc));
     int index = deviceIDToIndex[dev_id];
-    fprintf(stderr, "chpl_gpu_impl_mem_free dev_id %d index %d\n", dev_id);
-    switch_context(index];
+    fprintf(stderr, "chpl_gpu_impl_mem_free dev_id %d index %d\n", dev_id, index);
+    switch_context(index);
 
 #ifdef CHPL_GPU_MEM_STRATEGY_ARRAY_ON_DEVICE
     if (chpl_gpu_impl_is_host_ptr(memAlloc)) {
