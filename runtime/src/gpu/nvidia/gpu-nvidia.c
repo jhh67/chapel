@@ -201,7 +201,7 @@ void chpl_gpu_impl_init(int* num_devices) {
   deviceClockRates = chpl_malloc(sizeof(int)*numDevices);
   dev_pid_to_lid_table = chpl_malloc(sizeof(int) * numAllDevices);
 
-  fprintf(stderr, "numAllDevices %d\n", numAllDevices);
+  //fprintf(stderr, "numAllDevices %d\n", numAllDevices);
 
   // Go through the PCI bus addresses returned by chpl_topo_selectMyDevices
   // and find the corresponding GPUs. Initialize each GPU and its array
@@ -230,7 +230,7 @@ void chpl_gpu_impl_init(int* num_devices) {
         chpl_gpu_devices[i] = device;
         chpl_gpu_primary_ctx[i] = context;
         dev_pid_to_lid_table[j] = i; // map device ID to array index
-        fprintf(stderr, "dev_pid_to_lid_table[%d] = %d\n", j, i);
+        //fprintf(stderr, "dev_pid_to_lid_table[%d] = %d\n", j, i);
 
         // TODO can we refactor some of this to chpl-gpu to avoid duplication
         // between runtime layers?
