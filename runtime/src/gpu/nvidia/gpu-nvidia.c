@@ -49,7 +49,7 @@ static CUdevice  *chpl_gpu_devices;
 
 static int numAllDevices = -1;
 static int numDevices = -1;
-static int *deviceIDToIndex;
+static int *dev_pid_to_lid_table;
 
 // array indexed by device ID (we load the same module once for each GPU).
 static CUmodule *chpl_gpu_cuda_modules;
@@ -98,7 +98,7 @@ static void switch_context(int dev_lid) {
 
 static int dev_pid_to_lid(int32_t dev_pid) {
   assert((dev_pid >= 0) && (dev_pid < numAllDevices));
-  int dev_lid = deviceIDToIndex[dev_pid];
+  int dev_lid = dev_pid_to_lid_table[dev_pid];
   assert((dev_lid >= 0) && (dev_lid < numDevices));
   return dev_lid;
 }
@@ -191,7 +191,7 @@ void chpl_gpu_impl_init(int* num_devices) {
   }
 
   // Allocate the GPU data structures. Note that the CUDA API, specifically
-  // cuCtxGetDevice, returns the global device ID so we need deviceIDToIndex
+  // cuCtxGetDevice, returns the global device ID so we need dev_pid_to_lid_table
   // to map from the global device ID to an array index.
 
   numDevices = numAddrs;
@@ -199,7 +199,7 @@ void chpl_gpu_impl_init(int* num_devices) {
   chpl_gpu_devices = chpl_malloc(sizeof(CUdevice)*numDevices);
   chpl_gpu_cuda_modules = chpl_malloc(sizeof(CUmodule)*numDevices);
   deviceClockRates = chpl_malloc(sizeof(int)*numDevices);
-  deviceIDToIndex = chpl_malloc(sizeof(int) * numAllDevices);
+  dev_pid_to_lid_table = chpl_malloc(sizeof(int) * numAllDevices);
 
   fprintf(stderr, "numAllDevices %d\n", numAllDevices);
 
@@ -229,8 +229,8 @@ void chpl_gpu_impl_init(int* num_devices) {
 
         chpl_gpu_devices[i] = device;
         chpl_gpu_primary_ctx[i] = context;
-        deviceIDToIndex[j] = i; // map device ID to array index
-        fprintf(stderr, "deviceIDToIndex[%d] = %d\n", j, i);
+        dev_pid_to_lid_table[j] = i; // map device ID to array index
+        fprintf(stderr, "dev_pid_to_lid_table[%d] = %d\n", j, i);
 
         // TODO can we refactor some of this to chpl-gpu to avoid duplication
         // between runtime layers?
