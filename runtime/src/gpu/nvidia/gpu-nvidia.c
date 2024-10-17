@@ -96,7 +96,7 @@ static void switch_context(int dev_lid) {
 // sublocale ID. Physical device IDs are the same for all co-locales on the
 // machine.
 
-static int devPID2LID(int32_t dev_pid) {
+static int dev_pid_to_lid(int32_t dev_pid) {
   assert((dev_pid >= 0) && (dev_pid < numAllDevices));
   int dev_lid = deviceIDToIndex[dev_pid];
   assert((dev_lid >= 0) && (dev_lid < numDevices));
@@ -109,7 +109,7 @@ static CUmodule get_module(void) {
   CUmodule module;
 
   CUDA_CALL(cuCtxGetDevice(&device));
-  int dev_lid = devPID2LID((int32_t) device);
+  int dev_lid = dev_pid_to_lid((int32_t) device);
   module = chpl_gpu_cuda_modules[dev_lid];
   return module;
 }
@@ -373,7 +373,7 @@ void chpl_gpu_impl_mem_free(void* memAlloc) {
     CUDA_CALL(cuPointerGetAttribute((void*)&dev_pid,
                                     CU_POINTER_ATTRIBUTE_DEVICE_ORDINAL,
                                     (CUdeviceptr)memAlloc));
-    int dev_lid = devicePID2LID(dev_pid);
+    int dev_lid = dev_pid_to_lid(dev_pid);
     if (dev_lid != -1) {
       switch_context(dev_lid);
     }
