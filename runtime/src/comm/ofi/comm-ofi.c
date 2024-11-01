@@ -2575,7 +2575,7 @@ void init_ofiEp(void) {
   if (desiredTxCtxs < numTxCtxs) {
     numTxCtxs = desiredTxCtxs;
   }
-  DBG_PRINTF(DBG_CFG,"tciTabBindTxCtxs %s numTxCtxs %d numAmHandlers %d",
+  DBG_PRINTF(DBG_CFG,"tciTabBindTxCtxs %s numTxCtxs %zd numAmHandlers %d",
              tciTabBindTxCtxs ? "true" : "false", numTxCtxs, numAmHandlers);
   const chpl_bool useScalEp = envPreferScalableTxEp
                               && ofi_info->domain_attr->max_ep_tx_ctx > 1;
@@ -7923,7 +7923,9 @@ int isAtomicValid(enum fi_datatype ofiType) {
     validByType[FI_FLOAT]  = computeAtomicValid(FI_FLOAT);
     validByType[FI_DOUBLE] = computeAtomicValid(FI_DOUBLE);
     inited = true;
-    if (DBG_TEST_MASK(DBG_CFG_AMO) && (ofi_info->tx_attr->caps & FI_ATOMIC)) {
+#ifdef CHPL_COMM_DEBUG
+    if (DBG_TEST_MASK(DBG_CFG_AMO) && (chpl_nodeID == 0) &&
+        (ofi_info->tx_attr->caps & FI_ATOMIC)) {
       char buf[1024];
       int offset;
 
@@ -7935,13 +7937,16 @@ int isAtomicValid(enum fi_datatype ofiType) {
         offset += snprintf(buf + offset, sizeof(buf) - offset, "%s: ",
                       fi_tostr(&t, FI_TYPE_ATOMIC_TYPE));
         for (enum fi_op op = 0; op < FI_ATOMIC_OP_LAST; op++) {
-          if (my_valid(t, op)) {
+          int valid = my_valid(t, op);
+          int fetch = my_fetch_valid(t, op);
+          int compare = my_compare_valid(t, op);
+          if (valid || fetch || compare) {
             char suffix[3];
             char *s = suffix;
-            if (my_fetch_valid(t, op)) {
+            if (fetch) {
               *s++ = '+';
             }
-            if (my_compare_valid(t, op)) {
+            if (compare) {
               *s++ = '*';
             }
             *s = '\0';
@@ -7960,8 +7965,8 @@ int isAtomicValid(enum fi_datatype ofiType) {
                    validByType[t] ? "valid" : "invalid");
       }
     }
+#endif
   }
-
   return validByType[ofiType];
 }
 
