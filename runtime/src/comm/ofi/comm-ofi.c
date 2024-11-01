@@ -7858,6 +7858,13 @@ void chpl_comm_atomic_unordered_task_fence(void) {
 // internal AMO utilities
 //
 
+#define my_valid(typ, op) \
+  (fi_atomicvalid(ep, typ, op, &count) == 0 && count > 0)
+#define my_fetch_valid(typ, op) \
+  (fi_fetch_atomicvalid(ep, typ, op, &count) == 0 && count > 0)
+#define my_compare_valid(typ, op) \
+  (fi_compare_atomicvalid(ep, typ, op, &count) == 0 && count > 0)
+
 static
 int computeAtomicValid(enum fi_datatype ofiType) {
   //
@@ -7871,13 +7878,6 @@ int computeAtomicValid(enum fi_datatype ofiType) {
 
   struct fid_ep* ep = tciTab[0].txCtx; // assume same answer for all endpoints
   size_t count;                        // ignored
-
-#define my_valid(typ, op) \
-  (fi_atomicvalid(ep, typ, op, &count) == 0 && count > 0)
-#define my_fetch_valid(typ, op) \
-  (fi_fetch_atomicvalid(ep, typ, op, &count) == 0 && count > 0)
-#define my_compare_valid(typ, op) \
-  (fi_compare_atomicvalid(ep, typ, op, &count) == 0 && count > 0)
 
   // For integral types, all operations matter.
   if (ofiType == FI_INT32
@@ -7908,9 +7908,6 @@ int computeAtomicValid(enum fi_datatype ofiType) {
           && my_fetch_valid(ofiType, FI_ATOMIC_WRITE)
           && my_compare_valid(ofiType, FI_CSWAP));
 
-#undef my_valid
-#undef my_fetch_valid
-#undef my_compare_valid
 }
 
 static
@@ -7926,10 +7923,51 @@ int isAtomicValid(enum fi_datatype ofiType) {
     validByType[FI_FLOAT]  = computeAtomicValid(FI_FLOAT);
     validByType[FI_DOUBLE] = computeAtomicValid(FI_DOUBLE);
     inited = true;
+    if (DBG_TEST_MASK(DBG_CFG_AMO) && (ofi_info->tx_attr->caps & FI_ATOMIC)) {
+      char buf[1024];
+      int offset;
+
+      struct fid_ep* ep = tciTab[0].txCtx; // assume same answer for all
+                                           // endpoints
+      size_t count;                        // ignored
+      for (enum fi_datatype t = 0; t < FI_DATATYPE_LAST; t++) {
+        offset = 0;
+        offset += snprintf(buf + offset, sizeof(buf) - offset, "%s: ",
+                      fi_tostr(&t, FI_TYPE_ATOMIC_TYPE));
+        for (enum fi_op op = 0; op < FI_ATOMIC_OP_LAST; op++) {
+          if (my_valid(t, op)) {
+            char suffix[3];
+            char *s = suffix;
+            if (my_fetch_valid(t, op)) {
+              *s++ = '+';
+            }
+            if (my_compare_valid(t, op)) {
+              *s++ = '*';
+            }
+            *s = '\0';
+            const char *sep = " ";
+            if (op == FI_ATOMIC_OP_LAST - 1) {
+              sep = "";
+            }
+            offset += snprintf(buf + offset, sizeof(buf) - offset, "%s%s%s",
+                            fi_tostr(&op, FI_TYPE_ATOMIC_OP), suffix, sep);
+          }
+        }
+        DBG_PRINTF(DBG_CFG_AMO, "%s", buf);
+      }
+      for (enum fi_datatype t = 0; t < FI_DATATYPE_LAST; t++) {
+        DBG_PRINTF(DBG_CFG_AMO, "%s: %s", fi_tostr(&t, FI_TYPE_ATOMIC_TYPE),
+                   validByType[t] ? "valid" : "invalid");
+      }
+    }
   }
 
   return validByType[ofiType];
 }
+
+#undef my_valid
+#undef my_fetch_valid
+#undef my_compare_valid
 
 
 static inline
