@@ -7792,6 +7792,21 @@ DEFN_IFACE_AMO_SIMPLE_OP(add, FI_SUM, uint64, FI_UINT64, uint64_t)
 DEFN_IFACE_AMO_SIMPLE_OP(add, FI_SUM, real32, FI_FLOAT, _real32)
 DEFN_IFACE_AMO_SIMPLE_OP(add, FI_SUM, real64, FI_DOUBLE, _real64)
 
+DEFN_IFACE_AMO_SIMPLE_OP(min, FI_MIN, int32, FI_INT32, int32_t)
+DEFN_IFACE_AMO_SIMPLE_OP(min, FI_MIN, int64, FI_INT64, int64_t)
+DEFN_IFACE_AMO_SIMPLE_OP(min, FI_MIN, uint32, FI_UINT32, uint32_t)
+DEFN_IFACE_AMO_SIMPLE_OP(min, FI_MIN, uint64, FI_UINT64, uint64_t)
+DEFN_IFACE_AMO_SIMPLE_OP(min, FI_MIN, real32, FI_FLOAT, _real32)
+DEFN_IFACE_AMO_SIMPLE_OP(min, FI_MIN, real64, FI_DOUBLE, _real64)
+
+
+DEFN_IFACE_AMO_SIMPLE_OP(max, FI_MAX, int32, FI_INT32, int32_t)
+DEFN_IFACE_AMO_SIMPLE_OP(max, FI_MAX, int64, FI_INT64, int64_t)
+DEFN_IFACE_AMO_SIMPLE_OP(max, FI_MAX, uint32, FI_UINT32, uint32_t)
+DEFN_IFACE_AMO_SIMPLE_OP(max, FI_MAX, uint64, FI_UINT64, uint64_t)
+DEFN_IFACE_AMO_SIMPLE_OP(max, FI_MAX, real32, FI_FLOAT, _real32)
+DEFN_IFACE_AMO_SIMPLE_OP(max, FI_MAX, real64, FI_DOUBLE, _real64)
+
 
 #define DEFN_IFACE_AMO_SUB(fnType, ofiType, Type, negate)               \
   void chpl_comm_atomic_sub_##fnType                                    \
@@ -7888,22 +7903,30 @@ int computeAtomicValid(enum fi_datatype ofiType) {
             && my_valid(ofiType, FI_BOR)
             && my_valid(ofiType, FI_BAND)
             && my_valid(ofiType, FI_BXOR)
+            && my_valid(ofiType, FI_MIN)
+            && my_valid(ofiType, FI_MAX)
             && my_valid(ofiType, FI_ATOMIC_WRITE)
             && my_fetch_valid(ofiType, FI_SUM)
             && my_fetch_valid(ofiType, FI_BOR)
             && my_fetch_valid(ofiType, FI_BAND)
             && my_fetch_valid(ofiType, FI_BXOR)
+            && my_fetch_valid(ofiType, FI_MIN)
+            && my_fetch_valid(ofiType, FI_MAX)
             && my_fetch_valid(ofiType, FI_ATOMIC_READ)
             && my_fetch_valid(ofiType, FI_ATOMIC_WRITE)
             && my_compare_valid(ofiType, FI_CSWAP));
   }
 
   //
-  // For real types, only sum, read, write, and cswap matter.
+  // For real types, only sum, min, max, read, write, and cswap matter.
   //
   return (   my_valid(ofiType, FI_SUM)
+          && my_valid(ofiType, FI_MIN)
+          && my_valid(ofiType, FI_MAX)
           && my_valid(ofiType, FI_ATOMIC_WRITE)
           && my_fetch_valid(ofiType, FI_SUM)
+          && my_fetch_valid(ofiType, FI_MIN)
+          && my_fetch_valid(ofiType, FI_MAX)
           && my_fetch_valid(ofiType, FI_ATOMIC_READ)
           && my_fetch_valid(ofiType, FI_ATOMIC_WRITE)
           && my_compare_valid(ofiType, FI_CSWAP));
@@ -8148,6 +8171,44 @@ void doCpuAMO(void* obj,
     }
     break;
 
+
+  case FI_MIN:
+    if (ofiType == FI_INT32) {
+      CPU_INT_ARITH_AMO(min, int_least32_t, i32);
+    } else if (ofiType == FI_UINT32) {
+      CPU_INT_ARITH_AMO(min, uint_least32_t, u32);
+    } else if (ofiType == FI_INT64) {
+      CPU_INT_ARITH_AMO(min, int_least64_t, i64);
+    } else if (ofiType == FI_UINT64) {
+      CPU_INT_ARITH_AMO(min, uint_least64_t, u64);
+    } else if (ofiType == FI_FLOAT) {
+      CPU_INT_ARITH_AMO(min, _real32, r32);
+    } else if (ofiType == FI_DOUBLE) {
+      CPU_INT_ARITH_AMO(min, _real64, r64);
+    } else {
+      INTERNAL_ERROR_V("doCpuAMO(): unsupported ofiOp %d, ofiType %d",
+                       ofiOp, ofiType);
+    }
+    break;
+
+  case FI_MAX:
+    if (ofiType == FI_INT32) {
+      CPU_INT_ARITH_AMO(max, int_least32_t, i32);
+    } else if (ofiType == FI_UINT32) {
+      CPU_INT_ARITH_AMO(max, uint_least32_t, u32);
+    } else if (ofiType == FI_INT64) {
+      CPU_INT_ARITH_AMO(max, int_least64_t, i64);
+    } else if (ofiType == FI_UINT64) {
+      CPU_INT_ARITH_AMO(max, uint_least64_t, u64);
+    } else if (ofiType == FI_FLOAT) {
+      CPU_INT_ARITH_AMO(max, _real32, r32);
+    } else if (ofiType == FI_DOUBLE) {
+      CPU_INT_ARITH_AMO(max, _real64, r64);
+    } else {
+      INTERNAL_ERROR_V("doCpuAMO(): unsupported ofiOp %d, ofiType %d",
+                       ofiOp, ofiType);
+    }
+    break;
 
   default:
     INTERNAL_ERROR_V("doCpuAMO(): unsupported ofiOp %d, ofiType %d",
@@ -8719,6 +8780,8 @@ const char* amo_opName(enum fi_op ofiOp) {
   case FI_BOR: return "bor";
   case FI_BXOR: return "bxor";
   case FI_SUM: return "sum";
+  case FI_MIN: return "min";
+  case FI_MAX: return "max";
   default: return "amoOp???";
   }
 }

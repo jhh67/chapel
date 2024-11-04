@@ -189,6 +189,18 @@ static inline type atomic_fetch_xor_explicit_ ## type(chpl_atomic_ ## type * obj
 } \
 static inline type atomic_fetch_xor_ ## type(chpl_atomic_ ## type * obj, type operand) { \
   return atomic_fetch_xor(obj, operand); \
+} \
+static inline type atomic_fetch_min_explicit_ ## type(chpl_atomic_ ## type * obj, type operand, chpl_memory_order order) { \
+  return atomic_fetch_min_explicit(obj, operand, order); \
+} \
+static inline type atomic_fetch_min_ ## type(chpl_atomic_ ## type * obj, type operand) { \
+  return atomic_fetch_min(obj, operand); \
+} \
+static inline type atomic_fetch_max_explicit_ ## type(chpl_atomic_ ## type * obj, type operand, chpl_memory_order order) { \
+  return atomic_fetch_max_explicit(obj, operand, order); \
+} \
+static inline type atomic_fetch_max_ ## type(chpl_atomic_ ## type * obj, type operand) { \
+  return atomic_fetch_max(obj, operand); \
 }
 
 
