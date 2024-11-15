@@ -93,7 +93,8 @@ void chpl_comm_broadcast_global_vars(int numGlobals) {
     chpl_comm_get(buf, 0, buf_on_0, size, CHPL_COMM_UNKNOWN_ID, 0, -1);
     for (int i = 0; i < chpl_numGlobalsOnHeap; i++) {
       *chpl_globals_registry[i] = buf[i];
-      fprintf(stderr, "XXX chpl_globals_registry[%i] = %p, (%d:%p)\n", i,
+      fprintf(stderr, "%p XXX chpl_globals_registry[%i] = %p, (%d:%p)\n",
+              (void *) pthread_self(), i,
               chpl_globals_registry[i],
               buf[i].locale.node, buf[i].addr);
     }
