@@ -98,7 +98,7 @@ void chpl_comm_broadcast_global_vars(int numGlobals) {
               chpl_globals_registry[i],
               buf[i].locale.node, buf[i].addr);
     }
-    chpl_atomic_thread_fence(chpl_memory_order_release);
+    chpl_atomic_thread_fence(chpl_memory_order_acq_rel);
     chpl_comm_barrier("broadcast global vars");
     chpl_mem_free(buf, 0, 0);
   }
