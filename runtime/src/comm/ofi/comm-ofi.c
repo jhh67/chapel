@@ -6625,7 +6625,7 @@ nb_handle_t ofi_get_nb(nb_handle_t handle, void* addr, c_nodeid_t node,
     }
     DBG_PRINTF(DBG_RMA | DBG_RMA_READ,
               "GET %p <= %d:%p, size %zd",
-              dest, (int) node, src, size);
+              dest, (int) node, src, chunkSize);
 
     if (handle == NULL) {
       handle = chpl_mem_alloc(sizeof(*handle),
