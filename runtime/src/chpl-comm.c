@@ -53,6 +53,8 @@ static int32_t   localRank = -1;
 //
 void chpl_comm_register_global_var(int i, wide_ptr_t *ptr_to_wide_ptr) {
   chpl_globals_registry[i] = ptr_to_wide_ptr;
+  fprintf(stderr, "XXX chpl_globals_registry[%i] = %p\n", i,
+          chpl_globals_registry[i]);
 }
 
 
@@ -90,6 +92,8 @@ void chpl_comm_broadcast_global_vars(int numGlobals) {
     chpl_comm_get(buf, 0, buf_on_0, size, CHPL_COMM_UNKNOWN_ID, 0, -1);
     for (int i = 0; i < chpl_numGlobalsOnHeap; i++) {
       *chpl_globals_registry[i] = buf[i];
+      fprintf(stderr, "XXX *chpl_globals_registry[%i] = %p\n", i,
+          *chpl_globals_registry[i]);
     }
     chpl_comm_barrier("broadcast global vars");
     chpl_mem_free(buf, 0, 0);
