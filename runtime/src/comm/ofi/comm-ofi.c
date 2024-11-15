@@ -5680,6 +5680,7 @@ int test_nb_complete(nb_handle_t handle) {
 }
 
 int chpl_comm_test_nb_complete(chpl_comm_nb_handle_t h) {
+  DBG_PRINTF(DBG_IFACE, "%s(%p)", __func__, h);
   chpl_comm_diags_incr(test_nb);
   return test_nb_complete((nb_handle_t) h);
 }
@@ -5771,11 +5772,15 @@ chpl_bool check_complete(nb_handle_t *handles, size_t nhandles,
 static inline
 void wait_nb_some(nb_handle_t *handles, size_t nhandles) {
   DBG_PRINTF(DBG_HANDLES, "%s(%p, %zd)", __func__, handles, nhandles);
+  for (size_t i = 0; i < nhandles; i++) {
+    DBG_PRINTF(DBG_HANDLES, "handles[%zd] = %p", i, handles[i]);
+  }
   (void) check_complete(handles, nhandles, true /*blocking*/);
   DBG_PRINTF(DBG_HANDLES, "%s(%p, %zd) done", __func__, handles, nhandles);
 }
 
 void chpl_comm_wait_nb_some(chpl_comm_nb_handle_t* h, size_t nhandles) {
+  DBG_PRINTF(DBG_IFACE, "%s(%p, %zd)", __func__, h, nhandles);
   chpl_comm_diags_incr(wait_nb);
   wait_nb_some((nb_handle_t *) h, nhandles);
 }
@@ -5790,11 +5795,13 @@ int try_nb_some(nb_handle_t *handles, size_t nhandles) {
 }
 
 int chpl_comm_try_nb_some(chpl_comm_nb_handle_t* h, size_t nhandles) {
+  DBG_PRINTF(DBG_IFACE, "%s(%p, %zd)", __func__, h, nhandles);
   chpl_comm_diags_incr(try_nb);
   return try_nb_some((nb_handle_t *) h, nhandles);
 }
 
 void chpl_comm_free_nb_handle(chpl_comm_nb_handle_t h) {
+  DBG_PRINTF(DBG_IFACE, "%s(%p)", __func__, h);
   nb_handle_t handle = (nb_handle_t) h;
   nb_handle_t next;
   for (; handle != NULL; handle = next) {
