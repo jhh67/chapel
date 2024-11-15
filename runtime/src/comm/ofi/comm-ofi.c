@@ -3360,6 +3360,7 @@ wide_ptr_t* chpl_comm_broadcast_global_vars_helper(void) {
     CHPL_CALLOC(buf, chpl_numGlobalsOnHeap);
     for (int i = 0; i < chpl_numGlobalsOnHeap; i++) {
       buf[i] = *chpl_globals_registry[i];
+      DBG_PRINTF(DBG_IFACE, "buf[%i] = %p", i, buf[i]);
     }
   }
   chpl_comm_ofi_oob_bcast(&buf, sizeof(buf));
