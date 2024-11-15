@@ -53,8 +53,9 @@ static int32_t   localRank = -1;
 //
 void chpl_comm_register_global_var(int i, wide_ptr_t *ptr_to_wide_ptr) {
   chpl_globals_registry[i] = ptr_to_wide_ptr;
-  fprintf(stderr, "XXX chpl_globals_registry[%i] = %p\n", i,
-          chpl_globals_registry[i]);
+  fprintf(stderr, "XXX chpl_globals_registry[%i] = %p (%d:%p)\n", i,
+          chpl_globals_registry[i], chpl_globals_registry[i]->locale,
+          chpl_globals_registry[i]->addr);
 }
 
 
