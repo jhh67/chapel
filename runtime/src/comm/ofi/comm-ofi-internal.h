@@ -67,6 +67,7 @@ extern "C" {
   m(AMO,                    "AMOs")                                     \
   m(AMO_READ,               "AMOs: reads")                              \
   m(AMO_UNORD,              "AMOs: unordered operations")               \
+  m(HANDLES,                "non-blocking handles")                     \
   m(ACK,                    "tx acknowledgements")                      \
   m(ORDER,                  "ops done only for ordering")               \
   m(HEAP,                   "layer-provided fixed heap")                \

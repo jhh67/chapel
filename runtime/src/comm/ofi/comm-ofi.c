@@ -5670,10 +5670,12 @@ chpl_comm_nb_handle_t chpl_comm_get_nb(void* addr, c_nodeid_t node,
 
 static inline
 int test_nb_complete(nb_handle_t handle) {
+  DBG_PRINTF(DBG_HANDLES, "%s(%p)", __func__, handle);
   int result = (handle != NULL ? handle->reported : 1);
   if (result) {
     DBG_PRINTF(DBG_RMA, "handle %p is complete", handle);
   }
+  DBG_PRINTF(DBG_HANDLES, "%s(%p) = %d", __func__, handle, result);
   return result;
 }
 
@@ -5768,7 +5770,9 @@ chpl_bool check_complete(nb_handle_t *handles, size_t nhandles,
 
 static inline
 void wait_nb_some(nb_handle_t *handles, size_t nhandles) {
+  DBG_PRINTF(DBG_HANDLES, "%s(%p, %zd)", __func__, handles, nhandles);
   (void) check_complete(handles, nhandles, true /*blocking*/);
+  DBG_PRINTF(DBG_HANDLES, "%s(%p, %zd) done", __func__, handles, nhandles);
 }
 
 void chpl_comm_wait_nb_some(chpl_comm_nb_handle_t* h, size_t nhandles) {
@@ -5778,7 +5782,11 @@ void chpl_comm_wait_nb_some(chpl_comm_nb_handle_t* h, size_t nhandles) {
 
 static inline
 int try_nb_some(nb_handle_t *handles, size_t nhandles) {
-  return check_complete(handles, nhandles, false /*blocking*/);
+  DBG_PRINTF(DBG_HANDLES, "%s(%p, %zd)", __func__, handles, nhandles);
+  int result = check_complete(handles, nhandles, false /*blocking*/);
+  DBG_PRINTF(DBG_HANDLES, "%s(%p, %zd) = %d", __func__, handles, nhandles,
+             result);
+  return result;
 }
 
 int chpl_comm_try_nb_some(chpl_comm_nb_handle_t* h, size_t nhandles) {
