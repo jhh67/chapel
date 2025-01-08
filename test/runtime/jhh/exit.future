@@ -1,0 +1,2 @@
+bug: exit(0) hangs when there are multiple locales
+#7011
