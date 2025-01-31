@@ -274,6 +274,8 @@ void parseNumLocales(const char* numPtr, int32_t lineno, int32_t filename) {
           t = "socket";
         } else if (!strcmp(suffix, "numa")) {
           t = "numa";
+        } else if (!strcmp(suffix, "numas")) {
+          t = "numas";
         } else if (!strcmp(suffix, "llc")) {
           t = "cache";
         } else if (!strcmp(suffix, "c") || !strcmp(suffix, "core")) {
