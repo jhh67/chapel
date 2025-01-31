@@ -181,7 +181,7 @@ static void *touch_thread(void *mem_region) {
   memory_region* mr = (memory_region*) mem_region;
 
   uintptr_t page_size = chpl_comm_regMemHeapPageSize();
-  uintptr_t touch_size = page_size > 2<<20 ? page_size: 2<<20;
+  uintptr_t touch_size = page_size < 2<<20 ? page_size: 2<<20;
   unsigned char* aligned_start = round_up_to_mask_ptr(mr->start, touch_size-1);
   uintptr_t aligned_offset = (uintptr_t)aligned_start - (uintptr_t)mr->start;
   uintptr_t aligned_size = round_down_to_mask(mr->size - aligned_offset, touch_size-1);
