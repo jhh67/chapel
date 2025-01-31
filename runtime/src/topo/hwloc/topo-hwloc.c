@@ -670,15 +670,16 @@ static void partitionResources(void) {
               _DBG_P("adding object %d to logAccSets[0]", i);
             }
           }
-        }
+        } else {
 
-        for (int i = 0; i < numPartitions; i++) {
-          hwloc_obj_t obj;
-          CHK_ERR(obj = hwloc_get_obj_inside_cpuset_by_type(topology,
-                                  root->cpuset, myRootType, i));
-          hwloc_cpuset_t s = hwloc_bitmap_dup(obj->cpuset);
-          hwloc_bitmap_and(s, s, logAccSet);
-          logAccSets[i] = s;
+          for (int i = 0; i < numPartitions; i++) {
+            hwloc_obj_t obj;
+            CHK_ERR(obj = hwloc_get_obj_inside_cpuset_by_type(topology,
+                                    root->cpuset, myRootType, i));
+            hwloc_cpuset_t s = hwloc_bitmap_dup(obj->cpuset);
+            hwloc_bitmap_and(s, s, logAccSet);
+            logAccSets[i] = s;
+          }
         }
       } else {
         // Cores not tied to a root object
