@@ -191,7 +191,7 @@ static void *touch_thread(void *mem_region) {
           chpl_nodeID, mr->tid, page_size, touch_size, mr->start, mr->size,
           aligned_start, aligned_offset, aligned_size);
   chpl_topo_setThreadLocality(mr->tid % chpl_topo_getNumNumaDomains());
-  nid = chpl_topo_getThreadLocality();
+  int nid = chpl_topo_getThreadLocality();
   fprintf(stderr, "%d: tid %d nid %d\n", chpl_nodeID, mr->tid, nid);
   // Iterate through all the touch regions cyclically
   for (uintptr_t tr=mr->tid*touch_size; tr<aligned_size; tr+=mr->nthreads*touch_size) {
