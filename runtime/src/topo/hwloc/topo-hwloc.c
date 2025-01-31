@@ -551,6 +551,7 @@ static void partitionResources(void) {
     } else if (!strcmp(t , "numas")) {
       myRootType = HWLOC_OBJ_NUMANODE;
       numObjsToUse = chpl_env_rt_get_int("NUM_OBJS_TO_USE", numObjsToUse);
+      _DBG_P("Using %d objects per locale\n", numObjsToUse);
     } else if (!strcmp(t , "core")) {
       myRootType = HWLOC_OBJ_CORE;
     } else if (!strcmp(t , "cache")) {
@@ -663,8 +664,10 @@ static void partitionResources(void) {
               hwloc_cpuset_t s = hwloc_bitmap_dup(obj->cpuset);
               hwloc_bitmap_and(s, s, logAccSet);
               logAccSets[0] = s;
+              _DBG_P("assigning logAccSets[0] to object %d", i);
             } else {
               hwloc_bitmap_or(logAccSets[0], logAccSets[0], obj->cpuset);
+              _DBG_P("adding object %d to logAccSets[0]", i);
             }
           }
         }
