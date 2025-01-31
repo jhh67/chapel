@@ -539,6 +539,7 @@ static void partitionResources(void) {
   int numLocalesOnNode = chpl_get_num_locales_on_node();
   int numColocales = chpl_env_rt_get_int("LOCALES_PER_NODE", 0);
   int unusedCores = 0;
+  int numObjsToUse = 1;
 
   const char *t = chpl_env_rt_get("COLOCALE_OBJ_TYPE", NULL);
   if (t != NULL) {
@@ -547,6 +548,9 @@ static void partitionResources(void) {
       myRootType = HWLOC_OBJ_PACKAGE;
     } else if (!strcmp(t , "numa")) {
       myRootType = HWLOC_OBJ_NUMANODE;
+    } else if (!strcmp(t , "numas")) {
+      myRootType = HWLOC_OBJ_NUMANODE;
+      numObjsToUse = chpl_env_rt_get_int("NUM_OBJS_TO_USE", numObjsToUse);
     } else if (!strcmp(t , "core")) {
       myRootType = HWLOC_OBJ_CORE;
     } else if (!strcmp(t , "cache")) {
@@ -635,7 +639,7 @@ static void partitionResources(void) {
                    objTypeString(myRootType));
           chpl_error(msg, 0, 0);
         }
-        if (numObjs > numPartitions) {
+        if ((numObjs > numPartitions) && (numObjsToUse == 1)) {
           int coresPerPartition = numCores / numObjs;
           unusedCores = (numObjs - numPartitions) * coresPerPartition;
         }
@@ -649,6 +653,21 @@ static void partitionResources(void) {
         // Compute the accessible PUs for all partitions based on the object
         // each occupies. This is used to determine which NIC each locale
         // should use.
+
+        if ((numPartitions == 1) && (numObjsToUse > 1)) {
+          for (int i = 0; i < numObjsToUse; i++) {
+            hwloc_obj_t obj;
+            CHK_ERR(obj = hwloc_get_obj_inside_cpuset_by_type(topology,
+                                    root->cpuset, myRootType, i));
+            if (i == 0) {
+              hwloc_cpuset_t s = hwloc_bitmap_dup(obj->cpuset);
+              hwloc_bitmap_and(s, s, logAccSet);
+              logAccSets[0] = s;
+            } else {
+              hwloc_bitmap_or(logAccSets[0], logAccSets[0], obj->cpuset);
+            }
+          }
+        }
 
         for (int i = 0; i < numPartitions; i++) {
           hwloc_obj_t obj;
