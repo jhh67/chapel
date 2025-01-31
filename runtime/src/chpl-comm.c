@@ -186,6 +186,10 @@ static void *touch_thread(void *mem_region) {
   uintptr_t aligned_offset = (uintptr_t)aligned_start - (uintptr_t)mr->start;
   uintptr_t aligned_size = round_down_to_mask(mr->size - aligned_offset, touch_size-1);
 
+  fprintf(stderr, "tid %d page_size %lu touch_size %lu start %p size %lu\n",
+          mr->tid, page_size, touch_size, mr->start, mr->size);
+  fprintf(stderr, "aligned_start %p aligned_offset %lu aligned_size %lu\n",
+          aligned_start, aligned_offset, aligned_size);
   chpl_topo_setThreadLocality(mr->tid % chpl_topo_getNumNumaDomains());
   // Iterate through all the touch regions cyclically
   for (uintptr_t tr=mr->tid*touch_size; tr<aligned_size; tr+=mr->nthreads*touch_size) {
