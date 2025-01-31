@@ -191,11 +191,16 @@ static void *touch_thread(void *mem_region) {
           chpl_nodeID, mr->tid, page_size, touch_size, mr->start, mr->size,
           aligned_start, aligned_offset, aligned_size);
   chpl_topo_setThreadLocality(mr->tid % chpl_topo_getNumNumaDomains());
+  nid = chpl_topo_getThreadLocality();
+  fprintf(stderr, "%d: tid %d nid %d\n", chpl_nodeID, mr->tid, nid);
   // Iterate through all the touch regions cyclically
   for (uintptr_t tr=mr->tid*touch_size; tr<aligned_size; tr+=mr->nthreads*touch_size) {
     // Iterate through all the page regions in the current region we're touching
     for (uintptr_t pr=tr; pr<tr+touch_size; pr+=page_size) {
       aligned_start[pr] = 0;
+      if (chpl_nodeID == 0) {
+        fprintf(stderr, "XXX nid %d addr %p\n", nid, &(aligned_start[pr]));
+      }
     }
   }
   return NULL;
