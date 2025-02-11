@@ -76,6 +76,7 @@ DEFAULT = set(['default'])
 
 # Global ordered list that stores names, content-categories, and shortnames
 CHPL_ENVS = [
+    ChapelEnv('CHPL_BRANCH', INTERNAL),
     ChapelEnv('CHPL_HOST_PLATFORM', COMPILER | LAUNCHER),
     ChapelEnv('CHPL_HOST_COMPILER', COMPILER | LAUNCHER),
     ChapelEnv('  CHPL_HOST_CC', COMPILER | NOPATH),
@@ -175,7 +176,7 @@ ENV_VALS = {}
 """Compute '--all' env var values and populate global dict, ENV_VALS"""
 def compute_all_values():
     global ENV_VALS
-
+    ENV_VALS['CHPL_BRANCH'] = chpl_branch.get()
     ENV_VALS['CHPL_HOME'] = chpl_home_utils.get_chpl_home()
     ENV_VALS['CHPL_HOST_PLATFORM'] = chpl_platform.get('host')
 
