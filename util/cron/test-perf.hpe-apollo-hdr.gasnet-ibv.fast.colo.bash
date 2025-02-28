@@ -10,7 +10,7 @@ export CHPL_TEST_PERF_CONFIG_NAME='jhh-16-node-apollo-hdr'
 
 source $UTIL_CRON_DIR/common-perf.bash
 
-export CHPL_NIGHTLY_TEST_DIRS optimizations/autoAggregation/perf
+export CHPL_NIGHTLY_TEST_DIRS=optimizations/autoAggregation/perf
 
 export CHPL_NIGHTLY_TEST_CONFIG_NAME="perf.jhh.gasnet.colo"
 
