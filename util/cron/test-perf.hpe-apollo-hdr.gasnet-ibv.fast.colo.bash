@@ -6,11 +6,13 @@
 UTIL_CRON_DIR=$(cd $(dirname ${BASH_SOURCE[0]}) ; pwd)
 
 export CHPL_TEST_PERF_SUBDIR="hpe-apollo"
-export CHPL_TEST_PERF_CONFIG_NAME='16-node-apollo-hdr'
+export CHPL_TEST_PERF_CONFIG_NAME='jhh-16-node-apollo-hdr'
 
 source $UTIL_CRON_DIR/common-perf.bash
 
-export CHPL_NIGHTLY_TEST_CONFIG_NAME="perf.hpe-apollo-hdr.gasnet-ibv.fast.colo"
+export CHPL_NIGHTLY_TEST_DIRS optimizations/autoAggregation/perf
+
+export CHPL_NIGHTLY_TEST_CONFIG_NAME="perf.jhh.gasnet.colo"
 
 source $UTIL_CRON_DIR/common-hpe-apollo.bash
 source $UTIL_CRON_DIR/common-perf-hpe-apollo-hdr.bash
