@@ -30,7 +30,7 @@ proc main() {
 
   var A, B: [ProblemSpace] elemType;
 
-  writelin("XXX initializing B");
+  writeln("XXX initializing B");
   initVector(B);
 
   var execTime: [1..numTrials] real;                 // an array of timings
