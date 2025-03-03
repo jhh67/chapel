@@ -23,20 +23,17 @@ config const printParams = true,
              printStats = true;
 
 proc main() {
-  writeln("XXX main starting");
   printConfiguration();   // print the problem size, number of trials, etc.
 
   const ProblemSpace: domain(1) dmapped new blockDist(boundingBox={1..m}) = {1..m};
 
   var A, B: [ProblemSpace] elemType;
 
-  writeln("XXX initializing B");
   initVector(B);
 
   var execTime: [1..numTrials] real;                 // an array of timings
 
   for trial in 1..numTrials {                        // loop over the trials
-    writeln("XXX trial: ", trial);
     const startTime = timeSinceEpoch().totalSeconds();              // capture the start time
 
     forall i in ProblemSpace with (ref A) do
@@ -45,7 +42,6 @@ proc main() {
     execTime(trial) = timeSinceEpoch().totalSeconds() - startTime;  // store the elapsed time
   }
 
-  writeln("XXX verifying results");
   const validAnswer = verifyResults(A, B);           // verify...
   printResults(validAnswer, execTime);               // ...and print the results
 }
