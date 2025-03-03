@@ -23,6 +23,7 @@ config const printParams = true,
              printStats = true;
 
 proc main() {
+  writeln("main starting");
   printConfiguration();   // print the problem size, number of trials, etc.
 
   const ProblemSpace: domain(1) dmapped new blockDist(boundingBox={1..m}) = {1..m};
