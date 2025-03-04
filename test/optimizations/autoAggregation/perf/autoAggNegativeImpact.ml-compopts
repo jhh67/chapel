@@ -1,2 +1,2 @@
--M ../../../release/examples/benchmarks/hpcc --auto-aggregation  #auto-aggregation
--M ../../../release/examples/benchmarks/hpcc --no-auto-aggregation  #no-auto-aggregation
+--no-fast -M ../../../release/examples/benchmarks/hpcc --auto-aggregation  #auto-aggregation
+--no-fast -M ../../../release/examples/benchmarks/hpcc --no-auto-aggregation  #no-auto-aggregation
