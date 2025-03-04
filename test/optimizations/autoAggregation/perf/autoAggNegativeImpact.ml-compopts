@@ -1,2 +1,2 @@
---checks -M ../../../release/examples/benchmarks/hpcc --auto-aggregation  #auto-aggregation
---checks -M ../../../release/examples/benchmarks/hpcc --no-auto-aggregation  #no-auto-aggregation
+-M ../../../release/examples/benchmarks/hpcc --auto-aggregation  #auto-aggregation
+-M ../../../release/examples/benchmarks/hpcc --no-auto-aggregation  #no-auto-aggregation
