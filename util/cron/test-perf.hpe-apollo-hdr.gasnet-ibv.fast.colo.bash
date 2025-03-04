@@ -23,6 +23,8 @@ export GASNET_PHYSMEM_MAX="0.90"
 export CHPL_RT_LOCALES_PER_NODE=2
 export CHPL_GASNET_MORE_CFG_OPTIONS=--enable-pshm
 
+ulimit -c unlimited
+
 nightly_args="${nightly_args} -no-buildcheck"
 perf_args="-performance-description gn-ibv-fast-colo -numtrials 1 -sync-dir-suffix colocales"
 
