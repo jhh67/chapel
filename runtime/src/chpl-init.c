@@ -119,6 +119,7 @@ void chpl_rt_preUserCodeHook(void) {
   // all other nodes.  We have to barrier first because on-stmts during
   // module init can change the running task count on any node.
   //
+  fprintf(stderr, "XXX %d chpl_rt_preUserCodeHook starting\n", chpl_nodeID);
   chpl_comm_barrier("pre-user-code hook: init done");
   chpl_taskRunningCntReset(0, 0);
   if (chpl_nodeID == 0) {
@@ -141,6 +142,7 @@ void chpl_rt_preUserCodeHook(void) {
   // user code and execution starts spreading around the nodes.
   //
   chpl_comm_barrier("pre-user-code hook: mem tracking inited");
+  fprintf(stderr, "XXX %d chpl_rt_preUserCodeHook exiting\n", chpl_nodeID);
 }
 
 
