@@ -209,6 +209,8 @@ void chpl_rt_init(int argc, char* argv[]) {
   int runInGDB;
   int runInLLDB;
 
+  fprintf(stderr, "XXX chpl_rt_init starting\n");
+
   // Check that we can get the page size.
   assert( sys_page_size() > 0 );
 
@@ -330,6 +332,7 @@ void chpl_rt_init(int argc, char* argv[]) {
   // running Chapel code.
   //
   chpl_comm_barrier("barrier before main");
+  fprintf(stderr, "XXX chpl_rt_init exiting\n");
 }
 
 //
