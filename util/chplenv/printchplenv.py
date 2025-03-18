@@ -76,7 +76,7 @@ DEFAULT = set(['default'])
 
 # Global ordered list that stores names, content-categories, and shortnames
 CHPL_ENVS = [
-    ChapelEnv('CHPL_BRANCH', INTERNAL),
+    ChapelEnv('CHPL_FLAVOR', RUNTIME | LAUNCHER, 'flavor'),
     ChapelEnv('CHPL_HOST_PLATFORM', COMPILER | LAUNCHER),
     ChapelEnv('CHPL_HOST_COMPILER', COMPILER | LAUNCHER),
     ChapelEnv('  CHPL_HOST_CC', COMPILER | NOPATH),
@@ -176,7 +176,7 @@ ENV_VALS = {}
 """Compute '--all' env var values and populate global dict, ENV_VALS"""
 def compute_all_values():
     global ENV_VALS
-    ENV_VALS['CHPL_BRANCH'] = chpl_branch.get()
+    ENV_VALS['CHPL_FLAVOR'] = chpl_flavor.get()
     ENV_VALS['CHPL_HOME'] = chpl_home_utils.get_chpl_home()
     ENV_VALS['CHPL_HOST_PLATFORM'] = chpl_platform.get('host')
 
@@ -522,6 +522,10 @@ def printchplenv(contents, print_filters=None, print_format='pretty', only=None)
                 value += '-debug'
             elif name == 'CHPL_TASKS' and chpl_tasks_debug.get() == 'debug':
                 value += '-debug'
+            elif name == "CHPL_FLAVOR" and value == None:
+                # For backwards compatibility, don't include a flavor
+                # component in the path if flavor isn't set
+                continue
         if only:
             name = name.strip()
         ret.append(print_var(name, value, shortname=env.shortname))
