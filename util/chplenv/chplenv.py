@@ -9,6 +9,7 @@ import chpl_comm_debug
 import chpl_comm_segment
 import chpl_comm_substrate
 import chpl_compiler
+import chpl_flavor
 import chpl_gasnet
 import chpl_gmp
 import chpl_hwloc

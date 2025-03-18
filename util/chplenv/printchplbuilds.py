@@ -40,6 +40,7 @@ class State(Enum):
 # Maps component prefix to corresponding environment variable.
 
 prefixes = {
+    'flavor':       'CHPL_FLAVOR',
     'arch':         'CHPL_TARGET_CPU', # obsolete
     'cpu':          'CHPL_TARGET_CPU',
     'loc':          'CHPL_LOCALE_MODEL',
@@ -92,7 +93,8 @@ nextStates = {
     State.HWLOC:            State.RE2,
     State.RE2:              State.PREFIX,
     State.COMM_SUBSTRATE:   State.GASNET_SEGMENT,
-    State.GASNET_SEGMENT:   State.PREFIX
+    State.GASNET_SEGMENT:   State.PREFIX,
+    State.NONE:             State.NONE
 }
 
 # Some of the CHPL_*_DEBUG variables add a "-debug" suffix to the component
@@ -121,16 +123,28 @@ def ProcessDebug(fields, config):
 def Parse(path):
     global used
 
-    state = State.TARGET_PLATFORM
-
+    state = State.NONE
     config = {}
     i = 0
     while i < len(path):
-        component = path[i]
-        # Get environment variable that corresponds to the current state.
-        var = varNames[state]
         # Get default next state. Note that it might be changed below.
         nextState = nextStates[state]
+        component = path[i]
+        # Determine our initial state based on the first component
+        if state == State.NONE:
+            if '-' in component:
+                # There is a flavor in the path
+                state = State.PREFIX
+                nextState = State.TARGET_PLATFORM
+            else:
+                # There isn't a flavor in the path
+                state = State.TARGET_PLATFORM
+                nextState = nextStates[state]
+                config['CHPL_FLAVOR'] = None
+                used.add('CHPL_FLAVOR')
+
+        # Get environment variable that corresponds to the current state.
+        var = varNames[state]
         j = i + 1
         if state == State.PREFIX and '-' in component:
             fields = component.split('-')
