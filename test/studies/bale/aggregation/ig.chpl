@@ -7,6 +7,7 @@ use CopyAggregation;
 const numTasksPerLocale = if dataParTasksPerLocale > 0 then dataParTasksPerLocale
                                                        else here.maxTaskPar;
 const numTasks = numLocales * numTasksPerLocale;
+const numLocalesPerNode = here.numColocales;
 config const N = 1000000; // number of updates per task
 config const M = 10000; // number of entries in the table per task
 
@@ -27,8 +28,12 @@ proc startTimer() {
 proc stopTimer(name) {
     t.stop(); var src = t.elapsed(); t.clear();
     const bytesPerTask = 2 * N * numBytes(int);
-    const gbPerNode = bytesPerTask:real / (10**9):real * numTasksPerLocale;
-    writef("%10s:\t%.3dr seconds\t%.3dr GB/s/node\n", name, src, gbPerNode/src);
+    const gbPerLocale = bytesPerTask:real / (10**9):real * numTasksPerLocale;
+    const gbPerNode = gbPerLocale * numLocalesPerNode;
+    writef("%10s:\t%.3dr seconds\t%.3dr GB/s/locale\n", name, src,
+      gbPerLocale/src);
+    writef("%10s:\t%.3dr seconds\t%.3dr GB/s/node\n", name, src,
+      gbPerNode/src);
 }
 
 proc main() {
