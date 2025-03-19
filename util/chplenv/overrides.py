@@ -17,6 +17,8 @@ from utils import memoize, warning
 chplvars = [
              'CHPL_HOME',
 
+             'CHPL_FLAVOR',
+             
              'CHPL_HOST_PLATFORM',
              'CHPL_HOST_COMPILER',
              'CHPL_HOST_CC',
