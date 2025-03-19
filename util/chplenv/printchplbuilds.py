@@ -132,12 +132,12 @@ def Parse(path):
         component = path[i]
         # Determine our initial state based on the first component
         if state == State.NONE:
-            if '-' in component:
-                # There is a flavor in the path
+            if component.startswith("flavor"):
+                # Path starts with a flavor
                 state = State.PREFIX
                 nextState = State.TARGET_PLATFORM
             else:
-                # There isn't a flavor in the path
+                # Path starts with the target platform
                 state = State.TARGET_PLATFORM
                 nextState = nextStates[state]
                 config['CHPL_FLAVOR'] = None
