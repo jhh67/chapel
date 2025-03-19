@@ -7,7 +7,7 @@ from utils import memoize
 
 @memoize
 def get():
-    return overrides.get('CHPL_FLAVOR')
+    return overrides.get('CHPL_FLAVOR', 'none')
 
 def _main():
     flavor_val = get()

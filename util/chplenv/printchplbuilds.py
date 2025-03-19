@@ -140,7 +140,7 @@ def Parse(path):
                 # Path starts with the target platform
                 state = State.TARGET_PLATFORM
                 nextState = nextStates[state]
-                config['CHPL_FLAVOR'] = None
+                config['CHPL_FLAVOR'] = 'none'
                 used.add('CHPL_FLAVOR')
 
         # Get environment variable that corresponds to the current state.
