@@ -48,6 +48,10 @@ proc main() {
   Rindex = mod(Rindex, tableSize);
   var tmp: [UpdatesDom] int = -1;
 
+  writeln("N: ", N);
+  writeln("M: ", M);
+  writef("tableSize: %i (%i GB)\n", tableSize, tableSize * 8 / (2**30));
+  writef("numUpdates: %i (%i billion)", numUpdates, numUpdates / (10**9));
   startTimer();
   forall (t, r) in zip (tmp, Rindex) with (var agg = new SrcAggregator(int)) {
     agg.copy(t, A[r]);
