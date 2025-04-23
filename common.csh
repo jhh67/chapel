@@ -14,8 +14,8 @@ setenv GASNET_IBV_LIST_PORTS 1
 #setenv GASNET_TRACEFILE stderr
 #setenv GASNET_IBV_TRACEMASK I
 
-#setenv GASNET_NETWORKDEPTH_PP 255
-setenv GASNET_AM_CREDITS_PP 127
+#setenv GASNET_NETWORKDEPTH_PP 100
+#setenv GASNET_AM_CREDITS_PP 100
 
 set port0=mlx5_0
 set port1=mlx5_4
@@ -44,7 +44,7 @@ echo One locale, one NIC
 
 setenv GASNET_IBV_PORTS $port0
 
-./run.csh "$cmd" "$args" "$nodes" "$dir/1.1-out" || exit $status
+./run.csh "$cmd" "$args" "$nodes" "$dir/1-1.out" || exit $status
 
 echo One locale, two NICs
 
@@ -54,7 +54,7 @@ setenv GASNET_IBV_PORTS_TYPE HRank
 setenv GASNET_IBV_PORTS_0 $ports
 setenv GASNET_IBV_PORTS_1 $ports
 
-./run.csh "$cmd" "$args" "$nodes" "$dir/1.2-out" || exit $status
+./run.csh "$cmd" "$args" "$nodes" "$dir/1-2.out" || exit $status
 
 echo One locale, one socket, one NIC
 

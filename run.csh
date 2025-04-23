@@ -6,7 +6,7 @@ if ($#argv != 4) then
 endif
 
 set cmd = $1
-set args = $2
+set args = "$2"
 set nodes = $3
 set output = $4
 
