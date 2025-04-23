@@ -11,8 +11,8 @@ const numLocalesPerNode = here.numColocales;
 config const N = 1000000; // number of updates per task
 config const M = 10000; // number of entries in the table per task
 
-const numUpdates = N * numTasks;
-const tableSize = M * numTasks;
+config const numUpdates = N * numTasks;
+config const tableSize = M * numTasks;
 
 // Block array access is faster than Cyclic currently. We hadn't
 // optimized these before because the comm overhead dominated, but
@@ -27,13 +27,8 @@ proc startTimer() {
 }
 proc stopTimer(name) {
     t.stop(); var src = t.elapsed(); t.clear();
-    const bytesPerTask = 2 * N * numBytes(int);
-    const gbPerLocale = bytesPerTask:real / (10**9):real * numTasksPerLocale;
-    const gbPerNode = gbPerLocale * numLocalesPerNode;
-    writef("%10s:\t%.3dr seconds\t%.3dr GB/s/locale\n", name, src,
-      gbPerLocale/src);
-    writef("%10s:\t%.3dr seconds\t%.3dr GB/s/node\n", name, src,
-      gbPerNode/src);
+    writef("%10s:\t%.3dr seconds\t%.3dr GB/s\n", name, src,
+        2*numUpdates*numBytes(int)/10**9/src);
 }
 
 proc main() {
