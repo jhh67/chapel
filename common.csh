@@ -48,11 +48,9 @@ setenv GASNET_IBV_PORTS $port0
 
 echo One locale, two NICs
 
-#setenv GASNET_IBV_PORTS $ports
-unsetenv GASNET_IBV_PORTS
+unsetenv GASNET_IBV_PORTS*
 setenv GASNET_IBV_PORTS_TYPE HRank
-setenv GASNET_IBV_PORTS_0 $ports
-setenv GASNET_IBV_PORTS_1 $ports
+setenv GASNET_IBV_PORTS $ports
 
 ./run.csh "$cmd" "$args" "$nodes" "$dir/1-2.out" || exit $status
 
@@ -77,6 +75,7 @@ setenv GASNET_IBV_PORTS $port0
 
 echo Two locales, each with its own NIC
 
+unsetenv GASNET_IBV_PORTS*
 setenv GASNET_IBV_PORTS_TYPE HRank
 setenv GASNET_IBV_PORTS_0 $port0
 setenv GASNET_IBV_PORTS_1 $port1
@@ -86,7 +85,7 @@ setenv GASNET_IBV_PORTS_1 $port1
 
 echo Two locales, two shared NICs
 
-unsetenv GASNET_IBV_PORTS_TYPE 
+unsetenv GASNET_IBV_PORTS*
 setenv GASNET_IBV_PORTS  $ports
 
 ./run.csh "$cmd" "$args" "${nodes}x2" "$dir/2-2s.out" || exit $status
