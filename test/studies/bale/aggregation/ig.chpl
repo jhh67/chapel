@@ -27,7 +27,13 @@ proc startTimer() {
 }
 proc stopTimer(name) {
     t.stop(); var src = t.elapsed(); t.clear();
-    writef("%10s:\t%.3dr seconds\t%.3dr GB/s\n", name, src,
+    const bytesPerTask = 2 * N * numBytes(int);
+    writeln("bytesPerTask: ", bytesPerTask);
+    writeln("numTasksPerLocale: ", numTasksPerLocale);
+    const gbPerNode = bytesPerTask:real / (10**9):real * numTasksPerLocale;
+    writeln("gbPerNode: ", gbPerNode);
+    writef("%10s:\t%.3dr seconds\t%.3dr GB/s/node\n", name, src, gbPerNode/src);
+    writef("%10s2:\t%.3dr seconds\t%.3dr GB/s\n", name, src,
         2*numUpdates*numBytes(int)/10**9/src);
 }
 
@@ -46,7 +52,7 @@ proc main() {
   writeln("N: ", N);
   writeln("M: ", M);
   writef("tableSize: %i (%i GB)\n", tableSize, tableSize * 8 / (2**30));
-  writef("numUpdates: %i (%i billion)", numUpdates, numUpdates / (10**9));
+  writef("numUpdates: %i (%i billion)\n", numUpdates, numUpdates / (10**9));
   startTimer();
   forall (t, r) in zip (tmp, Rindex) with (var agg = new SrcAggregator(int)) {
     agg.copy(t, A[r]);
