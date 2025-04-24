@@ -265,5 +265,6 @@ proc printResults(successful, execTime) {
   if (printStats) {
     writeln("Execution time = ", execTime);
     writeln("Performance (GUPS) = ", (N_U / execTime) * 1e-9);
+    writeln("Performance (MUPS) = ", (N_U / execTime) * 1e-6);
   }
 }
